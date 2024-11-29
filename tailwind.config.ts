@@ -60,6 +60,17 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      spacing: {
+        "60": "60px",
+        "70": "70px",
+      },
+      fontSize: {
+        xs: ["12px", "1.25rem"],
+        sm: ["14px", "1.25rem"],
+        base: ["16px", "1.25rem"],
+        lg: ["20px", "2rem"],
+        xl: ["24px", "1.25rem"],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
