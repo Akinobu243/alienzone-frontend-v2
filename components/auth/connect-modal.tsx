@@ -44,11 +44,11 @@ const ConnectModal = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
         />
       </div>
       <div className="p-6 rounded-normal border border-gray-light backdrop-blur-[40px] font-inter space-y-8">
-        <div className="bg-gray-dark p-4 rounded-lg text-off-white text-[12px]/[19px]">
+        <div className="bg-glass p-4 rounded-lg text-off-white text-[12px]/[19px]">
           By connecting a wallet, you agree to{" "}
-          <span className="white">Terms of Service</span> and acknowledge that
-          you have read and understand the{" "}
-          <span className="white">Protocol Disclaimer</span>.
+          <span className="text-white">Terms of Service</span> and acknowledge
+          that you have read and understand the{" "}
+          <span className="text-white">Protocol Disclaimer</span>.
         </div>
 
         <div className="w-full space-y-4">

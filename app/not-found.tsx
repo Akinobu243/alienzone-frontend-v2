@@ -54,7 +54,7 @@ const NotFound = () => {
           // }}
           style={{
             backgroundImage: `
-              linear-gradient(rgba(24, 24, 24, 0.8), rgba(24, 24, 24, 0.8)), 
+              linear-gradient(rgba(24, 24, 24, 0.8), rgba(24, 24, 24, 0.8)),
               url(/images/404.jpeg)
             `,
           }}

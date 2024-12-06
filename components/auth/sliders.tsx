@@ -9,7 +9,7 @@ const Sliders = ({ current, moveToNextStep }: any) => {
         <div
           key={i}
           className={cn(
-            "h-1 w-12 bg-gray-dark rounded-normal transition-all duration-500 cursor-pointer",
+            "h-1 w-12 bg-glass rounded-normal transition-all duration-500 cursor-pointer",
             current === i + 1 ? "bg-white" : "hover:bg-white/20 hover:h-1.5"
           )}
           onClick={() => moveToNextStep(i + 1)}

@@ -26,14 +26,14 @@ const BrandButton: FC<BrandButtonProps> = ({
   ...props
 }) => {
   const sharedClasses = cn(
-    "relative flex items-center justify-center gap-2.5 p-[15px] px-[30px] border border-gray-light backdrop-blur-[20px] rounded-normal isolation-isolate overflow-hidden text-lg",
+    "relative flex items-center justify-center gap-2.5 p-[15px] px-[30px] border border-gray-light backdrop-blur-[20px] rounded-normal isolation-isolate overflow-hidden text-lg group",
     className
   )
 
   const blurSpan = (
     <span
       className={cn(
-        "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1]",
+        "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
         blurColor
       )}
     />

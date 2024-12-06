@@ -1,13 +1,17 @@
-const BackgroundCover = () => {
+const BackgroundCover = ({ url }: { url: string }) => {
   return (
     <>
       <div className="fixed w-[100vw] h-[100vh]">
         <div
-          className="bg-cover bg-center absolute inset-0 w-full h-full"
-          style={{ background: "url(/images/cover.jpeg)" }}
+          className=" absolute inset-0 w-full h-full "
+          style={{
+            background: `url(${url})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
         ></div>
       </div>
-      <div className="bg-gradient-to-l w-full h-full absolute inset-0 from-gray-700/20 via-gray-900/20 to-black/20"></div>
     </>
   )
 }

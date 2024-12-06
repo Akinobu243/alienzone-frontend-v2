@@ -6,7 +6,7 @@ const PreviousStepButton = ({ current, moveToPreviousStep }: any) => {
       className="border border-gray-light group rounded-normal p-2.5 cursor-pointer backdrop-blur-[40px]"
       onClick={() => moveToPreviousStep(current - 1)}
     >
-      <div className="border border-gray-light rounded-sm bg-gray-dark group-hover:bg-gray-dark/15 transition-colors duration-500 p-2">
+      <div className="border border-gray-light rounded-sm bg-glass group-hover:bg-glass/15 transition-colors duration-500 p-2">
         <svg
           width="20"
           height="21"

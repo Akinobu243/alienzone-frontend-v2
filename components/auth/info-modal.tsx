@@ -1,8 +1,10 @@
 "use client"
 
 import Image from "next/image"
-import boyImage from "@/public/images/boy.png"
+import character from "@/public/images/characters/character-1.png"
 
+import BrandButton from "@/components/ui/brand-button"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -10,10 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
-import PreviousStepButton from "../home/previous-step-button"
-import BrandButton from "../ui/brand-button"
-import { Input } from "../ui/input"
+import PreviousStepButton from "@/components/auth/previous-step-button"
 
 const InfoModal = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
   return (
@@ -30,7 +29,7 @@ const InfoModal = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
       </div>
       <div className="p-6 rounded-normal border border-gray-light backdrop-blur-[40px] flex flex-col lg:flex-row gap-4 overflow-hidden">
         <Image
-          src={boyImage}
+          src={character}
           alt="image"
           placeholder="blur"
           className="w-full lg:w-[462px] lg:h-[620px] object-cover rounded-normal"
@@ -64,7 +63,7 @@ const InfoModal = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
                 </div>
               </div>
 
-              <Input placeholder="Enter your name" showIcon />
+              <Input placeholder="Enter your name" />
             </div>
 
             <div className="space-y-3">

@@ -58,6 +58,7 @@ const config: Config = {
         "gray-dark": "#28292c",
         "gray-dark-with-opacity": "#D9D9D912",
         "off-white": "#FFFFFF80",
+        glass: "rgba(217, 217, 217, 0.07)",
       },
       borderRadius: {
         normal: "15px",
