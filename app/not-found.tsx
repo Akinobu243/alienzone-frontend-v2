@@ -1,38 +1,7 @@
-import { FlagIcon } from "lucide-react"
-
-import BlurBox from "@/components/ui/blur-box"
 import BrandButton from "@/components/ui/brand-button"
-import {
-  ChatIcon,
-  DoubleArrowIcon,
-  HomeIcon,
-  InfoIcon,
-  MailIcon,
-  PeopleIcon,
-  SettingsIcon,
-  Shop2Icon,
-  ShopIcon,
-  StackIcon,
-  VolumeIcon,
-} from "@/components/icons"
-import AlienzoneIcon from "@/components/icons/alienzone"
-
-const sidebarItems = [
-  { label: "", href: "", icon: <HomeIcon className="size-4" /> },
-  { label: "", href: "", icon: <DoubleArrowIcon className="size-4" /> },
-  { label: "", href: "", icon: <PeopleIcon className="size-4" /> },
-  { label: "", href: "", icon: <FlagIcon className="size-4" /> },
-  { label: "", href: "", icon: <StackIcon className="size-4" /> },
-  { label: "", href: "", icon: <InfoIcon className="size-4" /> },
-]
-
-const topbarItems = [
-  { label: "", href: "", icon: <MailIcon className="size-4" /> },
-  { label: "", href: "", icon: <ShopIcon className="size-4" /> },
-  { label: "", href: "", icon: <Shop2Icon className="size-4" /> },
-  { label: "", href: "", icon: <VolumeIcon className="size-4" /> },
-  { label: "", href: "", icon: <SettingsIcon className="size-4" /> },
-]
+import ChatBox from "@/components/common/chat-box"
+import RightSidebar from "@/components/common/right-sidebar"
+import TopBar from "@/components/common/top-bar"
 
 const NotFound = () => {
   return (
@@ -41,17 +10,6 @@ const NotFound = () => {
       <div className="fixed inset-0 p-20 pointer-events-none">
         <div
           className="bg-cover bg-center w-full h-full bg-no-repeat rounded-md"
-          // style={{ backgroundImage: "url(/images/404.jpeg)" }}
-          // style={{
-          //   backgroundImage: `
-          //     radial-gradient(
-          //       91.36% 91.36% at 31.6% 44.58%,
-          //       rgba(0, 0, 0, 0) 0%,
-          //       #000000 100%
-          //     ),
-          //     url(/images/404.jpeg)
-          //   `,
-          // }}
           style={{
             backgroundImage: `
               linear-gradient(rgba(24, 24, 24, 0.8), rgba(24, 24, 24, 0.8)),
@@ -59,15 +17,6 @@ const NotFound = () => {
             `,
           }}
         ></div>
-
-        {/* <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(91.36% 91.36% at 80% 50%, rgba(0, 0, 0, 0) 0%, #000000 100%)",
-            pointerEvents: "none",
-          }}
-        ></div> */}
 
         <div
           className="absolute inset-0 pointer-events-none"
@@ -98,32 +47,9 @@ const NotFound = () => {
         </div>
       </div>
 
-      <div className="absolute left-28 top-28 z-20 flex flex-col gap-2">
-        <div className="border border-gray-light rounded-normal cursor-pointer backdrop-blur-[40px] flex justify-center items-center size-14">
-          <AlienzoneIcon className="size-6" />
-        </div>
-
-        <BlurBox className="rounded-normal flex-col items-center gap-2.5 w-14 p-2">
-          {sidebarItems.map((item, index) => (
-            <BlurBox key={index}> {item.icon}</BlurBox>
-          ))}
-        </BlurBox>
-      </div>
-      <div className="absolute left-28 bottom-28">
-        <BlurBox className="rounded-normal flex-col items-center gap-2.5 w-14 p-2">
-          <BlurBox>
-            <ChatIcon className="size-4" />
-          </BlurBox>
-        </BlurBox>
-      </div>
-
-      <div className="absolute right-28 top-28 z-20 flex flex-col gap-2">
-        <BlurBox className="rounded-normal items-center gap-2.5 p-2">
-          {topbarItems.map((item, index) => (
-            <BlurBox key={index}> {item.icon}</BlurBox>
-          ))}
-        </BlurBox>
-      </div>
+      <RightSidebar />
+      <ChatBox />
+      <TopBar />
 
       <div className="absolute bottom-0 left-0 w-full p-4">
         <div className="font-inter text-[12px] font-normal text-off-white flex gap-1 md:gap-0 flex-col md:flex-row w-full justify-center items-center">

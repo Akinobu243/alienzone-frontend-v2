@@ -20,12 +20,15 @@ const Home = () => {
   const [currentStep, setCurrentStep] = useState(0)
 
   const moveToPreviousStep = () => {
+    if (currentStep === 0) return
     setCurrentStep((previous) => previous - 1)
   }
 
   const moveToNextStep = () => {
     if (currentStep < 5) {
       setCurrentStep((previous) => previous + 1)
+    } else {
+      setCurrentStep(0)
     }
   }
 
