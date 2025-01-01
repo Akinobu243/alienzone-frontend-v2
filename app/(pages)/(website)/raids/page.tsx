@@ -8,7 +8,6 @@ import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { Button } from "@/components/ui/button"
-import { ArrowBack } from "@/components/ui/icons"
 import TeamRecap from "@/components/pages/raids/TeamRecap"
 
 const raids = [
@@ -113,7 +112,7 @@ const Page = () => {
           // onClick={() => setIsActivityMenuOpen(!isActivityMenuOpen)}
           className="w-full glass-effect  px-3 py-3 z-10 flex items-center justify-between font-volkhov gap-2 lg:hidden h-max rounded-sm"
         >
-          Open Raids' List
+          Open Raids List
           <Plus className="size-5" />
         </button>
 
