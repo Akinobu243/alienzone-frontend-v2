@@ -1,19 +1,13 @@
 "use client"
 
-import React from "react"
 import Image from "next/image"
-import { useRaidTimer } from "@/context/raidTimer"
 import { useAliens, useAppDispatch, useRaidHistory } from "@/store/hooks"
 import { addRaidHistory } from "@/store/slices/raidsSlice"
 import { Raid } from "@/types"
 import toast from "react-hot-toast"
 
 import { launchRaid } from "@/lib/api"
-import {
-  formatDuration,
-  formatRemainingTime,
-  isRaidLaunched,
-} from "@/lib/utils"
+import { formatDuration, isRaidLaunched } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 
 import NoRaid from "./NoRaid"

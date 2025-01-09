@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useWallet } from "@/context/wallet"
 import { AuthUserData, CreateAlienData } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 import { FaXTwitter } from "react-icons/fa6"

@@ -37,7 +37,10 @@ const NoRaid = () => {
               <h1 className="font-inter max-lg:hidden">Rewards</h1>
               <div className="flex items-center gap-2">
                 {Object.values(RewardType).map((type) => (
-                  <div className="bg-white/5 rounded-full p-2 filter backdrop-blur-sm border border-white/20">
+                  <div
+                    key={type}
+                    className="bg-white/5 rounded-full p-2 filter backdrop-blur-sm border border-white/20"
+                  >
                     <Image
                       src={`/images/${type.toLowerCase()}.png`}
                       alt={type}
