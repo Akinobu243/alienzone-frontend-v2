@@ -6,6 +6,7 @@ import { useRaidTimer } from "@/context/raidTimer"
 import { useAliens, useProfile, useRaids } from "@/store/hooks"
 import { Plus } from "lucide-react"
 
+import { levelRequirements } from "@/config/constants"
 import { formatNumber, formatRemainingTime } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import { ArrowBack, FranceIcon } from "@/components/icons"
@@ -85,10 +86,17 @@ const Page = () => {
                       XP
                     </p>
 
-                    <Progress value={60} className="w-full " />
+                    <Progress
+                      value={profile?.experience}
+                      total={
+                        levelRequirements[profile?.level ?? 0].requiredPoints
+                      }
+                      className="w-full "
+                    />
 
                     <p className="glass-effect py-1 px-3 rounded-lg text-xs font-volkhov">
-                      157/200
+                      {profile?.experience}/
+                      {levelRequirements[profile?.level ?? 0].requiredPoints}
                     </p>
                   </div>
                 </div>
