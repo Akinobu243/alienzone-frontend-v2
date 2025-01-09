@@ -55,7 +55,7 @@ const SingleRaid = () => {
         <div className="grid grid-cols-1 gap-2 lg:gap-4">
           <div className="glass-effect p-2 lg:p-4 rounded-xl flex flex-col items-center relative overflow-hidden  lg:min-h-[150px] justify-center">
             <Image
-              src="/images/star.png"
+              src="/images/stars.png"
               alt="Star"
               width={500}
               height={500}
@@ -63,7 +63,7 @@ const SingleRaid = () => {
             />
             <div className="relative size-8 lg:size-20 mb-2">
               <Image
-                src="/images/star.png"
+                src="/images/stars.png"
                 alt="Star"
                 fill
                 className="object-contain"

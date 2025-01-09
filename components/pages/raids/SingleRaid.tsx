@@ -14,7 +14,7 @@ import NoRaid from "./NoRaid"
 import RaidInProgress from "./RaidInProgress"
 
 const rewardImages = {
-  STARS: "/images/star.png",
+  STARS: "/images/stars.png",
   XP: "/images/xp.png",
   REP: "/images/rep.png",
 }

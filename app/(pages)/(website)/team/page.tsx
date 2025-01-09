@@ -120,19 +120,19 @@ const page = () => {
                     </div>
                     <div className="flex items-center -space-x-2 bg-white/10 rounded px-2 py-1">
                       <Image
-                        src="/images/star.png"
+                        src="/images/stars.png"
                         alt="Star"
                         width={16}
                         height={16}
                       />
                       <Image
-                        src="/images/star.png"
+                        src="/images/stars.png"
                         alt="Star"
                         width={16}
                         height={16}
                       />
                       <Image
-                        src="/images/star.png"
+                        src="/images/stars.png"
                         alt="Star"
                         width={16}
                         height={16}

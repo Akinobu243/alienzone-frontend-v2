@@ -172,7 +172,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
               <div className="flex items-center gap-2">
                 <div className="size-6 lg:size-10 rounded-full p-px glass-effect flex items-center justify-center">
                   <Image
-                    src="/images/star.png"
+                    src="/images/stars.png"
                     alt="Star"
                     width={50}
                     height={50}
