@@ -14,8 +14,9 @@ import { cn } from "@/lib/utils"
 import { inter, volkhov } from "./fonts"
 
 export const metadata: Metadata = {
-  title: "Alienzone",
-  description: "",
+  title: "AlienZone",
+  description: "AlienZone - The Ultimate Gaming Experience",
+  manifest: "/manifest.json",
 }
 
 export default function RootLayout({
@@ -25,6 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+      </head>
       <body className={cn("antialiased", volkhov.variable, inter.variable)}>
         <ThemeProvider
           attribute="class"

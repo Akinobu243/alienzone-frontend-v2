@@ -10,15 +10,14 @@ export type AuthUserData = {
   country: string
   twitterId: string
   image?: string
+  refferalCode?: string
 }
 
 export interface CreateAlienData {
   name: string
   element: string
-  image: string
+  image: string | Blob | File
   strengthPoints: number
-  hair: string
-  face: string
 }
 
 export interface Profile {
@@ -110,4 +109,13 @@ export interface AliensState {
     loading: boolean
     error: string | null
   }
+}
+
+export type Traits = {
+  Body: string[]
+  Elements: string[]
+  Eyes: string[]
+  Face: string[]
+  Hair: string[]
+  Mouth: string[]
 }

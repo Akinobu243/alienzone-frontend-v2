@@ -69,6 +69,9 @@ const InfoModal = ({
         return
       }
 
+      if (userData.refferalCode) {
+        localStorage.removeItem("refferalCode")
+      }
       setIsAuthenticated(true)
       moveToNextStep()
     } catch (error) {

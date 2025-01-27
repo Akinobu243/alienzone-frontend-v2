@@ -35,7 +35,7 @@ export const useAliens = () => {
   const dispatch = useAppDispatch()
   const aliensState = useAppSelector((state) => state.aliens)
 
-  const handleCreateAlien = async (data: CreateAlienData) => {
+  const handleCreateAlien = async (data: FormData) => {
     try {
       await dispatch(createNewAlien(data)).unwrap()
     } catch (error) {

@@ -4,6 +4,7 @@ import {
   Profile,
   RaidHistoryResponse,
   RaidResponse,
+  Traits,
 } from "@/types"
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
 
@@ -172,24 +173,17 @@ export const getProfile = async (
   return response
 }
 
-export const createAlien = async ({
-  name,
-  element,
-  image,
-  strengthPoints,
-}: {
-  name: string
-  element: string
-  image: string
-  strengthPoints: number
-}): Promise<ApiResponse<any>> => {
-  const response = await apiManager.post("/profile/create-alien", {
-    name,
-    element,
-    image,
-    strengthPoints,
+export const createAlien = async (
+  data: FormData
+): Promise<ApiResponse<Alien>> => {
+  return apiManager.call<Alien>({
+    url: "/profile/create-alien",
+    method: "POST",
+    data,
+    // headers: {
+    //   "Content-Type": "multipart/form-data",
+    // },
   })
-  return response
 }
 
 export const getAliens = async (): Promise<ApiResponse<Alien[]>> => {
@@ -226,5 +220,10 @@ export const getRaidHistory = async (): Promise<
   const response = await apiManager.get<RaidHistoryResponse[]>(
     "/raids/get-raid-history"
   )
+  return response
+}
+
+export const getAllTraits = async (): Promise<ApiResponse<Traits>> => {
+  const response = await apiManager.get<Traits>("/profile/get-all-traits")
   return response
 }

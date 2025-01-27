@@ -30,7 +30,7 @@ export const fetchAliens = createAsyncThunk(
 
 export const createNewAlien = createAsyncThunk(
   "aliens/createAlien",
-  async (data: CreateAlienData, { rejectWithValue, dispatch }) => {
+  async (data: FormData, { rejectWithValue, dispatch }) => {
     try {
       const response = await createAlien(data)
       if (response.error) {

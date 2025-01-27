@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useAppDispatch } from "@/store/hooks"
+import { useAliens, useAppDispatch } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
 import { fetchRaidHistory, fetchRaids } from "@/store/slices/raidsSlice"
 import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { useAppKitAccount } from "@reown/appkit/react"
 import { Loader2 } from "lucide-react"
+import toast from "react-hot-toast"
 
+import { getAliens } from "@/lib/api"
 import { removeCookie } from "@/lib/cookie"
 
 const WALLET_INIT_TIMEOUT = 2000
@@ -19,7 +21,7 @@ export function Loader({ children }: { children: React.ReactNode }) {
   const { address, isConnected } = useAppKitAccount()
   const [isLoading, setIsLoading] = useState(true)
   const [walletInitialized, setWalletInitialized] = useState(false)
-
+  const { data: aliens } = useAliens()
   useEffect(() => {
     const timer = setTimeout(() => {
       setWalletInitialized(true)
@@ -39,7 +41,6 @@ export function Loader({ children }: { children: React.ReactNode }) {
       }
 
       if (address) {
-        setIsLoading(false)
         try {
           await Promise.all([
             dispatch(fetchUserProfile(address)),
@@ -47,6 +48,16 @@ export function Loader({ children }: { children: React.ReactNode }) {
             dispatch(fetchAliens()),
             dispatch(fetchRaidHistory()),
           ])
+
+          const aliens = await getAliens()
+
+          if (aliens?.data?.length === 0 || !aliens?.data) {
+            removeCookie("accessToken")
+            toast.error("Please create your first alien")
+            router.push("/auth")
+            return
+          }
+          setIsLoading(false)
         } catch (error) {
           console.error("Error fetching data:", error)
         }

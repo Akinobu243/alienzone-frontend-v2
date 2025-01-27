@@ -148,3 +148,44 @@ export const calculateRaidProgress = (
   const progress = (elapsed / totalDuration) * 100
   return Math.min(Math.max(progress, 0), 100) // Ensure value is between 0 and 100
 }
+
+// Fetch token price from Uniswap subgraph
+export async function getTokenPrice(): Promise<number> {
+  try {
+    const response = await fetch(
+      "https://api.thegraph.com/subgraphs/name/uniswap/arbitrum-v3",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `{
+          token(id: "0x888aaa48ebea87c74f690189e947d2c679705972") {
+            derivedETH
+            totalValueLockedUSD
+          }
+          bundle(id: "1") {
+            ethPriceUSD
+          }
+        }`,
+        }),
+      }
+    )
+
+    const data = await response.json()
+    const derivedETH = parseFloat(data.data.token.derivedETH)
+    const ethPriceUSD = parseFloat(data.data.bundle.ethPriceUSD)
+
+    return derivedETH * ethPriceUSD
+  } catch (error) {
+    console.error("Error fetching token price:", error)
+    return 0
+  }
+}
+
+// Calculate jackpot amount
+export function calculateJackpot(tokenPrice: number): number {
+  const MULTIPLIER = 1_000_000
+  return tokenPrice * MULTIPLIER
+}

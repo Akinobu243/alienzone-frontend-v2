@@ -28,6 +28,7 @@
     "unused-imports/no-unused-imports": "error",
     "@typescript-eslint/no-empty-object-type": "off",
     "@typescript-eslint/no-require-imports": "error",
+    "import/order": "off",
     "unused-imports/no-unused-vars": [
       "warn",
       {
@@ -39,23 +40,6 @@
     ],
 
     "no-eq-null": "warn",
-    "import/order": [
-      "warn",
-      {
-        "groups": [
-          ["builtin", "external"],
-          "internal",
-          "parent",
-          ["sibling", "index"],
-          "object"
-        ],
-        "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
-      }
-    ],
     "complexity": "warn",
     "no-console": ["warn"]
   }
