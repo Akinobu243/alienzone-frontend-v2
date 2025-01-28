@@ -9,6 +9,7 @@ export async function middleware(request: NextRequest) {
 
   // Get the user agent and check if mobile
   const userAgent = request.headers.get("user-agent") || ""
+  console.log(userAgent)
   const isMobile =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       userAgent
@@ -48,7 +49,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!api|...|_next/static|_next/image|assets|favicon.ico|sw.js).)",
-  ],
+  matcher: "/((?!api|static|.*\\..*|_next).*)",
 }
