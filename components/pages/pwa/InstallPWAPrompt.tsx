@@ -1,5 +1,6 @@
 "use client"
 
+import { usePwa } from "@/hooks/isPwa"
 import { useDevice } from "@/hooks/useDevice"
 
 export function InstallPWAPrompt() {
@@ -7,7 +8,8 @@ export function InstallPWAPrompt() {
     useDevice()
   const deviceInfo = useDevice()
 
-  if (isStandalone || !isMobile) return null
+  const isPwaMode = usePwa()
+  if (isPwaMode || !isMobile) return null
   if (!canInstallPWA && !isIOS) return null
 
   return (
