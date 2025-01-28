@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useAppDispatch } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
 import { fetchRaidHistory, fetchRaids } from "@/store/slices/raidsSlice"
@@ -25,6 +25,18 @@ export function Loader({ children }: { children: React.ReactNode }) {
   const { data: aliens } = useAliens()
   const isMobile = useIsMobile()
   const pathname = usePathname()
+
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const refferalCode = searchParams.get("refferalCode")
+    if (refferalCode) {
+      localStorage.setItem("refferalCode", refferalCode)
+      const newSearchParams = new URLSearchParams(searchParams.toString())
+      newSearchParams.delete("refferalCode")
+      router.replace(newSearchParams.toString())
+    }
+  }, [searchParams, router])
 
   useEffect(() => {
     if (pathname !== "/pwa" && isMobile) {
