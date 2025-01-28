@@ -9,7 +9,6 @@ export async function middleware(request: NextRequest) {
 
   // Get the user agent and check if mobile
   const userAgent = request.headers.get("user-agent") || ""
-  console.log(userAgent)
   const isMobile =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       userAgent

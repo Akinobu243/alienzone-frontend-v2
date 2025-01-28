@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { isStandalonePWA } from "is-standalone-pwa"
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -99,10 +100,7 @@ export function useDevice() {
     if (isChrome && isOpera) isChrome = false
 
     // PWA detection
-    const isStandalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as any).standalone ||
-      document.referrer.includes("android-app://")
+    const isStandalone = isStandalonePWA()
 
     setDeviceInfo({
       // Browser
@@ -132,6 +130,12 @@ export function useDevice() {
       userAgent,
     })
   }
+
+  // check is standalone
+  const isStandalone = isStandalonePWA()
+  useEffect(() => {
+    setDeviceInfo((prev) => ({ ...prev, isStandalone }))
+  }, [isStandalone])
 
   useEffect(() => {
     checkDeviceInfo()
