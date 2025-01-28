@@ -32,6 +32,7 @@ export interface Profile {
   experience: number
   reputation: number
   stars: number
+  refferalCode: string
 }
 
 export interface RaidReward {

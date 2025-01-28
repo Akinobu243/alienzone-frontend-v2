@@ -1,4 +1,8 @@
+import { useProfile } from "@/store/hooks"
+import toast from "react-hot-toast"
+
 export function InviteCard() {
+  const { data: profile } = useProfile()
   return (
     <div className="bg-white/10 rounded-2xl p-4">
       <div className="flex items-center gap-3">
@@ -26,8 +30,16 @@ export function InviteCard() {
           </svg>
         </button>
       </div>
-      <button className="w-full mt-4 py-3 bg-white/10 rounded-xl text-sm font-medium hover:bg-white/20 transition-colors font-sans">
-        Step 1: Tap here to join the channel
+      <button
+        onClick={() => {
+          navigator.clipboard.writeText(
+            `${window.location.origin}?refferalCode=${profile?.refferalCode}`
+          )
+          toast.success("Copied to clipboard")
+        }}
+        className="w-full mt-4 py-3 bg-white/10 rounded-xl text-sm font-medium hover:bg-white/20 transition-colors font-sans"
+      >
+        Copy Invite Link
       </button>
     </div>
   )
