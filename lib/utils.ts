@@ -193,3 +193,8 @@ export function calculateJackpot(tokenPrice: number): number {
   const MULTIPLIER = 1_000_000
   return tokenPrice * MULTIPLIER
 }
+
+// a utility funtion to sanitize input value on change allow space and special characters
+export const sanitizeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  return e.target.value.replace(/[^a-zA-Z0-9\s]/g, "")
+}

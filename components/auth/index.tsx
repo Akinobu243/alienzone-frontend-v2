@@ -6,8 +6,6 @@ import { AuthUserData, CreateAlienData, Traits } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 import { FaXTwitter } from "react-icons/fa6"
 
-import { getAllTraits } from "@/lib/api"
-import { useIsMobile } from "@/hooks/useIsMobile"
 import BrandButton from "@/components/ui/brand-button"
 import BackgroundCover from "@/components/common/background-cover"
 import Footer from "@/components/common/footer"
@@ -45,13 +43,49 @@ function ReferralCodeHandler({
   return null
 }
 
-const Home = () => {
+const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [traits, setTraits] = useState<Traits | null>(null)
+  const [traits, setTraits] = useState<Traits>({
+    Elements: [
+      "/images/alien/elements/gamma.png",
+      "/images/alien/elements/fire.png",
+      "/images/alien/elements/life.png",
+      "/images/alien/elements/water.png",
+      "/images/alien/elements/plasma.png",
+      "/images/alien/elements/love.png",
+      "/images/alien/elements/gravity.png",
+      "/images/alien/elements/thunder.png",
+    ],
+    Body: [
+      "/images/alien/body/cothes.png",
+      "/images/alien/body/body.png",
+      "/images/alien/body/head.png",
+    ],
+    Face: [
+      "/images/alien/face/Persona1.png",
+      "/images/alien/face/Persona2.png",
+      "/images/alien/face/Persona3.png",
+      "/images/alien/face/Persona4.png",
+      "/images/alien/face/Persona5.png",
+      "/images/alien/face/Persona6.png",
+      "/images/alien/face/Persona7.png",
+      "/images/alien/face/Persona8.png",
+    ],
+    Hair: [
+      "/images/alien/hair/Mijikai.png",
+      "/images/alien/hair/Poniteru.png",
+      "/images/alien/hair/Tepa.png",
+      "/images/alien/hair/Kusege.png",
+      "/images/alien/hair/Raito.PNG",
+      "/images/alien/hair/Bocchangari.PNG",
+      "/images/alien/hair/Bouken.PNG",
+      "/images/alien/hair/Rokusu.PNG",
+    ],
+  })
   const router = useRouter()
-  const isMObile = useIsMobile()
+
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",
     code: "random",
@@ -63,19 +97,19 @@ const Home = () => {
 
   const [createAlienData, setCreateAlienData] = useState<CreateAlienData>({
     name: "",
-    element: "/images/elements/element-1.png",
-    image: "/images/characters/character-1.png",
+    element: "/images/alien/elements/Water.png",
+    image: "",
     strengthPoints: 87,
   })
 
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)
-
-  useEffect(() => {
-    getAllTraits().then((res) => {
-      setTraits(res.data)
-    })
-  }, [])
-
+  // useEffect(() => {
+  //   getAllTraits().then((res) => {
+  //     if (res.data) {
+  //       setTraits(res.data)
+  //     }
+  //   })
+  // }, [])
   useEffect(() => {
     audioRef.current = new Audio("/music.mp3")
     audioRef.current.loop = true
@@ -108,7 +142,7 @@ const Home = () => {
   }
 
   const handleButtonClick = () => {
-    if (isMObile) {
+    if (deviceType === "mobile") {
       if (!isPlaying && audioRef.current) {
         audioRef.current.play()
         setIsPlaying(true)
@@ -119,9 +153,19 @@ const Home = () => {
 
   return (
     <main className="w-full h-screen relative">
-      <BackgroundCover url="/images/auth/bg.png" />
+      {deviceType === "mobile" ? (
+        <BackgroundCover url="/images/auth/mobile-bg.jpeg" />
+      ) : (
+        <video
+          src="/images/auth/desktop-bg.mov"
+          autoPlay
+          muted
+          loop
+          className="w-full h-full object-cover fixed top-0 left-0"
+        />
+      )}
       {currentStep > 0 ? (
-        <div className="fixed w-[100vw] h-[100vh] backdrop-blur-[10px] z-10"></div>
+        <div className="fixed w-[100vw] h-[100vh] backdrop-blur-[10px] z-10 max-lg:bg-black/50"></div>
       ) : null}
 
       <Suspense fallback={null}>
@@ -177,7 +221,7 @@ const Home = () => {
             blurColor="bg-[#9E96F4]"
             onClick={handleButtonClick}
           >
-            {isMObile ? (
+            {deviceType === "mobile" ? (
               "Tap here"
             ) : (
               <>
@@ -195,4 +239,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Auth

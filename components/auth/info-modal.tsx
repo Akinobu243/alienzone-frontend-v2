@@ -6,6 +6,7 @@ import { AuthUserData } from "@/types"
 import toast from "react-hot-toast"
 
 import { authenticate } from "@/lib/api"
+import { sanitizeInput } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { Input } from "@/components/ui/input"
 import {
@@ -16,6 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import PreviousStepButton from "@/components/auth/previous-step-button"
+// import countries from /assets/counties.json
+import countries from "@/app/assets/countries.json"
 
 interface InfoModalProps {
   current: number
@@ -78,7 +81,7 @@ const InfoModal = ({
   }
 
   return (
-    <div className="w-full space-y-6 z-20">
+    <div className="w-full space-y-6 z-20 max-w-[562px]">
       <div className="relative w-full flex items-center justify-between">
         <BrandButton className="items-start cursor-auto">
           Your Informations
@@ -131,7 +134,7 @@ const InfoModal = ({
                 placeholder="Enter your name"
                 value={userData?.name}
                 onChange={(e) =>
-                  setUserData({ ...userData, name: e.target.value })
+                  setUserData({ ...userData, name: sanitizeInput(e) })
                 }
               />
             </div>
@@ -153,11 +156,14 @@ const InfoModal = ({
                   <SelectValue placeholder="Choose country" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="france">France</SelectItem>
-                  <SelectItem value="germany">Germany</SelectItem>
-                  <SelectItem value="usa">USA</SelectItem>
-                  <SelectItem value="uk">Uk</SelectItem>
-                  <SelectItem value="spain">Spain</SelectItem>
+                  {countries.map((country) => (
+                    <SelectItem
+                      value={country.name.toLowerCase()}
+                      key={country.name}
+                    >
+                      {country.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

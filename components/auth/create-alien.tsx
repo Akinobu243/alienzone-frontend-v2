@@ -7,10 +7,12 @@ import { AuthUserData, CreateAlienData, Traits } from "@/types"
 import { Loader2 } from "lucide-react"
 import toast from "react-hot-toast"
 
+import { sanitizeInput } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import PreviousStepButton from "@/components/auth/previous-step-button"
 
+import { GradientBorder } from "../ui/gradient-border"
 import { AlienRenderer } from "./alien-renderer"
 
 interface CreateAlienProps {
@@ -40,8 +42,8 @@ const CreateAlien = ({
     hair: string
     face: string
   }>({
-    hair: "",
-    face: "",
+    hair: "/images/alien/hair/Kusege.png",
+    face: "/images/alien/face/Persona3.png",
   })
 
   const handleCreateAlien = async () => {
@@ -82,19 +84,16 @@ const CreateAlien = ({
         }, "image/png")
       })
 
-      // const base64 = canvas.toDataURL("image/png")
-
-      // testing with random body image
-      // const blob = await fetch(
-      //   "https://picsum.photos/200/300"
-      // ).then((res) => res.blob())
-
       // Create file from blob with a unique name
       const file = new File(
         [blob],
         `${createAlienData.name.toLowerCase().replace(/\s+/g, "-")}.png`,
         { type: "image/png" }
       )
+
+      // convert file to base64 and open in new tab
+      // const base64 = URL.createObjectURL(file)
+      // window.open(base64, "_blank")
 
       // Create form data
       const formData = new FormData()
@@ -114,25 +113,10 @@ const CreateAlien = ({
     }
   }
 
-  // useEffect(() => {
-  //   if (traits) {
-  //     setCreateAlienData({
-  //       ...createAlienData,
-  //       element: traits.Elements[0],
-  //     })
-
-  //     setSelectedTraits({
-  //       ...selectedTraits,
-  //       hair: traits.Hair[0],
-  //       face: traits.Face[0],
-  //     })
-  //   }
-  // }, [traits])
-
   return (
-    <div className="w-full space-y-6 z-20">
+    <div className="w-full space-y-6 z-20 max-lg:fixed max-lg:top-0 max-lg:left-0 max-lg:w-full max-lg:h-full max-lg:overflow-y-auto max-lg:py-4 max-lg:px-2">
       <div className="relative w-full flex items-center justify-between">
-        <BrandButton className="items-start cursor-auto">
+        <BrandButton className="items-start cursor-auto max-lg:text-sm">
           Create your Alien
         </BrandButton>
 
@@ -150,7 +134,7 @@ const CreateAlien = ({
       )}
 
       {traits && (
-        <div className="p-6 rounded-normal border border-gray-light backdrop-blur-[40px] flex flex-col lg:flex-row gap-4 overflow-hidden">
+        <div className="p-2 lg:p-6 rounded-normal border border-gray-light backdrop-blur-[40px] flex flex-col lg:flex-row gap-4 overflow-hidden">
           <div className="w-full lg:w-[662px]">
             <AlienRenderer
               ref={canvasRef}
@@ -159,146 +143,126 @@ const CreateAlien = ({
             />
           </div>
 
-          <div className="w-full flex flex-col gap-8 overflow-hidden px-2">
+          <div className="w-full flex flex-col  lg:gap-8 overflow-hidden px-2">
             <div className="space-y-3">
-              <div className="space-y-2">
-                <h3 className="text-2xl">Name your Alien</h3>
-                <input
-                  type="text"
-                  value={createAlienData.name}
-                  onChange={(e) =>
-                    setCreateAlienData({
-                      ...createAlienData,
-                      name: e.target.value,
-                    })
-                  }
-                  placeholder="Enter alien name"
-                  className="w-full px-4 py-2 rounded-lg bg-gray-dark text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5FFF95]"
-                />
-              </div>
+              <h3 className="text-xl max-lg:hidden">Name your Alien</h3>
+              <input
+                type="text"
+                value={createAlienData.name}
+                onChange={(e) =>
+                  setCreateAlienData({
+                    ...createAlienData,
+                    name: sanitizeInput(e),
+                  })
+                }
+                placeholder="Enter alien name"
+                className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5FFF95]"
+              />
             </div>
 
             <div className="space-y-3">
-              <div className="space-y-2">
-                <h3 className="text-2xl">Choose your Element</h3>
-                <p className="text-white text-[12px] font-inter">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-              </div>
+              <h3 className="text-xl max-lg:hidden">Choose your Element</h3>
 
               <ScrollArea>
                 <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
                   {traits?.Elements.map((element, index) => (
-                    <div
+                    <GradientBorder
                       key={index}
-                      className="w-20 h-20 p-0.5 rounded-lg shrink-0 cursor-pointer"
-                      style={{
-                        background:
-                          createAlienData.element === element
-                            ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
-                            : "unset",
-                      }}
-                      onClick={() =>
-                        setCreateAlienData({
-                          ...createAlienData,
-                          element: element,
-                        })
-                      }
+                      isSelected={createAlienData.element === element}
+                      className=" transition-colors duration-300"
                     >
-                      <div className="w-full h-full bg-gray-dark rounded-lg flex items-center justify-center">
-                        <Image
-                          src={element}
-                          alt="element image"
-                          width={200}
-                          height={200}
-                          className="size-full object-cover"
-                        />
+                      <div
+                        className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
+                        onClick={() =>
+                          setCreateAlienData({
+                            ...createAlienData,
+                            element: element,
+                          })
+                        }
+                      >
+                        <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
+                          <Image
+                            src={element}
+                            alt="element image"
+                            width={200}
+                            height={200}
+                            className="size-[calc(100%-10px)] object-cover"
+                          />
+                        </div>
                       </div>
-                    </div>
+                    </GradientBorder>
                   ))}
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
             </div>
-
             <div className="space-y-3">
-              <div className="space-y-2">
-                <h3 className="text-2xl">Choose your Hair</h3>
-                <p className="text-off-white text-[12px] font-inter">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-              </div>
+              <h3 className="text-xl max-lg:hidden">Choose your Hair</h3>
+
               <ScrollArea>
                 <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
                   {traits?.Hair.map((hair, index) => (
-                    <div
+                    <GradientBorder
                       key={index}
-                      className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
-                      style={{
-                        background:
-                          selectedTraits.hair === hair
-                            ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
-                            : "unset",
-                      }}
-                      onClick={() =>
-                        setSelectedTraits({
-                          ...selectedTraits,
-                          hair: hair,
-                        })
-                      }
+                      isSelected={selectedTraits.hair === hair}
+                      className=" transition-colors duration-300"
                     >
-                      <div className="w-full h-full bg-gray-dark rounded-lg flex items-center justify-center">
-                        <Image
-                          src={hair}
-                          alt="hair image"
-                          width={200}
-                          height={200}
-                          className="size-full object-cover"
-                        />
+                      <div
+                        className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
+                        onClick={() =>
+                          setSelectedTraits({
+                            ...selectedTraits,
+                            hair: hair,
+                          })
+                        }
+                      >
+                        <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
+                          <Image
+                            src={hair}
+                            alt="hair image"
+                            width={200}
+                            height={200}
+                            className="size-[calc(100%+40px)] object-cover absolute top-2 -left-1"
+                          />
+                        </div>
                       </div>
-                    </div>
+                    </GradientBorder>
                   ))}
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
             </div>
-
             <div className="space-y-3">
-              <div className="space-y-2">
-                <h3 className="text-2xl">Choose your Face</h3>
-                <p className="text-white text-[12px] font-inter">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-              </div>
+              <h3 className="text-xl max-lg:hidden">Choose your Face</h3>
+
               <ScrollArea>
                 <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
                   {traits?.Face.map((face, index) => (
-                    <div
+                    <GradientBorder
                       key={index}
-                      className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
-                      style={{
-                        background:
-                          selectedTraits.face === face
-                            ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
-                            : "unset",
-                      }}
-                      onClick={() =>
-                        setSelectedTraits({
-                          ...selectedTraits,
-                          face: face,
-                        })
-                      }
+                      isSelected={selectedTraits.face === face}
+                      className=" transition-colors duration-300"
                     >
-                      <div className="w-full h-full bg-gray-dark rounded-lg flex items-center justify-center">
-                        <Image
-                          src={face}
-                          alt="face image"
-                          width={200}
-                          height={200}
-                          className="size-full object-cover"
-                        />
+                      <div
+                        className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
+                        onClick={() =>
+                          setSelectedTraits({
+                            ...selectedTraits,
+                            face: face,
+                          })
+                        }
+                      >
+                        <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
+                          <Image
+                            src={face}
+                            alt="face image"
+                            width={200}
+                            height={200}
+                            className="size-[calc(100%+150px)] object-cover absolute -top-9 -left-1"
+                          />
+                        </div>
                       </div>
-                    </div>
+                    </GradientBorder>
                   ))}
                 </div>
                 <ScrollBar orientation="horizontal" />
@@ -306,7 +270,7 @@ const CreateAlien = ({
             </div>
 
             <BrandButton
-              className="items-start hover:-translate-y-1 duration-500 transition-transform w-full"
+              className="items-start hover:-translate-y-1 duration-500 transition-transform w-full max-lg:mt-4"
               blurColor="bg-[#96DFF4]"
               onClick={handleCreateAlien}
               disabled={createStatus.loading}

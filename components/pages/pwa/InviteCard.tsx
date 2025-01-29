@@ -1,13 +1,12 @@
-import { useProfile } from "@/store/hooks"
+import { Profile } from "@/types"
 import toast from "react-hot-toast"
 
-export function InviteCard() {
-  const { data: profile } = useProfile()
+export function InviteCard({ profile }: { profile: Profile | null }) {
   return (
     <div className="bg-white/10 rounded-2xl p-4">
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-xl">
-          0
+          {profile?.totalReferrals ?? 0}
         </div>
         <div className="flex-1">
           <h3 className="font-medium">Invite your friends and</h3>

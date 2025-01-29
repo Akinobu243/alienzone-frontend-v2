@@ -33,6 +33,7 @@ export interface Profile {
   reputation: number
   stars: number
   refferalCode: string
+  totalReferrals: number
 }
 
 export interface RaidReward {
@@ -115,8 +116,6 @@ export interface AliensState {
 export type Traits = {
   Body: string[]
   Elements: string[]
-  Eyes: string[]
   Face: string[]
   Hair: string[]
-  Mouth: string[]
 }

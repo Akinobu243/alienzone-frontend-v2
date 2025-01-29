@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef } from "react"
+import { forwardRef, useEffect, useRef, useState } from "react"
 
 interface AlienRendererProps {
   selectedTraits: {
@@ -8,122 +8,208 @@ interface AlienRendererProps {
   element: string
 }
 
+// Cache for loaded images
+const imageCache: { [key: string]: HTMLImageElement } = {}
+
+// Preload an image and store in cache
+const preloadImage = (src: string): Promise<HTMLImageElement> => {
+  if (imageCache[src]) {
+    return Promise.resolve(imageCache[src])
+  }
+
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      imageCache[src] = img
+      resolve(img)
+    }
+    img.onerror = (e) => {
+      console.error(`Failed to load image: ${src}`, e)
+      reject(e)
+    }
+    img.src = src
+  })
+}
+
 export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
   ({ selectedTraits, element }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const localCanvasRef = useRef<HTMLCanvasElement>(null)
     const hiddenCanvasRef = useRef<HTMLCanvasElement>(null)
+    const bufferCanvasRef = useRef<HTMLCanvasElement>(null)
+    const [isImagesLoaded, setIsImagesLoaded] = useState(false)
     const canvasRef =
       (ref as React.RefObject<HTMLCanvasElement>) || hiddenCanvasRef
 
-    // Fixed canvas dimensions for display
-    const DISPLAY_WIDTH = 462
-    const DISPLAY_HEIGHT = 620
+    // High resolution output scale
+    const OUTPUT_SCALE = 1
 
-    // High resolution output size (3x)
-    const OUTPUT_SCALE = 3
-    const OUTPUT_WIDTH = DISPLAY_WIDTH * OUTPUT_SCALE
-    const OUTPUT_HEIGHT = DISPLAY_HEIGHT * OUTPUT_SCALE
+    // Get base image dimensions from the first loaded image
+    const getBaseDimensions = (): { width: number; height: number } => {
+      const bodyImage = imageCache["/images/alien/body/body.png"]
+      if (bodyImage) {
+        return {
+          width: bodyImage.naturalWidth,
+          height: bodyImage.naturalHeight,
+        }
+      }
+      return { width: 462, height: 462 } // Fallback dimensions
+    }
+
+    // Preload all required images when traits change
+    useEffect(() => {
+      setIsImagesLoaded(false)
+
+      const baseImages = [
+        "/images/alien/body/body.png",
+        "/images/alien/body/head.png",
+        "/images/alien/body/cothes.png",
+      ]
+
+      const loadAllImages = async () => {
+        try {
+          const promises = baseImages.map((src) => preloadImage(src))
+          if (selectedTraits.face)
+            promises.push(preloadImage(selectedTraits.face))
+          if (selectedTraits.hair)
+            promises.push(preloadImage(selectedTraits.hair))
+          if (element) promises.push(preloadImage(element))
+
+          await Promise.all(promises)
+          setIsImagesLoaded(true)
+        } catch (error) {
+          console.error("Error preloading images:", error)
+          setIsImagesLoaded(false)
+        }
+      }
+
+      loadAllImages()
+    }, [selectedTraits.face, selectedTraits.hair, element])
 
     useEffect(() => {
+      if (!isImagesLoaded) return
+
       const displayCanvas = localCanvasRef.current
       const outputCanvas = canvasRef.current
-      if (!displayCanvas || !outputCanvas) return
+      const bufferCanvas = bufferCanvasRef.current
+      if (!displayCanvas || !outputCanvas || !bufferCanvas) {
+        console.error("Canvas references not found")
+        return
+      }
 
-      // Set up display canvas
-      displayCanvas.width = DISPLAY_WIDTH
-      displayCanvas.height = DISPLAY_HEIGHT
+      // Get natural dimensions from base image
+      const { width: naturalWidth, height: naturalHeight } = getBaseDimensions()
+
+      // Set up all canvases with correct dimensions
+      const setupCanvas = (canvas: HTMLCanvasElement, scale: number = 1) => {
+        canvas.width = naturalWidth * scale
+        canvas.height = naturalHeight * scale
+      }
+
+      setupCanvas(displayCanvas)
+      setupCanvas(bufferCanvas)
+      setupCanvas(outputCanvas, OUTPUT_SCALE)
+
       const displayCtx = displayCanvas.getContext("2d", { alpha: true })
-
-      // Set up hidden output canvas
-      outputCanvas.width = OUTPUT_WIDTH
-      outputCanvas.height = OUTPUT_HEIGHT
       const outputCtx = outputCanvas.getContext("2d", { alpha: true })
+      const bufferCtx = bufferCanvas.getContext("2d", { alpha: true })
 
-      if (!displayCtx || !outputCtx) return
-
-      const loadImage = (src: string): Promise<HTMLImageElement> => {
-        return new Promise((resolve, reject) => {
-          const img = new Image()
-          img.crossOrigin = "anonymous"
-          img.onload = () => resolve(img)
-          img.onerror = (e) => {
-            console.error(`Failed to load image: ${src}`, e)
-            reject(e)
-          }
-          img.src = src
-        })
+      if (!displayCtx || !outputCtx || !bufferCtx) {
+        console.error("Failed to get canvas contexts")
+        return
       }
 
       const drawAlien = async (
         ctx: CanvasRenderingContext2D,
-        width: number,
-        height: number,
+        scale: number = 1,
         showBackground: boolean
       ) => {
+        const width = naturalWidth * scale
+        const height = naturalHeight * scale
+
         // Clear canvas with transparency
         ctx.clearRect(0, 0, width, height)
 
         try {
-          // Draw element as background if selected (only for display canvas)
-          if (showBackground && element) {
-            const elementImg = await loadImage(element)
-            ctx.globalAlpha = 0.15 // Reduced opacity for subtle background
-            ctx.drawImage(elementImg, 0, 0, width, height)
-            ctx.globalAlpha = 1
+          // Helper function to draw image maintaining aspect ratio
+          const drawImage = (image: HTMLImageElement) => {
+            ctx.drawImage(image, 0, 0, width, height)
           }
 
-          // Draw base body first
-          const bodyImg = await loadImage("/images/alien/body/body.png")
-          ctx.drawImage(bodyImg, 0, 0, width, height)
+          // Draw base body
+          const bodyPath = "/images/alien/body/body.png"
+          if (imageCache[bodyPath]) {
+            drawImage(imageCache[bodyPath])
+          }
 
-          // Draw head on top of face traits
-          const headImg = await loadImage("/images/alien/body/head.png")
-          ctx.drawImage(headImg, 0, 0, width, height)
+          // Draw head
+          const headPath = "/images/alien/body/head.png"
+          if (imageCache[headPath]) {
+            drawImage(imageCache[headPath])
+          }
 
           // Draw selected face traits
-          if (selectedTraits.face) {
-            const faceImg = await loadImage(selectedTraits.face)
-            ctx.drawImage(faceImg, 0, 0, width, height)
+          if (selectedTraits.face && imageCache[selectedTraits.face]) {
+            drawImage(imageCache[selectedTraits.face])
           }
 
-          // Draw selected hair on top of head
-          if (selectedTraits.hair) {
-            const hairImg = await loadImage(selectedTraits.hair)
-            ctx.drawImage(hairImg, 0, 0, width, height)
+          // Draw selected hair
+          if (selectedTraits.hair && imageCache[selectedTraits.hair]) {
+            drawImage(imageCache[selectedTraits.hair])
           }
 
-          // Draw clothes last to be on top of everything
-          const clothesImg = await loadImage("/images/alien/body/cothes.png")
-          ctx.drawImage(clothesImg, 0, 0, width, height)
+          // Draw clothes
+          const clothesPath = "/images/alien/body/cothes.png"
+          if (imageCache[clothesPath]) {
+            drawImage(imageCache[clothesPath])
+          }
         } catch (error) {
           console.error("Error drawing alien:", error)
         }
       }
 
-      // Draw on both canvases
-      drawAlien(displayCtx, DISPLAY_WIDTH, DISPLAY_HEIGHT, true) // For display, with background
-      drawAlien(outputCtx, OUTPUT_WIDTH, OUTPUT_HEIGHT, false) // For high-res output, without background
-    }, [selectedTraits, element])
+      // Draw to buffer first
+      drawAlien(bufferCtx, 1, true).then(() => {
+        // Copy from buffer to display canvas
+        displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height)
+        displayCtx.drawImage(bufferCanvas, 0, 0)
+      })
+
+      // Draw high-res output separately
+      drawAlien(outputCtx, OUTPUT_SCALE, false)
+    }, [selectedTraits, element, isImagesLoaded])
+
+    // Get dimensions for the container
+    const { width: naturalWidth, height: naturalHeight } = getBaseDimensions()
 
     return (
       <div
         ref={containerRef}
-        className="w-full h-full flex items-center justify-center "
+        className="relative w-full h-full flex items-center justify-center lg:items-end rounded-normal "
+        style={{
+          backgroundImage: `url(${element.replace(".png", "-bg.png")})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        {/* Visible canvas for display */}
-        <canvas
-          ref={localCanvasRef}
-          style={{
-            width: `${DISPLAY_WIDTH}px`,
-            height: `${DISPLAY_HEIGHT}px`,
-            maxWidth: "100%",
-            objectFit: "contain",
-          }}
-          className="max-sm:!h-64"
-        />
-        {/* Hidden canvas for high-res output */}
-        <canvas ref={canvasRef} style={{ display: "none" }} />
+        <div className="relative w-fit h-fit max-w-full max-h-full">
+          {/* Visible canvas for display */}
+          <canvas
+            ref={localCanvasRef}
+            style={{
+              width: "100%",
+              height: "100%",
+              maxWidth: `${naturalWidth}px`,
+              maxHeight: `${naturalHeight}px`,
+              display: "block",
+              objectFit: "contain",
+            }}
+            className="max-sm:h-64 max-sm:w-auto max-sm:object-contain"
+          />
+          {/* Hidden canvases */}
+          <canvas ref={canvasRef} style={{ display: "none" }} />
+          <canvas ref={bufferCanvasRef} style={{ display: "none" }} />
+        </div>
       </div>
     )
   }

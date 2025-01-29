@@ -29,7 +29,7 @@ const Page = () => {
               <img
                 src={aliens?.[0]?.image}
                 alt="alien"
-                className="absolute top-4 lg:-top-56 right-4  lg:-left-[40vw] xl:-left-[30vw] 2xl:-left-[12vw]    px-3 py-2 rounded-xl w-[1400px] min-w-[1400px]"
+                className="absolute -top-20 lg:-top-36 -left-[100vw]  lg:-left-[50vw] xl:-left-[35vw] 2xl:-left-[18vw]    px-3 py-2 rounded-xl w-[1700px] min-w-[1700px]"
               />
             )}
             <div className="absolute top-4 lg:top-10 right-4 lg:left-[23%]  glass-effect  z-10  px-3 py-2 rounded-xl w-max">

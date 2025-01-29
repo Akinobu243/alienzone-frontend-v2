@@ -42,7 +42,10 @@ export default function Home() {
         }}
       >
         <div className="relative z-10 space-y-4">
-          <JackpotCard amount={jackpotAmount} players={77500} />
+          <JackpotCard amount={jackpotAmount} />
+
+          <UserProgress profile={profile ?? null} alien={aliens?.[0] ?? null} />
+          <InviteCard profile={profile ?? null} />
           <Link
             href={
               "https://app.uniswap.org/explore/tokens/arbitrum/0x888aaa48ebea87c74f690189e947d2c679705972?chain=arbitrum"
@@ -50,19 +53,9 @@ export default function Home() {
             target="_blank"
           >
             <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
-              Buy Token
+              Buy $ZONE
             </BrandButton>
           </Link>
-          <InviteCard />
-          <UserProgress
-            username={profile?.name ?? "Name"}
-            tokenType="TON"
-            stars={profile?.stars ?? 0}
-            level="Airdrop Level 1"
-            amount={0}
-            profit={0}
-            image={aliens?.[0]?.image ?? ""}
-          />
         </div>
       </div>
       <div

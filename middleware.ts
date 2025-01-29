@@ -14,18 +14,18 @@ export async function middleware(request: NextRequest) {
       userAgent
     )
 
-  // Get the current path
+  // Get the current path and search params
   const url = request.nextUrl.clone()
-  const { pathname } = url
+  const { pathname, search } = url
 
   // Handle auth redirects first
   if (expiredToken) {
     if (!pathname.startsWith("/auth")) {
-      return NextResponse.redirect(new URL("/auth", request.url))
+      return NextResponse.redirect(new URL(`/auth${search}`, request.url))
     }
   } else {
     if (pathname.startsWith("/auth")) {
-      return NextResponse.redirect(new URL("/", request.url))
+      return NextResponse.redirect(new URL(`/${search}`, request.url))
     }
   }
 

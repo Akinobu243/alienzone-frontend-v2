@@ -8,6 +8,7 @@ import {
   useAppKitProvider,
 } from "@reown/appkit/react"
 import { BrowserProvider, Eip1193Provider } from "ethers"
+import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
@@ -30,7 +31,11 @@ const ConnectModal = ({
 
   const router = useRouter()
   const options = [
-    // { key: "twitter", label: "Twitter", icon: <FaXTwitter className="w-5 h-5" /> },
+    {
+      key: "email",
+      label: "Login with Email",
+      icon: <Mail className="w-5 h-5" />,
+    },
     {
       key: "wallet",
       label: isConnected ? "Wallet connected" : "Continue with a wallet",
@@ -56,9 +61,9 @@ const ConnectModal = ({
   ]
 
   const handleOptionClick = (option: (typeof options)[0]) => {
-    if (option.key === "wallet") {
-      open()
-    }
+    // if (option.key === "wallet") {
+    open()
+    // }
   }
 
   const handleAuthenticate = async () => {
@@ -102,13 +107,13 @@ const ConnectModal = ({
         <BrandButton className="items-start cursor-auto">
           Log In or Sign Up
         </BrandButton>
-
+        X
         <PreviousStepButton
           current={current}
           moveToPreviousStep={moveToPreviousStep}
         />
       </div>
-      <div className="p-6 rounded-normal border border-gray-light backdrop-blur-[40px] font-inter space-y-8">
+      <div className="p-6 backdrop-blur-[20px] rounded-normal border border-gray-light max-lg:bg-white/10 lg:backdrop-blur-[40px] font-inter space-y-8">
         <div className="bg-glass p-4 rounded-lg text-off-white text-[12px]/[19px]">
           By connecting a wallet, you agree to{" "}
           <span className="text-white">Terms of Service</span> and acknowledge
