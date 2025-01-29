@@ -107,7 +107,7 @@ const ConnectModal = ({
         <BrandButton className="items-start cursor-auto">
           Log In or Sign Up
         </BrandButton>
-        X
+
         <PreviousStepButton
           current={current}
           moveToPreviousStep={moveToPreviousStep}

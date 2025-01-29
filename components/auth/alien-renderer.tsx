@@ -1,5 +1,7 @@
 import { forwardRef, useEffect, useRef, useState } from "react"
 
+import { useIsMobile } from "@/hooks/useIsMobile"
+
 interface AlienRendererProps {
   selectedTraits: {
     hair: string
@@ -43,6 +45,7 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
 
     // High resolution output scale
     const OUTPUT_SCALE = 1
+    const isMobile = useIsMobile()
 
     // Get base image dimensions from the first loaded image
     const getBaseDimensions = (): { width: number; height: number } => {
@@ -192,19 +195,17 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
           backgroundPosition: "center",
         }}
       >
-        <div className="relative w-fit h-fit max-w-full max-h-full">
+        <div className="relative w-fit h-fit max-w-full max-h-full flex items-center justify-center">
           {/* Visible canvas for display */}
           <canvas
             ref={localCanvasRef}
             style={{
-              width: "100%",
+              width: isMobile ? "100%" : "140%",
               height: "100%",
-              maxWidth: `${naturalWidth}px`,
-              maxHeight: `${naturalHeight}px`,
               display: "block",
               objectFit: "contain",
             }}
-            className="max-sm:h-64 max-sm:w-auto max-sm:object-contain"
+            className="max-sm:h-64 max-sm:w-auto max-sm:object-contain "
           />
           {/* Hidden canvases */}
           <canvas ref={canvasRef} style={{ display: "none" }} />

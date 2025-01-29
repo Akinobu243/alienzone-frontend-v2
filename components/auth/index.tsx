@@ -44,7 +44,7 @@ function ReferralCodeHandler({
 }
 
 const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(3)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [traits, setTraits] = useState<Traits>({
@@ -97,7 +97,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
 
   const [createAlienData, setCreateAlienData] = useState<CreateAlienData>({
     name: "",
-    element: "/images/alien/elements/Water.png",
+    element: "/images/alien/elements/water.png",
     image: "",
     strengthPoints: 87,
   })

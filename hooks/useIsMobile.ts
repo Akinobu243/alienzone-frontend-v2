@@ -13,7 +13,10 @@ export const useIsMobile = () => {
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
       const isMobileDevice = mobileRegex.test(navigator.userAgent)
 
-      return isMobileDevice
+      // check if the screen width is less than 768px
+      const isMobileScreen = window.innerWidth < 768
+
+      return isMobileDevice || isMobileScreen
     }
 
     const handleResize = () => {

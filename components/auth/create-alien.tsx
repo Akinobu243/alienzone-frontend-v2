@@ -42,8 +42,8 @@ const CreateAlien = ({
     hair: string
     face: string
   }>({
-    hair: "/images/alien/hair/Kusege.png",
-    face: "/images/alien/face/Persona3.png",
+    hair: "/images/alien/hair/kusege.png",
+    face: "/images/alien/face/persona3.png",
   })
 
   const handleCreateAlien = async () => {
