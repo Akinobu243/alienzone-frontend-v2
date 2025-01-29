@@ -33,7 +33,7 @@ export default function Home() {
   return (
     <>
       <div
-        className="space-y-6 p-4 min-h-screen pb-20"
+        className="space-y-6 p-4 min-h-screen pb-20 w-full  mx-auto lg:flex lg:flex-col lg:items-center lg:justify-center"
         style={{
           background: "url('/images/auth/bg.png')",
           backgroundSize: "cover",
@@ -41,21 +41,40 @@ export default function Home() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="relative z-10 space-y-4">
-          <JackpotCard amount={jackpotAmount} />
+        <div className="flex gap-4 items-stretch w-full max-w-screen-lg">
+          <div className="w-1/2 hidden lg:block">
+            <div className="w-full h-full  rounded-xl overflow-hidden bg-[#2C2D30]  relative z-10">
+              <img
+                src={aliens?.[0]?.image}
+                alt="User's alien"
+                className="w-full h-full object-contain z-10 relative"
+              />
+              <img
+                src={aliens?.[0]?.element.replace(".png", "-bg.png")}
+                alt="User's alien"
+                className="w-full h-full object-cover absolute top-0 left-0"
+              />
+            </div>
+          </div>
+          <div className="relative z-10 space-y-4 w-full lg:w-1/2">
+            <JackpotCard amount={jackpotAmount} />
 
-          <UserProgress profile={profile ?? null} alien={aliens?.[0] ?? null} />
-          <InviteCard profile={profile ?? null} />
-          <Link
-            href={
-              "https://app.uniswap.org/explore/tokens/arbitrum/0x888aaa48ebea87c74f690189e947d2c679705972?chain=arbitrum"
-            }
-            target="_blank"
-          >
-            <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
-              Buy $ZONE
-            </BrandButton>
-          </Link>
+            <UserProgress
+              profile={profile ?? null}
+              alien={aliens?.[0] ?? null}
+            />
+            <InviteCard profile={profile ?? null} />
+            <Link
+              href={
+                "https://app.uniswap.org/explore/tokens/arbitrum/0x888aaa48ebea87c74f690189e947d2c679705972?chain=arbitrum"
+              }
+              target="_blank"
+            >
+              <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                Buy $ZONE
+              </BrandButton>
+            </Link>
+          </div>
         </div>
       </div>
       <div

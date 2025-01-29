@@ -30,19 +30,19 @@ export async function middleware(request: NextRequest) {
   }
 
   // Then handle mobile/desktop redirects for specific routes
-  if (pathname === "/" || pathname === "/pwa") {
-    // If mobile and not already on PWA page, redirect to PWA
-    if (isMobile && pathname !== "/pwa") {
-      url.pathname = "/pwa"
-      return NextResponse.redirect(url)
-    }
+  // if (pathname === "/" || pathname === "/pwa") {
+  //   // If mobile and not already on PWA page, redirect to PWA
+  //   if (isMobile && pathname !== "/pwa") {
+  //     url.pathname = "/pwa"
+  //     return NextResponse.redirect(url)
+  //   }
 
-    // If desktop and on PWA page, redirect to home
-    if (!isMobile && pathname === "/pwa") {
-      url.pathname = "/"
-      return NextResponse.redirect(url)
-    }
-  }
+  //   // If desktop and on PWA page, redirect to home
+  //   if (!isMobile && pathname === "/pwa") {
+  //     url.pathname = "/"
+  //     return NextResponse.redirect(url)
+  //   }
+  // }
 
   return NextResponse.next()
 }

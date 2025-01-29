@@ -38,11 +38,11 @@ export function Loader({ children }: { children: React.ReactNode }) {
     }
   }, [searchParams, router])
 
-  useEffect(() => {
-    if (pathname !== "/pwa" && isMobile) {
-      router.push("/pwa")
-    }
-  }, [pathname, isMobile, router])
+  // useEffect(() => {
+  //   if (pathname !== "/pwa" && isMobile) {
+  //     router.push("/pwa")
+  //   }
+  // }, [pathname, isMobile, router])
 
   useEffect(() => {
     const timer = setTimeout(() => {
