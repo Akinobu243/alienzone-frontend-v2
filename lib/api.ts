@@ -227,3 +227,21 @@ export const getAllTraits = async (): Promise<ApiResponse<Traits>> => {
   const response = await apiManager.get<Traits>("/profile/get-all-traits")
   return response
 }
+
+export const getUnseenReferralRewards = async (): Promise<
+  ApiResponse<number>
+> => {
+  const response = await apiManager.get<number>(
+    "/profile/unseen-referral-rewards"
+  )
+  return response
+}
+
+export const markReferralRewardsAsSeen = async (): Promise<
+  ApiResponse<boolean>
+> => {
+  const response = await apiManager.post<boolean>(
+    "/profile/mark-referral-rewards-seen"
+  )
+  return response
+}

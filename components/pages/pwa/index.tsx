@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
+import { useDisconnect } from "@reown/appkit/react"
 
+import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
 import { calculateJackpot, getTokenPrice } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 
@@ -14,7 +17,11 @@ import { UserProgress } from "./UserProgress"
 export default function Home() {
   const [jackpotAmount, setJackpotAmount] = useState(0)
   const { data: aliens } = useAliens()
+  const router = useRouter()
   const { data: profile } = useProfile()
+  const { disconnect } = useDisconnect()
+
+  const [unseenReferralRewards, setUnseenReferralRewards] = useState(0)
 
   useEffect(() => {
     const fetchJackpotAmount = async () => {
@@ -28,6 +35,24 @@ export default function Home() {
     // const interval = setInterval(fetchJackpotAmount, 60000)
 
     // return () => clearInterval(interval)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken")
+    disconnect()
+    router.push("/auth")
+  }
+
+  useEffect(() => {
+    const fetchUnseenReferralRewards = async () => {
+      const response = await getUnseenReferralRewards()
+      setUnseenReferralRewards(response.data ?? 0)
+
+      if (response.data && response.data > 0) {
+        await markReferralRewardsAsSeen()
+      }
+    }
+    fetchUnseenReferralRewards()
   }, [])
 
   return (
@@ -62,6 +87,7 @@ export default function Home() {
             <UserProgress
               profile={profile ?? null}
               alien={aliens?.[0] ?? null}
+              unseenReferralRewards={unseenReferralRewards}
             />
             <InviteCard profile={profile ?? null} />
             <Link
@@ -74,6 +100,13 @@ export default function Home() {
                 Buy $ZONE
               </BrandButton>
             </Link>
+            <BrandButton
+              className="w-full mt-4"
+              blurColor="bg-[#FFC0CB]"
+              onClick={handleLogout}
+            >
+              Logout
+            </BrandButton>
           </div>
         </div>
       </div>

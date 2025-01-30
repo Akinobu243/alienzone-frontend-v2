@@ -4,6 +4,7 @@ import { Alien, Profile } from "@/types"
 interface UserProgressProps {
   profile: Profile | null
   alien: Alien | null
+  unseenReferralRewards: number
 }
 
 interface LevelRange {
@@ -19,7 +20,11 @@ const LEVEL_RANGES: LevelRange[] = [
   { min: 50, max: 100, level: 4 },
 ]
 
-export function UserProgress({ profile, alien }: UserProgressProps) {
+export function UserProgress({
+  profile,
+  alien,
+  unseenReferralRewards,
+}: UserProgressProps) {
   // Calculate current level range
   const getCurrentLevelRange = (referrals: number): LevelRange => {
     return (
@@ -59,10 +64,19 @@ export function UserProgress({ profile, alien }: UserProgressProps) {
             <div className="text-white/70 font-medium">{profile?.name}</div>
             <div className="text-white text-xl mt-1">{alien?.name}</div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="text-blue-400 text-2xl">+10 Stars</div>
-            <Image src="/images/stars.png" alt="Star" width={40} height={40} />
-          </div>
+          {unseenReferralRewards > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="text-blue-400 text-2xl">
+                +{unseenReferralRewards} Stars
+              </div>
+              <Image
+                src="/images/stars.png"
+                alt="Star"
+                width={40}
+                height={40}
+              />
+            </div>
+          )}
         </div>
 
         {/* Progress Bar */}
