@@ -4,7 +4,6 @@ import { Suspense, useEffect, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { AuthUserData, CreateAlienData, Traits } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
-import { FaXTwitter } from "react-icons/fa6"
 
 import BrandButton from "@/components/ui/brand-button"
 import BackgroundCover from "@/components/common/background-cover"
@@ -221,13 +220,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
             blurColor="bg-[#9E96F4]"
             onClick={handleButtonClick}
           >
-            {deviceType === "mobile" ? (
-              "Tap here"
-            ) : (
-              <>
-                Log In with <FaXTwitter className="w-5 h-5" />
-              </>
-            )}
+            Tap here
           </BrandButton>
           {currentStep > 0 ? (
             <Sliders current={currentStep} moveToNextStep={moveToNextStep} />
