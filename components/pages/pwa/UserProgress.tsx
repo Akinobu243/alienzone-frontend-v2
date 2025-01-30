@@ -92,7 +92,9 @@ export function UserProgress({
 
           <div className="flex justify-between text-xs ">
             <span>{profile?.stars} Stars</span>
-            <span>Airdrop Level {currentRange.level}</span>
+            <span>
+              {profile?.totalReferrals} / {currentRange.max}
+            </span>
           </div>
         </div>
       </div>
