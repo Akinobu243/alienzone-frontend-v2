@@ -19,16 +19,15 @@ function PurchaseContent() {
     const purchaseStatus = searchParams.get("status") as PurchaseStatus
 
     if (!sessionId || !purchaseStatus) {
-      router.push("/")
+      router.push("/treasure")
       return
     }
 
     setStatus(purchaseStatus)
 
     // Clean up URL - remove search params
-    const newUrl = window.location.pathname
-    window.history.replaceState({}, "", newUrl)
-  }, [searchParams, router])
+    router.replace("/purchase")
+  }, [])
 
   const content = {
     success: {

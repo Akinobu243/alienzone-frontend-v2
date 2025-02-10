@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
+import { useProfile } from "@/store/hooks"
 import { Pack } from "@/types"
-import { Plus } from "lucide-react"
+import { ArrowLeft, Plus } from "lucide-react"
 
 import { createCheckoutSession, getAllPacks } from "@/lib/api"
 import { cn } from "@/lib/utils"
@@ -19,25 +21,22 @@ const tabs = [
     label: "STAR",
     active: true,
   },
-  {
-    id: "zone",
-    label: "ZONE",
-    active: false,
-  },
-  {
-    id: "swap",
-    label: "Swap",
-    active: false,
-  },
+  // {
+  //   id: "zone",
+  //   label: "ZONE",
+  //   active: false,
+  // },
+  // {
+  //   id: "swap",
+  //   label: "Swap",
+  //   active: false,
+  // },
 ]
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("star")
   const [packs, setPacks] = useState<Pack[]>([])
-  const [balance] = useState({
-    zone: "3,621,000 ZONE",
-    star: "151,600 STAR",
-  })
+  const { data: profile } = useProfile()
 
   useEffect(() => {
     const fetchPacks = async () => {
@@ -71,6 +70,15 @@ const Page = () => {
             {/* Navigation Tabs */}
             <div className="flex  items-center gap-3">
               <div className="flex gap-3 flex-1">
+                <Link href="/">
+                  <button
+                    className={cn(
+                      "px-8 h-14 rounded-xl text-xl transition-all duration-300 flex items-center gap-2 bg-white/10 border border-white/10 hover:bg-white/10"
+                    )}
+                  >
+                    <ArrowLeft size={24} /> Back
+                  </button>
+                </Link>
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
@@ -83,34 +91,6 @@ const Page = () => {
                     {tab.label}
                   </button>
                 ))}
-              </div>
-
-              {/* Balance Display */}
-              <div className="flex items-center gap-4 border border-white/10 rounded-xl px-4">
-                <div className="flex h-14 items-center gap-2">
-                  <Image
-                    src="/images/coin-zone.png"
-                    alt="ZONE"
-                    width={24}
-                    height={24}
-                  />
-                  <span>{balance.zone}</span>
-                  <button className="ml-2 rounded-full p-1 border border-white/10">
-                    <Plus size={12} />
-                  </button>
-                </div>
-                <div className="flex h-14 items-center gap-2 ">
-                  <Image
-                    src="/images/stars.png"
-                    alt="STAR"
-                    width={24}
-                    height={24}
-                  />
-                  <span>{balance.star}</span>
-                  <button className="ml-2  rounded-full p-1 border border-white/10">
-                    <Plus size={12} />
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -139,7 +119,7 @@ const Page = () => {
                           />
                         </div>
                         <div
-                          className="bg-white/10 h-12 rounded flex items-center justify-between px-4"
+                          className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
                           onClick={() => handleBuy(pack)}
                         >
                           {/* <div className="flex items-center gap-2">
@@ -153,10 +133,9 @@ const Page = () => {
                               />
                             </div>
                           </div> */}
-                          <div className="flex items-center gap-2 bg-white/10 rounded-lg border border-white/10 px-4 py-1 w-full justify-between">
-                            <p className="">Buy for</p>
-                            <p className="text-[#5FD7FF]">{pack.price}$</p>
-                          </div>
+
+                          <p className="">Buy for</p>
+                          <p className="text-[#5FD7FF]">{pack.price}$</p>
                         </div>
                       </div>
                     </CarouselItem>
@@ -164,20 +143,73 @@ const Page = () => {
                 </CarouselContent>
               </Carousel>
             </div>
+
+            {/* Balance Display */}
+            <div className="flex items-center gap-4 border border-white/10 rounded-xl px-4 mt-4 bg-white/10 justify-center">
+              <div className="flex h-14 items-center gap-2">
+                <Image
+                  src="/images/coin-zone.png"
+                  alt="ZONE"
+                  width={24}
+                  height={24}
+                />
+                <span>{profile?.experience} ZONE</span>
+                <button className="ml-2 rounded-full p-1 border border-white/10">
+                  <Plus size={12} />
+                </button>
+              </div>
+              <div className="flex h-14 items-center gap-2 ">
+                <Image
+                  src="/images/stars.png"
+                  alt="STAR"
+                  width={24}
+                  height={24}
+                />
+                <span>{profile?.stars} STAR</span>
+                <button className="ml-2  rounded-full p-1 border border-white/10">
+                  <Plus size={12} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col rounded-2xl glass-effect z-10 p-2 gap-3 lg:hidden flex-1 max-h-full">
-        <div className=" bg-white/10 rounded px-2 py-4 ">
-          <Carousel className="w-full ">
-            <CarouselContent>
+        <div className="flex  items-center gap-3">
+          <div className="flex gap-3 flex-1">
+            <Link href="/">
+              <button
+                className={cn(
+                  "px-8 h-12  rounded-xl  transition-all duration-300 flex items-center gap-2 bg-white/10 border border-white/10 hover:bg-white/10"
+                )}
+              >
+                <ArrowLeft size={16} /> Back
+              </button>
+            </Link>
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "px-8 h-12 rounded-xl  transition-all duration-300 flex-1 bg-white/10 border border-white/10",
+                  activeTab === tab.id ? "bg-white/20" : "hover:bg-white/10"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className=" bg-white/10 rounded px-2 py-4 flex-1 ">
+          <Carousel className="w-full h-full">
+            <CarouselContent className="h-full">
               {packs.map((pack, index) => (
                 <CarouselItem
                   key={index}
                   className="  lg:basis-1/2 xl:basis-1/4 "
                 >
-                  <div className="bg-white/10 p-4 rounded-lg flex flex-col gap-4  mx-2 border border-white/10 min-h-[500px] h-[calc(100vh-250px)]">
+                  <div className="bg-white/10  p-4 rounded-lg flex flex-col gap-4  mx-2 border border-white/10 min-h-[500px] h-full">
                     <div className="flex justify-between items-center border border-white/10  rounded-xl h-12 px-4">
                       <p>{pack.name}</p>
                       <button className="ml-2 rounded-full p-1 border border-white/10">
@@ -193,7 +225,7 @@ const Page = () => {
                       />
                     </div>
                     <div
-                      className="bg-white/10 h-12 rounded flex items-center justify-between px-4"
+                      className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
                       onClick={() => handleBuy(pack)}
                     >
                       {/* <div className="flex items-center gap-2">
@@ -207,16 +239,36 @@ const Page = () => {
                               />
                             </div>
                           </div> */}
-                      <div className="flex items-center gap-2 bg-white/10 rounded-lg border border-white/10 px-4 py-1 w-full justify-between">
-                        <p className="">Buy for</p>
-                        <p className="text-[#5FD7FF]">{pack.price}$</p>
-                      </div>
+
+                      <p className="">Buy for</p>
+                      <p className="text-[#5FD7FF]">{pack.price}$</p>
                     </div>
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
+        </div>
+        <div className="flex items-center gap-4 border border-white/10 rounded-xl px-4  bg-white/10 justify-center">
+          <div className="flex h-14 items-center gap-2">
+            <Image
+              src="/images/coin-zone.png"
+              alt="ZONE"
+              width={24}
+              height={24}
+            />
+            <span>{profile?.experience} ZONE</span>
+            <button className="ml-2 rounded-full p-1 border border-white/10">
+              <Plus size={12} />
+            </button>
+          </div>
+          <div className="flex h-14 items-center gap-2 ">
+            <Image src="/images/stars.png" alt="STAR" width={24} height={24} />
+            <span>{profile?.stars} STAR</span>
+            <button className="ml-2  rounded-full p-1 border border-white/10">
+              <Plus size={12} />
+            </button>
+          </div>
         </div>
       </div>
 

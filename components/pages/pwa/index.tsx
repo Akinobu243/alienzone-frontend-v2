@@ -5,9 +5,14 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { useLogout } from "@privy-io/react-auth"
+import { Copy, CopyCheck, LogOut } from "lucide-react"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
-import { calculateJackpot, getTokenPrice } from "@/lib/utils"
+import {
+  calculateJackpot,
+  formateWalletAddress,
+  getTokenPrice,
+} from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 
 import { InviteCard } from "./InviteCard"
@@ -22,6 +27,7 @@ export default function Home() {
   const { logout } = useLogout()
 
   const [unseenReferralRewards, setUnseenReferralRewards] = useState(0)
+  const [isCopied, setIsCopied] = useState(false)
 
   useEffect(() => {
     const fetchJackpotAmount = async () => {
@@ -54,6 +60,14 @@ export default function Home() {
     }
     fetchUnseenReferralRewards()
   }, [])
+
+  const handleCopy = (value: string) => {
+    setIsCopied(true)
+    navigator.clipboard.writeText(value)
+    setTimeout(() => {
+      setIsCopied(false)
+    }, 2000)
+  }
 
   return (
     <>
@@ -90,7 +104,7 @@ export default function Home() {
               unseenReferralRewards={unseenReferralRewards}
             />
             <InviteCard profile={profile ?? null} />
-            <Link href={"/website/treasure"}>
+            <Link href={"/treasure"}>
               <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
                 Treasure
               </BrandButton>
@@ -105,13 +119,24 @@ export default function Home() {
                 Buy $ZONE
               </BrandButton>
             </Link>
-            <BrandButton
-              className="w-full mt-4"
-              blurColor="bg-[#FFC0CB]"
-              onClick={handleLogout}
-            >
-              Logout
-            </BrandButton>
+            <div className="flex gap-2">
+              {/* wallet add */}
+              <BrandButton
+                className="w-full "
+                blurColor="bg-[#FFC0CB]"
+                onClick={() => handleCopy(profile?.walletAddress ?? "")}
+              >
+                {formateWalletAddress(profile?.walletAddress ?? "")}{" "}
+                {isCopied ? (
+                  <CopyCheck className="size-4" />
+                ) : (
+                  <Copy className="size-4" />
+                )}
+              </BrandButton>
+              <BrandButton blurColor="bg-[#FFC0CB]" onClick={handleLogout}>
+                <LogOut className="size-6" />
+              </BrandButton>
+            </div>
           </div>
         </div>
       </div>

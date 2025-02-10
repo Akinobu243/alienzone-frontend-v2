@@ -23,6 +23,7 @@ const ConnectModal = ({
 }) => {
   const { login, ready, authenticated, user, signMessage } = usePrivy()
   const { logout } = useLogout()
+  console.log(user)
 
   const { wallets } = useWallets()
 
@@ -73,21 +74,36 @@ const ConnectModal = ({
       return
     }
 
-    const provider = await wallet.getEthereumProvider()
-    if (!provider) {
+    let sign = ""
+
+    if (wallet.connectorType === "embedded") {
+      const response = await signMessage({
+        message: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+      })
+      sign = response.signature
+    } else {
+      const provider = await wallet.getEthereumProvider()
+      if (!provider) {
+        toast.error("Please connect a wallet")
+        return
+      }
+
+      const ethersProvider = new ethers.BrowserProvider(provider)
+      const signer = await ethersProvider.getSigner()
+
+      const response = await signer.signMessage(
+        process.env.NEXT_PUBLIC_SIGN_MESSAGE!
+      )
+      sign = response
+    }
+
+    if (!sign) {
       toast.error("Please connect a wallet")
       return
     }
 
-    const ethersProvider = new ethers.BrowserProvider(provider)
-    const signer = await ethersProvider.getSigner()
-
-    const response = await signer.signMessage(
-      process.env.NEXT_PUBLIC_SIGN_MESSAGE!
-    )
-    if (!response) return
     const res = await authenticate({
-      signature: response,
+      signature: sign,
       signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
     })
     if (res.data) {
