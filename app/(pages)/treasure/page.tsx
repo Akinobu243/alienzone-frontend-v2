@@ -5,9 +5,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { useWallet } from "@/context/wallet"
 import { useProfile } from "@/store/hooks"
-import { Pack } from "@/types"
+import { Pack, PackReward, PackRewardType } from "@/types"
 import type { EmblaCarouselType } from "embla-carousel"
-import { ArrowLeft, Plus } from "lucide-react"
+import { ArrowLeft, Info, Plus } from "lucide-react"
 
 import { createCheckoutSession, getAllPacks } from "@/lib/api"
 import { cn } from "@/lib/utils"
@@ -16,11 +16,17 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 const tabs = [
   {
-    id: "star",
-    label: "STAR",
+    id: "special",
+    label: "Special",
     active: true,
   },
   // {
@@ -35,6 +41,107 @@ const tabs = [
   // },
 ]
 
+interface PackDetailsModalProps {
+  pack: Pack | null
+  isOpen: boolean
+  onClose: () => void
+}
+
+// funtion to separat other rewards from alien part
+const separateRewards = (rewards: PackReward[]) => {
+  const alienPart = rewards.filter(
+    (reward) => reward.type === PackRewardType.ALIEN_PART
+  )
+  const otherRewards = rewards.filter(
+    (reward) => reward.type !== PackRewardType.ALIEN_PART
+  )
+  return { alienPart, otherRewards }
+}
+
+const PackDetailsModal = ({ pack, isOpen, onClose }: PackDetailsModalProps) => {
+  if (!pack) return null
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="bg-white/10 backdrop-blur-lg border border-white/10">
+        <DialogHeader>
+          <DialogTitle className="text-xl flex items-center gap-2">
+            <Info size={20} />
+            {pack.name}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-4">
+          <div className="relative h-48">
+            <Image
+              src={pack.image}
+              alt={pack.name}
+              fill
+              className="object-contain"
+            />
+          </div>
+
+          <div className="space-y-4">
+            {/* <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+              <h3 className="text-lg mb-2">Description</h3>
+              <p className="text-white/70">
+                {pack.description || "No description available."}
+              </p>
+            </div> */}
+
+            <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+              <h3 className="text-lg mb-2">What you&apos;ll get</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {separateRewards(pack.rewards).otherRewards?.map(
+                  (reward, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-white/5 p-2 rounded"
+                    >
+                      <Image
+                        src={
+                          reward.type === PackRewardType.STARS
+                            ? "/images/stars.png"
+                            : reward.type === PackRewardType.XP
+                              ? "/images/xp.png"
+                              : reward.type === PackRewardType.REP
+                                ? "/images/rep.png"
+                                : "/images/unknown.png"
+                        }
+                        alt={reward.type}
+                        width={24}
+                        height={24}
+                      />
+                      <span>
+                        {reward.amount}{" "}
+                        {reward.type === PackRewardType.STARS
+                          ? "Stars"
+                          : reward.type === PackRewardType.XP
+                            ? "XP"
+                            : reward.type === PackRewardType.REP
+                              ? "REP"
+                              : "Unknown"}
+                      </span>
+                    </div>
+                  )
+                )}
+                {separateRewards(pack.rewards).alienPart.length > 0 ? (
+                  <div className="flex items-center gap-2 bg-white/5 p-2 rounded">
+                    <span>
+                      {separateRewards(pack.rewards).alienPart.length} Alien
+                      Parts
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 const Page = () => {
   const [activeTab, setActiveTab] = useState("star")
   const [packs, setPacks] = useState<Pack[]>([])
@@ -42,6 +149,7 @@ const Page = () => {
   const { user } = useWallet()
   const [api, setApi] = useState<EmblaCarouselType>()
   const [current, setCurrent] = useState(0)
+  const [selectedPack, setSelectedPack] = useState<Pack | null>(null)
 
   useEffect(() => {
     const fetchPacks = async () => {
@@ -73,7 +181,7 @@ const Page = () => {
       <div className="absolute top-10 left-24 flex gap-3 z-20 h-14 items-center max-lg:hidden">
         <h1 className="text-3xl ">Treasure</h1>
       </div>
-      <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-40px)] max-lg:hidden">
+      <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-33px)] max-lg:hidden">
         <div className="absolute inset-0 bg-[url('/images/pages/team-bg.jpg')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/team-bg.jpg')]">
           <div className="absolute inset-0 bg-[#181818CC]"></div>
         </div>
@@ -108,7 +216,7 @@ const Page = () => {
             </div>
 
             {/* Carousel Section */}
-            <div className=" mt-4 bg-white/10 rounded px-2 py-4 relative">
+            <div className=" mt-4 bg-white/10 rounded px-2 py-4 relative ">
               <Carousel
                 className="w-full"
                 setApi={setApi}
@@ -122,10 +230,13 @@ const Page = () => {
                       key={index}
                       className="  lg:basis-1/2 xl:basis-1/4 "
                     >
-                      <div className="bg-white/10 p-4 rounded-lg flex flex-col gap-4  mx-2 border border-white/10 min-h-[500px] h-[calc(100vh-350px)]">
+                      <div className="bg-white/10 p-4 rounded-lg flex flex-col gap-4  mx-2 border border-white/10 min-h-[500px] h-[calc(100vh-390px)]">
                         <div className="flex justify-between items-center border border-white/10  rounded-xl h-12 px-4">
                           <p>{pack.name}</p>
-                          <button className="ml-2 rounded-full p-1 border border-white/10">
+                          <button
+                            className="ml-2 rounded-full p-1 border border-white/10 hover:bg-white/10 transition-colors"
+                            onClick={() => setSelectedPack(pack)}
+                          >
                             <Plus size={12} />
                           </button>
                         </div>
@@ -250,7 +361,10 @@ const Page = () => {
                   <div className="bg-white/10  p-4 rounded-lg flex flex-col gap-4  mx-2 border border-white/10 min-h-[500px] h-full">
                     <div className="flex justify-between items-center border border-white/10  rounded-xl h-12 px-4">
                       <p>{pack.name}</p>
-                      <button className="ml-2 rounded-full p-1 border border-white/10">
+                      <button
+                        className="ml-2 rounded-full p-1 border border-white/10 hover:bg-white/10 transition-colors"
+                        onClick={() => setSelectedPack(pack)}
+                      >
                         <Plus size={12} />
                       </button>
                     </div>
@@ -331,6 +445,12 @@ const Page = () => {
             "radial-gradient(91.36% 91.36% at 31.6% 44.58%, rgba(0, 0, 0, 0) 0%, #000000 100%)",
         }}
       ></div>
+
+      <PackDetailsModal
+        pack={selectedPack}
+        isOpen={!!selectedPack}
+        onClose={() => setSelectedPack(null)}
+      />
     </>
   )
 }

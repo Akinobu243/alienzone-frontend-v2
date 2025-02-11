@@ -128,4 +128,40 @@ export interface Pack {
   price: number
   createdAt: string
   updatedAt: string
+  rewards: PackReward[]
+}
+
+// enum PackRewardType {
+//   STARS
+//   ALIEN_PART
+//   XP
+//   REP
+// }
+
+// model PackReward {
+//   id          Int            @id @default(autoincrement())
+//   pack        Pack           @relation(fields: [packId], references: [id])
+//   packId      Int
+//   type        PackRewardType
+//   amount      Int?
+//   alienPart   AlienPart?     @relation(fields: [alienPartId], references: [id])
+//   alienPartId Int?
+//   createdAt   DateTime       @default(now())
+//   updatedAt   DateTime       @updatedAt
+
+//   @@index([packId])
+//   @@index([alienPartId])
+// }
+
+export enum PackRewardType {
+  STARS = "STARS",
+  ALIEN_PART = "ALIEN_PART",
+  XP = "XP",
+  REP = "REP",
+}
+
+export interface PackReward {
+  id: number
+  type: PackRewardType
+  amount: number
 }

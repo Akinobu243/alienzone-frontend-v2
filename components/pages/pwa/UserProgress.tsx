@@ -41,7 +41,7 @@ export function UserProgress({
     100
 
   return (
-    <div className="bg-[#1A1B1E] rounded-2xl p-4 flex flex-col gap-4">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 flex flex-col gap-4">
       {/* Alien Image */}
       <div className="w-full h-64  rounded-xl overflow-hidden bg-[#2C2D30]  relative lg:hidden">
         <img

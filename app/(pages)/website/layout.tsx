@@ -31,8 +31,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             " bg-[#2B3C25] p-4 lg:px-20 max-lg:h-screen relative flex flex-col"
           )}
         >
-          <div className=" relative z-20 pb-2">
-            <div className=" flex justify-between items-center  lg:hidden">
+          <div className=" relative z-20 pb-2 lg:hidden">
+            <div className=" flex justify-between items-center  ">
               <div className="flex gap-2">
                 <Link
                   href="/"

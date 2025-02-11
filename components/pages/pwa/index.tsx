@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
-import { useLogout, usePrivy, useWallets } from "@privy-io/react-auth"
+import { useLogout } from "@privy-io/react-auth"
 import { Copy, CopyCheck, LogOut } from "lucide-react"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
@@ -26,8 +26,6 @@ export default function Home() {
   const router = useRouter()
   const { data: profile } = useProfile()
   const { logout } = useLogout()
-  const { user } = usePrivy()
-  const { wallets } = useWallets()
   const [unseenReferralRewards, setUnseenReferralRewards] = useState(0)
   const [isCopied, setIsCopied] = useState(false)
 
@@ -40,9 +38,9 @@ export default function Home() {
 
     fetchJackpotAmount()
     // Refresh price every minute
-    // const interval = setInterval(fetchJackpotAmount, 60000)
+    const interval = setInterval(fetchJackpotAmount, 60000)
 
-    // return () => clearInterval(interval)
+    return () => clearInterval(interval)
   }, [])
 
   const handleLogout = () => {
@@ -74,9 +72,9 @@ export default function Home() {
   return (
     <>
       <div
-        className="space-y-6 p-4 min-h-screen pb-20 w-full  mx-auto lg:flex lg:flex-col lg:items-center lg:justify-center"
+        className="space-y-6 p-4 min-h-screen lg:pb-20 w-full  mx-auto lg:flex lg:flex-col lg:items-center lg:justify-center"
         style={{
-          background: "url('/images/auth/bg.png')",
+          background: "url('/images/image1.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -88,7 +86,7 @@ export default function Home() {
               <img
                 src={aliens?.[0]?.image}
                 alt="User's alien"
-                className="w-full h-full object-contain z-10 relative"
+                className="w-full h-[calc(100%+130px)] object-contain z-10 relative"
               />
               <img
                 src={aliens?.[0]?.element.replace(".png", "-bg.png")}
@@ -151,7 +149,7 @@ export default function Home() {
         </div>
       </div>
       <div
-        className="fixed top-0 left-0 w-full h-full bg-black/90 backdrop-blur-lg"
+        className="fixed top-0 left-0 w-full h-full bg-black/10 backdrop-blur-lg "
         style={{
           background:
             "radial-gradient(95.75% 157.14% at 100% 0%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 50%) 100%)",

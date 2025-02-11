@@ -31,8 +31,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             " bg-[#2B3C25] p-4 lg:px-20 max-lg:h-screen relative flex flex-col"
           )}
         >
-          <div className=" relative z-20 pb-2">
-            <div className=" flex justify-between items-center  lg:hidden">
+          <div className=" relative z-20 pb-2 lg:hidden">
+            <div className=" flex justify-between items-center  ">
               <div className="flex gap-2">
                 <Link
                   href="/"
@@ -78,7 +78,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             )}
           </div>
           <div className="relative max-lg:flex-1  w-full   overflow-hidden ">
-            <div className="relative z-10 h-full lg:min-h-[calc(100vh-160px)]  flex flex-col overflow-auto">
+            <div className="relative z-10 h-full   flex flex-col overflow-auto">
               <RightSidebar className="absolute left-8 top-10 max-lg:hidden" />
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
               <TopBar className="absolute right-8 top-10 max-lg:hidden" />
