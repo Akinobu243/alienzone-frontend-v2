@@ -68,7 +68,6 @@ const ConnectModal = ({
 
   const handleAuthenticate = async () => {
     const wallet = wallets[0]
-    console.log(wallets)
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
