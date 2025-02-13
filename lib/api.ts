@@ -224,8 +224,8 @@ export const getRaidHistory = async (): Promise<
   return response
 }
 
-export const getAllTraits = async (): Promise<ApiResponse<Traits>> => {
-  const response = await apiManager.get<Traits>("/profile/get-all-traits")
+export const getOnboardingData = async (): Promise<ApiResponse<Traits>> => {
+  const response = await apiManager.get<Traits>("/profile/get-onboarding-data")
   return response
 }
 

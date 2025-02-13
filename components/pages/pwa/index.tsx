@@ -89,7 +89,7 @@ export default function Home() {
                 className="w-full h-[calc(100%+130px)] object-contain z-10 relative"
               />
               <img
-                src={aliens?.[0]?.element.replace(".png", "-bg.png")}
+                src={aliens?.[0]?.element?.background}
                 alt="User's alien"
                 className="w-full h-full object-cover absolute top-0 left-0"
               />

@@ -15,7 +15,7 @@ export type AuthUserData = {
 
 export interface CreateAlienData {
   name: string
-  element: string
+  elementId?: number
   image: string | Blob | File
   strengthPoints: number
 }
@@ -94,12 +94,13 @@ export interface RaidHistoryResponse extends RaidHistory {
 export interface Alien {
   id: number
   name: string
-  element: string
+  element?: Element
   image: string
   strengthPoints: number
   userId: number
   inRaid: boolean
   createdAt: string
+
   updatedAt: string
 }
 
@@ -113,11 +114,45 @@ export interface AliensState {
   }
 }
 
+export type AlienPart = {
+  id: number
+  name: string
+  image: string
+  type: AlienPartType
+  description?: string
+  price?: number
+  isDefault: boolean
+  alienPartGroupId?: number
+}
+
+export enum AlienPartType {
+  BODY = "BODY",
+  CLOTHES = "CLOTHES",
+  FACE = "FACE",
+  HEAD = "HEAD",
+  EYES = "EYES",
+  MOUTH = "MOUTH",
+  HAIR = "HAIR",
+  MARKS = "MARKS",
+  POWERS = "POWERS",
+  ACCESSORIES = "ACCESSORIES",
+}
+
+export type Element = {
+  id: number
+  name: string
+  image: string
+  background?: string
+}
+
 export type Traits = {
-  Body: string[]
-  Elements: string[]
-  Face: string[]
-  Hair: string[]
+  elements: Element[]
+  alienParts: {
+    EYES: AlienPart[]
+    MOUTH: AlienPart[]
+    HAIR: AlienPart[]
+    FACE: AlienPart[]
+  }
 }
 
 export interface Pack {

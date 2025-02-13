@@ -1,6 +1,6 @@
 "use client"
 
-import { Dispatch, SetStateAction, useRef, useState } from "react"
+import { Dispatch, SetStateAction, useRef } from "react"
 import Image from "next/image"
 import { useAliens } from "@/store/hooks"
 import { AuthUserData, CreateAlienData, Traits } from "@/types"
@@ -24,6 +24,16 @@ interface CreateAlienProps {
   createAlienData: CreateAlienData
   setCreateAlienData: Dispatch<SetStateAction<CreateAlienData>>
   traits: Traits | null
+  selectedTraits: {
+    hair: string
+    face: string
+  }
+  setSelectedTraits: Dispatch<
+    SetStateAction<{
+      hair: string
+      face: string
+    }>
+  >
 }
 
 const CreateAlien = ({
@@ -35,16 +45,11 @@ const CreateAlien = ({
   createAlienData,
   setCreateAlienData,
   traits,
+  selectedTraits,
+  setSelectedTraits,
 }: CreateAlienProps) => {
   const { createAlien, createStatus } = useAliens()
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [selectedTraits, setSelectedTraits] = useState<{
-    hair: string
-    face: string
-  }>({
-    hair: "/images/alien/hair/kusege.png",
-    face: "/images/alien/face/persona3.png",
-  })
 
   const handleCreateAlien = async () => {
     // Validate required fields
@@ -52,7 +57,7 @@ const CreateAlien = ({
       toast.error("Please enter a name for your alien")
       return
     }
-    if (!createAlienData.element) {
+    if (!createAlienData.elementId) {
       toast.error("Please select an element for your alien")
       return
     }
@@ -98,7 +103,7 @@ const CreateAlien = ({
       // Create form data
       const formData = new FormData()
       formData.append("name", createAlienData.name)
-      formData.append("element", createAlienData.element)
+      formData.append("elementId", createAlienData.elementId?.toString() || "")
       formData.append("image", file)
       formData.append("strengthPoints", "100") // Default strength points
 
@@ -139,7 +144,11 @@ const CreateAlien = ({
             <AlienRenderer
               ref={canvasRef}
               selectedTraits={selectedTraits}
-              element={createAlienData.element}
+              element={
+                traits?.elements?.find(
+                  (element) => element.id === createAlienData.elementId
+                )?.image || ""
+              }
             />
           </div>
 
@@ -165,10 +174,10 @@ const CreateAlien = ({
 
               <ScrollArea>
                 <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
-                  {traits?.Elements.map((element, index) => (
+                  {traits?.elements?.map((element, index) => (
                     <GradientBorder
                       key={index}
-                      isSelected={createAlienData.element === element}
+                      isSelected={createAlienData.elementId === element.id}
                       className=" transition-colors duration-300"
                     >
                       <div
@@ -176,17 +185,18 @@ const CreateAlien = ({
                         onClick={() =>
                           setCreateAlienData({
                             ...createAlienData,
-                            element: element,
+                            elementId: element.id,
                           })
                         }
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={element}
+                            src={element.image}
                             alt="element image"
                             width={200}
                             height={200}
                             className="size-[calc(100%-10px)] object-cover"
+                            crossOrigin="anonymous"
                           />
                         </div>
                       </div>
@@ -201,10 +211,10 @@ const CreateAlien = ({
 
               <ScrollArea>
                 <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
-                  {traits?.Hair.map((hair, index) => (
+                  {traits?.alienParts?.HAIR?.map((hair, index) => (
                     <GradientBorder
                       key={index}
-                      isSelected={selectedTraits.hair === hair}
+                      isSelected={selectedTraits.hair === hair.image}
                       className=" transition-colors duration-300"
                     >
                       <div
@@ -212,17 +222,18 @@ const CreateAlien = ({
                         onClick={() =>
                           setSelectedTraits({
                             ...selectedTraits,
-                            hair: hair,
+                            hair: hair.image,
                           })
                         }
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={hair}
+                            src={hair.image}
                             alt="hair image"
                             width={200}
                             height={200}
                             className="size-[calc(100%+40px)] object-cover absolute top-2 -left-1"
+                            crossOrigin="anonymous"
                           />
                         </div>
                       </div>
@@ -237,10 +248,10 @@ const CreateAlien = ({
 
               <ScrollArea>
                 <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
-                  {traits?.Face.map((face, index) => (
+                  {traits?.alienParts?.FACE?.map((face, index) => (
                     <GradientBorder
                       key={index}
-                      isSelected={selectedTraits.face === face}
+                      isSelected={selectedTraits.face === face.image}
                       className=" transition-colors duration-300"
                     >
                       <div
@@ -248,17 +259,18 @@ const CreateAlien = ({
                         onClick={() =>
                           setSelectedTraits({
                             ...selectedTraits,
-                            face: face,
+                            face: face.image,
                           })
                         }
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={face}
+                            src={face.image}
                             alt="face image"
                             width={200}
                             height={200}
                             className="size-[calc(100%+150px)] object-cover absolute -top-9 -left-1"
+                            crossOrigin="anonymous"
                           />
                         </div>
                       </div>

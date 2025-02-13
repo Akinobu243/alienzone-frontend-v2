@@ -49,11 +49,13 @@ export function UserProgress({
           alt="User's alien"
           className="w-full h-full object-contain z-10 relative"
         />
-        <img
-          src={alien?.element.replace(".png", "-bg.png")}
-          alt="User's alien"
-          className="w-full h-full object-cover absolute top-0 left-0"
-        />
+        {alien?.element && (
+          <img
+            src={alien?.element?.background}
+            alt="User's alien"
+            className="w-full h-full object-cover absolute top-0 left-0"
+          />
+        )}
       </div>
 
       {/* User Details */}

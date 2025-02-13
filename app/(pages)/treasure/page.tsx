@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useWallet } from "@/context/wallet"
 import { useProfile } from "@/store/hooks"
-import { Pack, PackReward, PackRewardType } from "@/types"
+import { Pack } from "@/types"
 import type { EmblaCarouselType } from "embla-carousel"
 import { ArrowLeft, Info, Plus } from "lucide-react"
 
@@ -47,17 +47,6 @@ interface PackDetailsModalProps {
   onClose: () => void
 }
 
-// funtion to separat other rewards from alien part
-const separateRewards = (rewards: PackReward[]) => {
-  const alienPart = rewards.filter(
-    (reward) => reward.type === PackRewardType.ALIEN_PART
-  )
-  const otherRewards = rewards.filter(
-    (reward) => reward.type !== PackRewardType.ALIEN_PART
-  )
-  return { alienPart, otherRewards }
-}
-
 const PackDetailsModal = ({ pack, isOpen, onClose }: PackDetailsModalProps) => {
   if (!pack) return null
 
@@ -90,50 +79,10 @@ const PackDetailsModal = ({ pack, isOpen, onClose }: PackDetailsModalProps) => {
             </div> */}
 
             <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-              <h3 className="text-lg mb-2">What you&apos;ll get</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {separateRewards(pack.rewards).otherRewards?.map(
-                  (reward, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 bg-white/5 p-2 rounded"
-                    >
-                      <Image
-                        src={
-                          reward.type === PackRewardType.STARS
-                            ? "/images/stars.png"
-                            : reward.type === PackRewardType.XP
-                              ? "/images/xp.png"
-                              : reward.type === PackRewardType.REP
-                                ? "/images/rep.png"
-                                : "/images/unknown.png"
-                        }
-                        alt={reward.type}
-                        width={24}
-                        height={24}
-                      />
-                      <span>
-                        {reward.amount}{" "}
-                        {reward.type === PackRewardType.STARS
-                          ? "Stars"
-                          : reward.type === PackRewardType.XP
-                            ? "XP"
-                            : reward.type === PackRewardType.REP
-                              ? "REP"
-                              : "Unknown"}
-                      </span>
-                    </div>
-                  )
-                )}
-                {separateRewards(pack.rewards).alienPart.length > 0 ? (
-                  <div className="flex items-center gap-2 bg-white/5 p-2 rounded">
-                    <span>
-                      {separateRewards(pack.rewards).alienPart.length} Alien
-                      Parts
-                    </span>
-                  </div>
-                ) : null}
-              </div>
+              <div
+                className="grid grid-cols-2 gap-2"
+                dangerouslySetInnerHTML={{ __html: pack.description }}
+              ></div>
             </div>
           </div>
         </div>

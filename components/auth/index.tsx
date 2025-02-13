@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { AuthUserData, CreateAlienData, Traits } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 
+import { getOnboardingData } from "@/lib/api"
 import BrandButton from "@/components/ui/brand-button"
 import BackgroundCover from "@/components/common/background-cover"
 import Footer from "@/components/common/footer"
@@ -46,43 +47,8 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [traits, setTraits] = useState<Traits>({
-    Elements: [
-      "/images/alien/elements/gamma.png",
-      "/images/alien/elements/fire.png",
-      "/images/alien/elements/life.png",
-      "/images/alien/elements/water.png",
-      "/images/alien/elements/plasma.png",
-      "/images/alien/elements/love.png",
-      "/images/alien/elements/gravity.png",
-      "/images/alien/elements/thunder.png",
-    ],
-    Body: [
-      "/images/alien/body/cothes.png",
-      "/images/alien/body/body.png",
-      "/images/alien/body/head.png",
-    ],
-    Face: [
-      "/images/alien/face/persona1.png",
-      "/images/alien/face/persona2.png",
-      "/images/alien/face/persona3.png",
-      "/images/alien/face/persona4.png",
-      "/images/alien/face/persona5.png",
-      "/images/alien/face/persona6.png",
-      "/images/alien/face/persona7.png",
-      "/images/alien/face/persona8.png",
-    ],
-    Hair: [
-      "/images/alien/hair/mijikai.png",
-      "/images/alien/hair/poniteru.png",
-      "/images/alien/hair/tepa.png",
-      "/images/alien/hair/kusege.png",
-      "/images/alien/hair/raito.png",
-      "/images/alien/hair/bocchangari.png",
-      "/images/alien/hair/bouken.png",
-      "/images/alien/hair/rokusu.png",
-    ],
-  })
+
+  const [traits, setTraits] = useState<Traits | null>(null)
   const router = useRouter()
 
   const [userData, setUserData] = useState<AuthUserData>({
@@ -96,19 +62,35 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
 
   const [createAlienData, setCreateAlienData] = useState<CreateAlienData>({
     name: "",
-    element: "/images/alien/elements/water.png",
+    elementId: undefined,
     image: "",
     strengthPoints: 87,
   })
 
+  const [selectedTraits, setSelectedTraits] = useState<{
+    hair: string
+    face: string
+  }>({
+    hair: "/images/alien/hair/kusege.png",
+    face: "/images/alien/face/persona3.png",
+  })
+
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)
-  // useEffect(() => {
-  //   getAllTraits().then((res) => {
-  //     if (res.data) {
-  //       setTraits(res.data)
-  //     }
-  //   })
-  // }, [])
+  useEffect(() => {
+    getOnboardingData().then((res) => {
+      if (res.data) {
+        setTraits(res.data)
+        setCreateAlienData({
+          ...createAlienData,
+          elementId: res.data.elements[0].id,
+        })
+        setSelectedTraits({
+          hair: res.data.alienParts.HAIR[0].image,
+          face: res.data.alienParts.FACE[0].image,
+        })
+      }
+    })
+  }, [])
   useEffect(() => {
     audioRef.current = new Audio("/music.mp3")
     audioRef.current.loop = true
@@ -208,6 +190,8 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
                   createAlienData={createAlienData}
                   setCreateAlienData={setCreateAlienData}
                   traits={traits}
+                  selectedTraits={selectedTraits}
+                  setSelectedTraits={setSelectedTraits}
                 />
               ) : null}
             </motion.div>

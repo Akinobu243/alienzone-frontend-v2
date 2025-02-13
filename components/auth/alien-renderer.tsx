@@ -21,6 +21,7 @@ const preloadImage = (src: string): Promise<HTMLImageElement> => {
 
   return new Promise((resolve, reject) => {
     const img = new Image()
+    img.crossOrigin = "anonymous"
     img.onload = () => {
       imageCache[src] = img
       resolve(img)
@@ -71,12 +72,32 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
 
       const loadAllImages = async () => {
         try {
-          const promises = baseImages.map((src) => preloadImage(src))
-          if (selectedTraits.face)
-            promises.push(preloadImage(selectedTraits.face))
-          if (selectedTraits.hair)
-            promises.push(preloadImage(selectedTraits.hair))
-          if (element) promises.push(preloadImage(element))
+          // Create a new array of all image sources
+          const allImageSources = [
+            ...baseImages,
+            ...(selectedTraits.face ? [selectedTraits.face] : []),
+            ...(selectedTraits.hair ? [selectedTraits.hair] : []),
+            ...(element ? [element] : []),
+          ]
+
+          // Load all images with crossOrigin
+          const promises = allImageSources.map((src) => {
+            // Skip crossOrigin for local images (starting with '/')
+            if (src.startsWith("/")) {
+              return preloadImage(src)
+            }
+            // For S3 images, ensure crossOrigin is set
+            const img = new Image()
+            img.crossOrigin = "anonymous"
+            return new Promise((resolve, reject) => {
+              img.onload = () => {
+                imageCache[src] = img
+                resolve(img)
+              }
+              img.onerror = reject
+              img.src = src
+            })
+          })
 
           await Promise.all(promises)
           setIsImagesLoaded(true)
@@ -113,9 +134,17 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       setupCanvas(bufferCanvas)
       setupCanvas(outputCanvas, OUTPUT_SCALE)
 
-      const displayCtx = displayCanvas.getContext("2d", { alpha: true })
-      const outputCtx = outputCanvas.getContext("2d", { alpha: true })
-      const bufferCtx = bufferCanvas.getContext("2d", { alpha: true })
+      const displayCtx = displayCanvas.getContext("2d", {
+        alpha: true,
+        willReadFrequently: true,
+        preserveDrawingBuffer: true,
+      }) as CanvasRenderingContext2D
+      const outputCtx = outputCanvas.getContext("2d", {
+        alpha: true,
+      }) as CanvasRenderingContext2D
+      const bufferCtx = bufferCanvas.getContext("2d", {
+        alpha: true,
+      }) as CanvasRenderingContext2D
 
       if (!displayCtx || !outputCtx || !bufferCtx) {
         console.error("Failed to get canvas contexts")
