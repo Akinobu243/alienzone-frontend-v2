@@ -121,6 +121,15 @@ const Page = () => {
   const handleBuy = async (pack: Pack) => {
     const response = await createCheckoutSession("PACK", pack.id)
     if (response.data) {
+      // Add event listener before opening new tab
+      const handleMessage = (event: MessageEvent) => {
+        if (event.data === "PURCHASE_COMPLETE") {
+          // Refresh page
+          window.location.reload()
+        }
+      }
+      window.addEventListener("message", handleMessage)
+
       window.open(response.data.url, "_blank")
     }
   }

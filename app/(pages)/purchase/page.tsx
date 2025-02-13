@@ -25,9 +25,22 @@ function PurchaseContent() {
 
     setStatus(purchaseStatus)
 
+    // If purchase was successful, notify the opener window
+    if (purchaseStatus === "success" && window.opener) {
+      window.opener.postMessage("PURCHASE_COMPLETE", window.location.origin)
+    }
+
     // Clean up URL - remove search params
     router.replace("/purchase")
   }, [])
+
+  const handleCloseTab = () => {
+    // If purchase was successful, notify opener before closing
+    if (status === "success" && window.opener) {
+      window.opener.postMessage("PURCHASE_COMPLETE", window.location.origin)
+    }
+    window.close()
+  }
 
   const content = {
     success: {
@@ -68,7 +81,7 @@ function PurchaseContent() {
           </BrandButton>
 
           <button
-            onClick={() => window.close()}
+            onClick={handleCloseTab}
             className="text-white/50 hover:text-white transition-colors"
           >
             Close Tab
