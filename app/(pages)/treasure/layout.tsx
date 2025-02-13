@@ -74,19 +74,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </IconButton>
             </div>
             {isOpenMobileMenu && (
-              <TopBar className="relative  top-auto right-auto lg:hidden items-center" />
+              <TopBar className="relative  top-auto right-auto lg:hidden items-center opacity-50 pointer-events-none" />
             )}
           </div>
           <div className="relative max-lg:flex-1  w-full   overflow-hidden ">
             <div className="relative z-10 h-full   flex flex-col overflow-auto">
-              <RightSidebar className="absolute left-8 top-10 max-lg:hidden" />
+              <RightSidebar className="absolute left-8 top-10 max-lg:hidden opacity-50 pointer-events-none" />
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
-              <TopBar className="absolute right-8 top-10 max-lg:hidden" />
+              <TopBar className="absolute right-8 top-10 max-lg:hidden opacity-50 pointer-events-none" />
 
               {children}
             </div>
           </div>
-          <div className="z-10 relative mt-3 space-y-2 lg:hidden">
+          <div className="z-10 relative mt-3 space-y-2 lg:hidden opacity-50 pointer-events-none">
             <RightSidebar />
           </div>
         </div>

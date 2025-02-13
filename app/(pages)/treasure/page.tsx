@@ -7,10 +7,11 @@ import { useWallet } from "@/context/wallet"
 import { useProfile } from "@/store/hooks"
 import { Pack } from "@/types"
 import type { EmblaCarouselType } from "embla-carousel"
-import { ArrowLeft, Info, Plus } from "lucide-react"
+import { ArrowLeft, Info, Loader2, Plus } from "lucide-react"
 
 import { createCheckoutSession, getAllPacks } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import { isPwa } from "@/hooks/isPwa"
 import {
   Carousel,
   CarouselContent,
@@ -99,6 +100,7 @@ const Page = () => {
   const [api, setApi] = useState<EmblaCarouselType>()
   const [current, setCurrent] = useState(0)
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null)
+  const [isBuying, setIsBuying] = useState(false)
 
   useEffect(() => {
     const fetchPacks = async () => {
@@ -117,8 +119,10 @@ const Page = () => {
       setCurrent(api.selectedScrollSnap())
     })
   }, [api])
+  const isPwaMode = isPwa()
 
   const handleBuy = async (pack: Pack) => {
+    setIsBuying(true)
     const response = await createCheckoutSession("PACK", pack.id)
     if (response.data) {
       // Add event listener before opening new tab
@@ -130,8 +134,16 @@ const Page = () => {
       }
       window.addEventListener("message", handleMessage)
 
-      window.open(response.data.url, "_blank")
+      // Check if running as PWA on iOS
+      if (isPwaMode) {
+        // For PWA, open in same window
+        window.location.href = response.data.url
+      } else {
+        // For regular browser, open in new tab
+        window.open(response.data.url, "_blank")
+      }
     }
+    setIsBuying(false)
   }
 
   return (
@@ -211,13 +223,22 @@ const Page = () => {
                             <p>Claimed</p>
                           </div>
                         ) : (
-                          <div
+                          <button
                             className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
                             onClick={() => handleBuy(pack)}
+                            disabled={isBuying}
                           >
-                            <p className="">Buy for</p>
-                            <p className="text-[#5FD7FF]">{pack.price}$</p>
-                          </div>
+                            {isBuying ? (
+                              <div className="flex items-center gap-2 w-full justify-center">
+                                <Loader2 className="size-6 animate-spin" />
+                              </div>
+                            ) : (
+                              <>
+                                <p className="">Buy for</p>
+                                <p className="text-[#5FD7FF]">{pack.price}$</p>
+                              </>
+                            )}
+                          </button>
                         )}
                       </div>
                     </CarouselItem>
@@ -333,13 +354,22 @@ const Page = () => {
                         <p>Claimed</p>
                       </div>
                     ) : (
-                      <div
+                      <button
                         className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
                         onClick={() => handleBuy(pack)}
+                        disabled={isBuying}
                       >
-                        <p className="">Buy for</p>
-                        <p className="text-[#5FD7FF]">{pack.price}$</p>
-                      </div>
+                        {isBuying ? (
+                          <div className="flex items-center gap-2 w-full justify-center">
+                            <Loader2 className="size-6 animate-spin" />
+                          </div>
+                        ) : (
+                          <>
+                            <p className="">Buy for</p>
+                            <p className="text-[#5FD7FF]">{pack.price}$</p>
+                          </>
+                        )}
+                      </button>
                     )}
                   </div>
                 </CarouselItem>

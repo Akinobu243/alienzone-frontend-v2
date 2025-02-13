@@ -6,18 +6,17 @@ export const isPwa = () => {
   // Check if window.matchMedia is available
   if (!window.matchMedia) return false
 
-  // Check if the site is running in standalone mode (iOS and Android)
+  // iOS specific check
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+  const isIOSPwa = isIOS && (window.navigator as any).standalone
+
+  // Android and other platforms check
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
-    (window.navigator as any).standalone ||
     document.referrer.includes("android-app://")
 
-  // Check if the site was launched from the home screen
-  const isPwaFromHomeScreen = window.matchMedia(
-    "(display-mode: standalone)"
-  ).matches
-
-  return isStandalone || isPwaFromHomeScreen
+  return isIOSPwa || isStandalone
 }
 
 export const usePwa = () => {

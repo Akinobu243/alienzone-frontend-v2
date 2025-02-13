@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { CheckCircle2, CircleX } from "lucide-react"
 
+import { isPwa } from "@/hooks/isPwa"
 import BrandButton from "@/components/ui/brand-button"
 
 type PurchaseStatus = "success" | "cancel" | null
@@ -25,21 +26,44 @@ function PurchaseContent() {
 
     setStatus(purchaseStatus)
 
-    // If purchase was successful, notify the opener window
-    if (purchaseStatus === "success" && window.opener) {
-      window.opener.postMessage("PURCHASE_COMPLETE", window.location.origin)
+    const isPwaMode = isPwa()
+
+    // If purchase was successful, handle PWA differently
+    if (purchaseStatus === "success") {
+      if (isPwaMode) {
+        // For PWA, navigate back to treasure after a short delay
+        setTimeout(() => {
+          router.push("/treasure")
+        }, 2000)
+      } else if (window.opener) {
+        // For regular browser, notify opener window
+        window.opener.postMessage("PURCHASE_COMPLETE", window.location.origin)
+      }
     }
 
     // Clean up URL - remove search params
     router.replace("/purchase")
   }, [])
+  const isPwaMode = isPwa()
 
   const handleCloseTab = () => {
-    // If purchase was successful, notify opener before closing
-    if (status === "success" && window.opener) {
-      window.opener.postMessage("PURCHASE_COMPLETE", window.location.origin)
+    if (status === "success") {
+      if (isPwaMode) {
+        // For PWA, navigate back
+        router.push("/treasure")
+      } else if (window.opener) {
+        // For regular browser, notify opener and close
+        window.opener.postMessage("PURCHASE_COMPLETE", window.location.origin)
+        window.close()
+      }
+    } else {
+      // For cancelled purchases
+      if (isPwaMode) {
+        router.push("/treasure")
+      } else {
+        window.close()
+      }
     }
-    window.close()
   }
 
   const content = {

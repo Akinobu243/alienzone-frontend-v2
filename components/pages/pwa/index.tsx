@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { useLogout } from "@privy-io/react-auth"
-import { Copy, CopyCheck, LogOut } from "lucide-react"
+import { Copy, CopyCheck, Loader2, LogOut } from "lucide-react"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
 import {
@@ -28,6 +28,7 @@ export default function Home() {
   const { logout } = useLogout()
   const [unseenReferralRewards, setUnseenReferralRewards] = useState(0)
   const [isCopied, setIsCopied] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   useEffect(() => {
     const fetchJackpotAmount = async () => {
@@ -44,6 +45,7 @@ export default function Home() {
   }, [])
 
   const handleLogout = () => {
+    setIsLoggingOut(true)
     localStorage.removeItem("accessToken")
     logout()
     router.push("/")
@@ -141,8 +143,16 @@ export default function Home() {
                   <Copy className="size-4" />
                 )}
               </BrandButton>
-              <BrandButton blurColor="bg-[#FFC0CB]" onClick={handleLogout}>
-                <LogOut className="size-6" />
+              <BrandButton
+                blurColor="bg-[#FFC0CB]"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? (
+                  <Loader2 className="size-6 animate-spin" />
+                ) : (
+                  <LogOut className="size-6" />
+                )}
               </BrandButton>
             </div>
           </div>
