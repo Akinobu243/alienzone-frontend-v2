@@ -11,7 +11,6 @@ import { ArrowLeft, Info, Plus } from "lucide-react"
 
 import { getAllPacks } from "@/lib/api"
 import { cn } from "@/lib/utils"
-import { isPwa } from "@/hooks/isPwa"
 import {
   Carousel,
   CarouselContent,
@@ -119,20 +118,18 @@ const Page = () => {
       setCurrent(api.selectedScrollSnap())
     })
   }, [api])
-  const isPwaMode = isPwa()
 
   return (
     <>
       <div className="absolute top-10 left-24 flex gap-3 z-20 h-14 items-center max-lg:hidden">
         <h1 className="text-3xl ">Treasure</h1>
       </div>
-      <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden max-lg:hidden">
+      <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden max-lg:hidden ">
         <div className="absolute inset-0 bg-[url('/images/pages/team-bg.jpg')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/team-bg.jpg')]">
           <div className="absolute inset-0 bg-[#181818CC]"></div>
         </div>
-
-        <div className="w-full z-10 pb-12 pr-8 pl-24 pt-28 relative flex flex-col gap-8 ">
-          <div className="bg-white/10 rounded-2xl p-2 backdrop-blur-lg">
+        <div className="w-full z-10  pr-8 pl-24 pt-28 relative flex flex-col gap-8   h-[calc(100vh-90px)]">
+          <div className="bg-white/10 rounded-2xl p-2 backdrop-blur-lg h-full flex flex-col">
             {/* Navigation Tabs */}
             <div className="flex  items-center gap-3">
               <div className="flex gap-3 flex-1">
@@ -161,15 +158,15 @@ const Page = () => {
             </div>
 
             {/* Carousel Section */}
-            <div className=" mt-4 bg-white/10 rounded px-2 py-4 relative ">
+            <div className=" mt-4 bg-white/10 rounded px-2 py-4 relative flex-1">
               <Carousel
-                className="w-full"
+                className="w-full h-full"
                 setApi={setApi}
                 opts={{
                   loop: true,
                 }}
               >
-                <CarouselContent>
+                <CarouselContent className="h-full">
                   {packs.map((pack, index) => (
                     <CarouselItem
                       key={index}

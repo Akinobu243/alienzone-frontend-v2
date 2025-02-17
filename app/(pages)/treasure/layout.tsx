@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <Loader>
         <div
           className={cn(
-            " bg-black p-4 lg:px-20 max-lg:h-screen relative flex flex-col lg:min-h-screen"
+            " bg-black max-lg:py-4  max-lg:h-screen relative flex flex-col lg:min-h-screen"
           )}
         >
           <div className=" relative z-20 pb-2 lg:hidden">
@@ -77,8 +77,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <TopBar className="relative  top-auto right-auto lg:hidden items-center opacity-50 pointer-events-none" />
             )}
           </div>
-          <div className="relative flex-1  w-full   overflow-hidden ">
-            <div className="relative z-10 h-full   flex flex-col overflow-auto">
+          <div className="relative flex-1  w-full   overflow-hidden flex flex-col ">
+            <div className="relative z-10 h-full flex-1   flex flex-col overflow-auto">
               <RightSidebar className="absolute left-8 top-10 max-lg:hidden opacity-50 pointer-events-none" />
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
               <TopBar className="absolute right-8 top-10 max-lg:hidden opacity-50 pointer-events-none" />
@@ -89,7 +89,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="z-10 relative mt-3 space-y-2 lg:hidden opacity-50 pointer-events-none">
             <RightSidebar />
           </div>
-          <p className="text-center text-sm text-white/50 pt-5 pb-2 max-lg:hidden">
+          <p className="text-center text-sm text-white/50 py-4 max-lg:hidden z-10 ">
             © 2024 Alienzone All rights reserved. Reach out to us at
             team@alienzone.io
           </p>
