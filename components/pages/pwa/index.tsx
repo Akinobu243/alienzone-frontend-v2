@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { useLogout } from "@privy-io/react-auth"
 import { Copy, CopyCheck, Loader2, LogOut } from "lucide-react"
+import { FaTelegram } from "react-icons/fa6"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
 import {
@@ -15,6 +16,7 @@ import {
   getTokenPrice,
 } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
+import { TwitterX } from "@/components/icons"
 
 import { InviteCard } from "./InviteCard"
 import { JackpotCard } from "./JackpotCard"
@@ -159,13 +161,31 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <p className="text-center text-sm text-white/50 py-4 max-lg:hidden z-10  ">
-          © {new Date().getFullYear()} Alienzone All rights reserved. Reach out
-          to us at{" "}
-          <a href="mailto:team@alienzone.io" className="underline">
-            team@alienzone.io
-          </a>
-        </p>
+        <div className="py-4 max-lg:hidden z-10 flex flex-col items-center justify-center text-white/50">
+          <div className="flex gap-4">
+            <Link
+              href="https://taap.it/alienzone2"
+              target="_blank"
+              className="hover:text-white"
+            >
+              <TwitterX size={24} />
+            </Link>
+            <Link
+              href="https://taap.it/alienzone"
+              target="_blank"
+              className="hover:text-white"
+            >
+              <FaTelegram size={24} />
+            </Link>
+          </div>
+          <p className="text-center text-sm  py-4 max-lg:hidden z-10  ">
+            © {new Date().getFullYear()} Alienzone All rights reserved. Reach
+            out to us at{" "}
+            <a href="mailto:team@alienzone.io" className="underline">
+              team@alienzone.io
+            </a>
+          </p>
+        </div>
       </div>
 
       <div

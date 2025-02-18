@@ -1,17 +1,17 @@
 if (!self.define) {
   let e,
-    s = {}
-  const a = (a, i) => (
-    (a = new URL(a + ".js", i).href),
-    s[a] ||
-      new Promise((s) => {
+    a = {}
+  const s = (s, i) => (
+    (s = new URL(s + ".js", i).href),
+    a[s] ||
+      new Promise((a) => {
         if ("document" in self) {
           const e = document.createElement("script")
-          ;(e.src = a), (e.onload = s), document.head.appendChild(e)
-        } else (e = a), importScripts(a), s()
+          ;(e.src = s), (e.onload = a), document.head.appendChild(e)
+        } else (e = s), importScripts(s), a()
       }).then(() => {
-        let e = s[a]
-        if (!e) throw new Error(`Module ${a} didn’t register its module`)
+        let e = a[s]
+        if (!e) throw new Error(`Module ${s} didn’t register its module`)
         return e
       })
   )
@@ -20,11 +20,11 @@ if (!self.define) {
       e ||
       ("document" in self ? document.currentScript.src : "") ||
       location.href
-    if (s[n]) return
-    let d = {}
-    const r = (e) => a(e, n),
-      t = { module: { uri: n }, exports: d, require: r }
-    s[n] = Promise.all(i.map((e) => t[e] || r(e))).then((e) => (c(...e), d))
+    if (a[n]) return
+    let r = {}
+    const t = (e) => s(e, n),
+      f = { module: { uri: n }, exports: r, require: t }
+    a[n] = Promise.all(i.map((e) => f[e] || t(e))).then((e) => (c(...e), r))
   }
 }
 define(["./workbox-1bb06f5e"], function (e) {
@@ -36,43 +36,43 @@ define(["./workbox-1bb06f5e"], function (e) {
       [
         {
           url: "/_next/app-build-manifest.json",
-          revision: "e7d909355a8041f606b0b0705d1f9cd1",
+          revision: "c6bd0b01c5e1838f9d9f79fad4291b97",
         },
         {
-          url: "/_next/static/cXcdiHTn8QgzdK0W0NNV-/_buildManifest.js",
+          url: "/_next/static/KZ92f-2yxhFQSMDerKHwb/_buildManifest.js",
           revision: "172e769da91baa11de9b258fb2d92f86",
         },
         {
-          url: "/_next/static/cXcdiHTn8QgzdK0W0NNV-/_ssgManifest.js",
+          url: "/_next/static/KZ92f-2yxhFQSMDerKHwb/_ssgManifest.js",
           revision: "b6652df95db52feb4daf4eca35380933",
         },
         {
           url: "/_next/static/chunks/0e5ce63c-ba908e60fa75493d.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/117-885630d6aa605918.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/12-c4c91dfb89962261.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/145-e80c88072fa0a115.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/148-23f7de661c2e26f6.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/157-ce5798a63690a029.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/175-f3346b9d32315e46.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/275.f7d888ce2d9ab1ea.js",
@@ -80,15 +80,15 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/276-1ff1dcb266294667.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/32-597ff9621e3bdba3.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/357-50740578b79fe2ce.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/488.6538d1c8774add49.js",
@@ -96,39 +96,39 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/506-73fef65bdcd42cf6.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/538-8a0c062c5f1203a0.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/56-353f121824ce2228.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/567-958c2ac7018aa3df.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/598-4be753ef0beec535.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/648-b822529d4fa336f8.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/695-ecfb2ae526681871.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/781-a7c2008d71ffb834.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/823-26ca71d2db53634e.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/844.17d09a631aa49dc3.js",
@@ -136,11 +136,11 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/884-740f385de5e5dd95.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/952-0bd619b9d4232456.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/978.d36d580f6c38aa64.js",
@@ -148,87 +148,87 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/app/(pages)/auth/page-e170ba98075a5181.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/purchase/page-fbecc1976f702e97.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/treasure/layout-e142680457953326.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/treasure/page-056dbdaf6b8f0ab1.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/website/hunt/page-19e4a480cd2d4f93.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/website/layout-2f5b7b2972054bb9.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/website/page-d78f6026f63401e0.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/website/raids/page-8f4da2670c688183.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pages)/website/team/page-ef4cd8161c46c780.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pwa)/layout-5f28cc3f6634ebe1.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/(pwa)/page-a8f7dcac6058d9d5.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/_not-found/page-887a6b78f334643d.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/layout-458caf7012eef6b4.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/app/not-found-e37b273eca2faa4c.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/c16f53c3-8ba8ddb0f19a5b6d.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/fd9d1056-7efa2690de02be3f.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/framework-00a8ba1a63cfdc9e.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/main-3aa39b3e8202c014.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/main-app-a782fb1548bbffd5.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/pages/_app-15e2daefa259f0b5.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/pages/_error-28b803cb2479b966.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/chunks/polyfills-42372ed130431b0a.js",
@@ -236,7 +236,7 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/webpack-edc8f3d72ada855e.js",
-          revision: "cXcdiHTn8QgzdK0W0NNV-",
+          revision: "KZ92f-2yxhFQSMDerKHwb",
         },
         {
           url: "/_next/static/css/b13b4e2fa42953fc.css",
@@ -280,51 +280,51 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/icons/apple-touch-icon.png",
-          revision: "8092d2d91664782b88a6265dc54bc9d2",
+          revision: "03cca17cc8c76384908de5dd88e3424b",
         },
         {
           url: "/icons/favicon-96x96.png",
-          revision: "b7f0e165d7daf75e9a03e5d8c8593d61",
+          revision: "af55c4b075ba4d50c2b0be2781bca910",
         },
         {
           url: "/icons/icon-128x128.png",
-          revision: "608eb5d4d17032b148e94a6854cb9ef6",
+          revision: "d1ffaa7a81fabf455ad3ac2c9d4ea01a",
         },
         {
           url: "/icons/icon-144x144.png",
-          revision: "db809beed511b09b3f82393c94948f57",
+          revision: "5176b23d6baf88e305c8e80c558504c1",
         },
         {
           url: "/icons/icon-152x152.png",
-          revision: "db316754947fa07337f67e75fbb2c58b",
+          revision: "7ceefb25cfd6f8a0c0cc692691573c25",
         },
         {
           url: "/icons/icon-192x192.png",
-          revision: "04cc5691d1cd63d59a3a03b03480796f",
+          revision: "b432765b7e143165cc6b4bcd95af4c8b",
         },
         {
           url: "/icons/icon-256x256.png",
-          revision: "6e28442d9cde05920883d2b2a8cbbb8c",
+          revision: "6f63fff9ee13b7034ffc9977e789918c",
         },
         {
           url: "/icons/icon-384x384.png",
-          revision: "f301b8ba30cf2fdc310fb9993fa53a4a",
+          revision: "78188eaf3002e490c1b8e22abf352c4c",
         },
         {
           url: "/icons/icon-48x48.png",
-          revision: "d4a5fbf4e3ff6d1efb1aa2d0dc67acf3",
+          revision: "e1f0d89a8fa2d7eb66e72c1247a7b958",
         },
         {
           url: "/icons/icon-512x512.png",
-          revision: "e64c0fd84d25d054f710effccba98ab3",
+          revision: "0cba0a6cbf17afa20a4733fc57c236ab",
         },
         {
           url: "/icons/icon-72x72.png",
-          revision: "8dd4a1078aa5745446c3be079a103192",
+          revision: "8200d96dfc0bf1228a0a2e2f73f3991b",
         },
         {
           url: "/icons/icon-96x96.png",
-          revision: "b7f0e165d7daf75e9a03e5d8c8593d61",
+          revision: "af55c4b075ba4d50c2b0be2781bca910",
         },
         {
           url: "/images/404.jpeg",
@@ -553,17 +553,17 @@ define(["./workbox-1bb06f5e"], function (e) {
           {
             cacheWillUpdate: async ({
               request: e,
-              response: s,
-              event: a,
+              response: a,
+              event: s,
               state: i,
             }) =>
-              s && "opaqueredirect" === s.type
-                ? new Response(s.body, {
+              a && "opaqueredirect" === a.type
+                ? new Response(a.body, {
                     status: 200,
                     statusText: "OK",
-                    headers: s.headers,
+                    headers: a.headers,
                   })
-                : s,
+                : a,
           },
         ],
       }),
@@ -684,8 +684,8 @@ define(["./workbox-1bb06f5e"], function (e) {
     e.registerRoute(
       ({ url: e }) => {
         if (!(self.origin === e.origin)) return !1
-        const s = e.pathname
-        return !s.startsWith("/api/auth/") && !!s.startsWith("/api/")
+        const a = e.pathname
+        return !a.startsWith("/api/auth/") && !!a.startsWith("/api/")
       },
       new e.NetworkFirst({
         cacheName: "apis",
