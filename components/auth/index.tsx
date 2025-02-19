@@ -153,7 +153,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         <ReferralCodeHandler setUserData={setUserData} />
       </Suspense>
 
-      <div className="w-full h-screen relative max-w-7xl overflow-hidden mx-auto py-10 px-6 flex flex-col justify-between items-center">
+      <div className="w-full min-h-screen relative max-w-7xl overflow-hidden mx-auto py-10 px-3 lg:px-6 flex flex-col justify-between items-center">
         {currentStep !== 3 ? <Header /> : null}
         <AnimatePresence mode="wait">
           {currentStep > 0 && (

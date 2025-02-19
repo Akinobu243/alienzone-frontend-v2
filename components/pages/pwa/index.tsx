@@ -161,7 +161,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="py-4 max-lg:hidden z-10 flex flex-col items-center justify-center text-white/50">
+        <div className="py-4  z-20 relative flex flex-col items-center justify-center text-white/50 gap-4">
           <div className="flex gap-4">
             <Link
               href="https://taap.it/alienzone2"
@@ -178,7 +178,7 @@ export default function Home() {
               <FaTelegram size={24} />
             </Link>
           </div>
-          <p className="text-center text-sm  py-4 max-lg:hidden z-10  ">
+          <p className="text-center text-sm      ">
             © {new Date().getFullYear()} Alienzone All rights reserved. Reach
             out to us at{" "}
             <a href="mailto:team@alienzone.io" className="underline">

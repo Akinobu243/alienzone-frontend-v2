@@ -119,7 +119,7 @@ const CreateAlien = ({
   }
 
   return (
-    <div className="w-full space-y-6 z-20 max-lg:fixed max-lg:top-0 max-lg:left-0 max-lg:w-full max-lg:h-full max-lg:overflow-y-auto max-lg:py-4 max-lg:px-2">
+    <div className="w-full space-y-6 z-20 max-lg:py-4 max-lg:px-2">
       <div className="relative w-full flex items-center justify-between">
         <BrandButton className="items-start cursor-auto max-lg:text-sm">
           Create your Alien

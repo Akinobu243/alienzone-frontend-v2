@@ -5,7 +5,7 @@ import { TwitterX } from "../icons"
 
 const Footer = () => {
   return (
-    <div className="font-inter text-[12px]/[12px] flex-col font-normal text-off-white flex gap-4 w-full justify-center items-center z-50 relative ">
+    <div className="font-inter text-[12px]/[12px] flex-col font-normal text-off-white flex gap-4 w-full justify-center items-center z-50 relative mt-4">
       {/* social icons */}
       <div className="flex gap-4">
         <Link
