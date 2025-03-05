@@ -52,7 +52,7 @@ export function Loader({ children }: { children: React.ReactNode }) {
       if (user?.wallet?.address) {
         try {
           await Promise.all([
-            dispatch(fetchUserProfile(user?.wallet?.address)),
+            dispatch(fetchUserProfile()),
             dispatch(fetchRaids()),
             dispatch(fetchAliens()),
             dispatch(fetchRaidHistory()),

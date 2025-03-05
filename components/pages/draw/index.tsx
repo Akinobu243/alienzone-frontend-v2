@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
-import { useAppDispatch, useCharacters } from "@/store/hooks"
+import { useCharacters, useProfile } from "@/store/hooks"
 import { Character } from "@/types"
 import { createPortal } from "react-dom"
 import toast from "react-hot-toast"
@@ -23,7 +23,6 @@ const VideoPlayerModal = ({
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
   const { fetchCharacters } = useCharacters()
-  const dispatch = useAppDispatch()
   useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
@@ -126,6 +125,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
   const [multiSommonCharacters, setMultiSommonCharacters] = useState<
     Character[]
   >([])
+  const { fetchUserProfile } = useProfile()
 
   // Get the fetchCharacters function from the useCharacters hook
   const { fetchCharacters } = useCharacters()
@@ -141,6 +141,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
 
       // Refresh characters list after successful summon
       fetchCharacters()
+      fetchUserProfile()
 
       // Check if character has a video and play it
       if (response.data?.character?.video) {
@@ -168,6 +169,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
 
       // Refresh characters list after successful multi-summon
       fetchCharacters()
+      fetchUserProfile()
 
       const characters = response.data?.summonResults.map(
         (result) => result.character

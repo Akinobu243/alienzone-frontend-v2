@@ -15,13 +15,18 @@ import {
   resetUpdateStatus,
   updateUserTeam,
 } from "./slices/teamSlice"
+import { fetchUserProfile } from "./slices/userProfileSlice"
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 export const useProfile = () => {
-  return useAppSelector((state) => state.userProfile)
+  const dispatch = useAppDispatch()
+  return {
+    ...useAppSelector((state) => state.userProfile),
+    fetchUserProfile: () => dispatch(fetchUserProfile()),
+  }
 }
 
 export const useRaids = () => {

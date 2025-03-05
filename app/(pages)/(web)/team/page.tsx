@@ -10,7 +10,7 @@ const Page = () => {
           <div className="absolute inset-0 bg-[#181818CC]"></div>
         </div>
 
-        <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-28 relative flex flex-col items-center justify-center gap-8  mx-auto max-w-[1050px]">
+        <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-28 relative flex flex-col items-center justify-center gap-8  mx-auto max-w-[1050px] ">
           <TeamPage />
         </div>
       </div>

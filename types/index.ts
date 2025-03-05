@@ -247,6 +247,7 @@ export interface Character {
   portal: number
   elementId: number
   onTeam: boolean
+  quantity: number
 }
 
 export enum CharacterRarity {

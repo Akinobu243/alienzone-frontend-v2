@@ -164,15 +164,8 @@ export const checkUserExist = async (
   return response
 }
 
-export const getProfile = async (
-  walletAddress: string
-): Promise<ApiResponse<Profile | null>> => {
-  const response = await apiManager.get<Profile | null>(
-    "/profile/get-profile",
-    {
-      walletAddress,
-    }
-  )
+export const getProfile = async (): Promise<ApiResponse<Profile | null>> => {
+  const response = await apiManager.get<Profile | null>("/profile/get-profile")
   return response
 }
 

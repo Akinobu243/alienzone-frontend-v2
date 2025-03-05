@@ -111,12 +111,12 @@ export default function Home() {
               <InviteCard profile={profile ?? null} />
               <div className="flex gap-2">
                 <Link href={"/treasure"} className="w-full">
-                  <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                  <BrandButton className="w-full " blurColor="bg-[#96DFF4]">
                     Treasure
                   </BrandButton>
                 </Link>
                 <Link href={"/raids"} className="w-full">
-                  <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                  <BrandButton className="w-full " blurColor="bg-[#96DFF4]">
                     Raid
                   </BrandButton>
                 </Link>

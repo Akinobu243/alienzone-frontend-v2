@@ -26,7 +26,7 @@ const RaidsPage = () => {
           setSelectedRaid={setSelectedRaid}
           raids={raids || []}
         />
-        <div className="flex-1 h-full flex flex-col">
+        <div className="flex-1 h-full flex flex-col overflow-y-auto">
           <SingleRaid raid={selectedRaid || undefined} />
           <TeamRecap />
           {/* End of team recap section */}

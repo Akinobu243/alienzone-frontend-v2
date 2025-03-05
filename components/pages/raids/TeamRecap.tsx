@@ -63,8 +63,18 @@ const TeamRecap = () => {
                 src={member.image || ""}
                 alt={member.name || ""}
                 fill
-                className="object-cover"
+                className="object-cover relative z-10"
               />
+              {member.type === "alien" && (
+                <div
+                  className="absolute inset-0 "
+                  style={{
+                    backgroundImage: `url(${member.element.background})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>

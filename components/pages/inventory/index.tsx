@@ -1,5 +1,7 @@
 import React, { useState } from "react"
 import Image from "next/image"
+import { useCharacters } from "@/store/hooks"
+import { Character } from "@/types"
 import { CloudLightning, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -35,8 +37,8 @@ const InventoryTabs = [
 
 const InventoryPage = () => {
   const [activeTab, setActiveTab] = useState<string>("all")
-  const [selectedItem, setSelectedItem] = useState<string>("")
-
+  const [selectedItem, setSelectedItem] = useState<Character | null>(null)
+  const { data: characters } = useCharacters()
   return (
     <div className="relative w-full h-full">
       <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl p-3 flex gap-3">
@@ -58,15 +60,15 @@ const InventoryPage = () => {
           </div>
 
           <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-3 mt-4">
-            {Array.from({ length: 10 }).map((_, index) => (
+            {characters?.map((character) => (
               <div
-                key={index}
-                className="w-full h-full bg-white/5 backdrop-blur-lg rounded-lg p-3 cursor-pointer"
-                onClick={() => setSelectedItem(index.toString())}
+                key={character.id}
+                className="w-full h-full bg-white/5 backdrop-blur-lg rounded-lg p-3 cursor-pointer max-w-48"
+                onClick={() => setSelectedItem(character)}
               >
                 <div className=" relative ">
                   <Image
-                    src="/images/raids/raid-1.jpg"
+                    src={character.image || ""}
                     alt="item"
                     width={100}
                     height={100}
@@ -74,9 +76,9 @@ const InventoryPage = () => {
                   />
                 </div>
                 <div className="flex items-center justify-between mt-3 text-sm">
-                  <p>Item name</p>
+                  <p>{character.name}</p>
                   <p className="border border-white/10 px-2  rounded-md text-2xs">
-                    x2
+                    x{character.quantity}
                   </p>
                 </div>
               </div>
@@ -88,7 +90,7 @@ const InventoryPage = () => {
             <div className="flex flex-col gap-4">
               <div className="relative">
                 <Image
-                  src="/images/raids/raid-1.jpg"
+                  src={selectedItem.image || ""}
                   alt="item"
                   width={400}
                   height={400}
@@ -96,7 +98,7 @@ const InventoryPage = () => {
                 />
 
                 <button
-                  onClick={() => setSelectedItem("")}
+                  onClick={() => setSelectedItem(null)}
                   className="absolute top-3 right-3 bg-white/10 backdrop-blur-lg rounded size-8 flex items-center justify-center border border-white/10"
                 >
                   <X className="w-4 h-4" />
@@ -105,7 +107,7 @@ const InventoryPage = () => {
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between bg-white/10 rounded-lg p-3">
-                  <h2 className="text-lg">Burn 4 Item Name</h2>
+                  <h2 className="text-lg"> {selectedItem.name}</h2>
                   <div className="flex items-center  bg-white/10 rounded-lg border border-white/5">
                     <div className="px-2 py-1 bg-white/10 rounded-lg border border-white/10">
                       <span className="text-sm font-inter">Rating</span>
