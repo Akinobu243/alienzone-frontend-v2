@@ -136,6 +136,9 @@ const LeaderboardPage = () => {
             {/* Table Header */}
             <div
               className={`grid grid-cols-${totalColSpan} gap-2 px-4 py-2 text-sm text-gray-400`}
+              style={{
+                gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
+              }}
             >
               {LEADERBOARD_COLUMNS.map((column) => (
                 <div
@@ -161,6 +164,9 @@ const LeaderboardPage = () => {
                   "hover:bg-white/10 transition-colors duration-200",
                   "bg-white/5"
                 )}
+                style={{
+                  gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
+                }}
               >
                 {/* Rank Column */}
                 <div className="flex items-center">
@@ -233,6 +239,9 @@ const LeaderboardPage = () => {
                   index % 2 === 0 ? "bg-white/5" : "bg-white/[0.02]",
                   selectedUser?.name === item.name && "bg-white/30"
                 )}
+                style={{
+                  gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
+                }}
                 onClick={() => setSelectedUser(item)}
               >
                 {/* Rank Column */}
