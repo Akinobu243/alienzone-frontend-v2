@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useCharacters } from "@/store/hooks"
-import { Character } from "@/types"
+import { Character, ForgeTabs } from "@/types"
 import { ArrowLeft, ArrowRight, Check, Lock } from "lucide-react"
 
 import { getCharacterTiers } from "@/lib/api"
 import { cn } from "@/lib/utils"
-import { ForgeTabs } from "@/app/(pages)/forge/page"
 
 const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [characterTiers, setCharacterTiers] = useState<Character[]>([])

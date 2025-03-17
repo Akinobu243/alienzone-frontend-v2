@@ -285,3 +285,9 @@ export interface Leaderboard {
   experience: number
   reputation: number
 }
+
+export enum ForgeTabs {
+  ENHANCEMENT = "enhancement",
+  PROMOTION = "promotion",
+  FORGE = "forge",
+}

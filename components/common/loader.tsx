@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useAppDispatch, useInventory } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
@@ -18,17 +18,10 @@ import { useIsMobile } from "@/hooks/useIsMobile"
 
 const WALLET_INIT_TIMEOUT = 2000
 
-export function Loader({ children }: { children: React.ReactNode }) {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
-  const { ready, authenticated, user } = usePrivy()
-  const [isLoading, setIsLoading] = useState(true)
-  const { data: aliens } = useAliens()
-  const isMobile = useIsMobile()
-  const pathname = usePathname()
-  const { fetchInventory } = useInventory()
-
+// Separate component for handling search params
+function SearchParamsHandler() {
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   useEffect(() => {
     const refferalCode = searchParams.get("refferalCode")
@@ -39,6 +32,19 @@ export function Loader({ children }: { children: React.ReactNode }) {
       router.replace(newSearchParams.toString())
     }
   }, [searchParams, router])
+
+  return null
+}
+
+export function Loader({ children }: { children: React.ReactNode }) {
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const { ready, authenticated, user } = usePrivy()
+  const [isLoading, setIsLoading] = useState(true)
+  const { data: aliens } = useAliens()
+  const isMobile = useIsMobile()
+  const pathname = usePathname()
+  const { fetchInventory } = useInventory()
 
   useEffect(() => {
     const handleWalletState = async () => {
@@ -88,5 +94,12 @@ export function Loader({ children }: { children: React.ReactNode }) {
     )
   }
 
-  return <>{children}</>
+  return (
+    <>
+      <Suspense fallback={null}>
+        <SearchParamsHandler />
+      </Suspense>
+      {children}
+    </>
+  )
 }
