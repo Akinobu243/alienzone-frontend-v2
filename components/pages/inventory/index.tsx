@@ -263,7 +263,6 @@ const InventoryPage = () => {
           summonType="character"
           summonItems={[summonedCharacter]}
           loading={false}
-          showMultiSummon={false}
           showCloseButton={true}
         />
       )}

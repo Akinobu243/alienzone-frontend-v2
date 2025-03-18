@@ -212,6 +212,7 @@ export interface TeamResponse {
     element: Element
     image: string | null
     type: "character" | "alien"
+    isSelected: boolean
   }[]
   synergies: Record<string, number>
   buffs: {
@@ -254,6 +255,7 @@ export interface Character {
   upgradeReq?: number
   onTeam: boolean
   quantity: number
+  tokenId?: number
 }
 
 export enum CharacterRarity {
@@ -277,6 +279,7 @@ export interface InventoryItem {
 }
 
 export interface Leaderboard {
+  id: number
   name: string
   country: string
   enterprise: string
@@ -284,6 +287,12 @@ export interface Leaderboard {
   level: number
   experience: number
   reputation: number
+  rank: number
+  walletAddress: string
+  stars: number
+  createdAt: string
+  isLiked: boolean
+  twitterId?: string
 }
 
 export enum ForgeTabs {

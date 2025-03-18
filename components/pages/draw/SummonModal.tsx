@@ -1,12 +1,16 @@
 import Image from "next/image"
 import Link from "next/link"
+import { useWallet } from "@/context/wallet"
 import { useCharacters } from "@/store/hooks"
 import { Character, Gear } from "@/types"
+import { usePrivy, useWallets } from "@privy-io/react-auth"
+import { ethers } from "ethers"
+import toast from "react-hot-toast"
 
-import { cn } from "@/lib/utils"
+import { mintCharacters, verifyMintTransaction } from "@/lib/api"
+import { cn, handleSignMessage } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-
-// Define a Gear type based on the API response
+import CONTRACT_ABI from "@/app/assets/abi.json"
 
 const SummonModal = ({
   isOpen,
@@ -16,8 +20,8 @@ const SummonModal = ({
   handleMultiSummon,
   loading,
   title,
-  showMultiSummon = true,
   showCloseButton = false,
+  showMintButton = false,
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
@@ -26,11 +30,14 @@ const SummonModal = ({
   handleMultiSummon?: () => void
   loading: boolean
   title?: string
-  showMultiSummon?: boolean
   showCloseButton?: boolean
+  showMintButton?: boolean
 }) => {
   // Get the fetchCharacters function from the useCharacters hook
   const { fetchCharacters } = useCharacters()
+  const { signMessage } = usePrivy()
+  const { wallets } = useWallets()
+  const { provider, signer } = useWallet()
 
   // Handle modal close to refresh characters
   const handleOpenChange = (open: boolean) => {
@@ -41,8 +48,89 @@ const SummonModal = ({
     setIsOpen(open)
   }
 
+  const handleMintCharacter = async () => {
+    if (summonType === "gear") return
+
+    const wallet = wallets[0]
+    if (!wallet) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    if (!provider || !signer) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    const charactersIds = summonItems.map((item) => item.id)
+    const tokenIds = summonItems
+      .map((item) => (item as Character).tokenId)
+      .filter((id) => id !== undefined)
+    const amounts = new Array(tokenIds.length).fill(1)
+
+    const signature = await handleSignMessage(
+      charactersIds.join(","),
+      wallet,
+      signMessage
+    )
+
+    if (!signature) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    try {
+      // Step 1: Get server signature and transaction ID
+      const response = await mintCharacters(charactersIds, signature)
+
+      if (response.error || !response.data) {
+        toast.error(response.error?.message || "Failed to get mint data")
+        return
+      }
+
+      const { serverSignature, transactionId } = response.data
+
+      // Step 2: Perform the transaction using the server signature
+      const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+      if (!contractAddress) {
+        toast.error("Contract address not configured")
+        return
+      }
+
+      const contract = new ethers.Contract(
+        contractAddress,
+        CONTRACT_ABI,
+        signer
+      )
+
+      // Perform the mint transaction
+      const tx = await contract.mintBatch(tokenIds, amounts, serverSignature)
+      const receipt = await tx.wait()
+
+      console.log(receipt)
+
+      // Step 3: Verify the transaction
+      const verifyResponse = await verifyMintTransaction(
+        transactionId,
+        serverSignature,
+        receipt.hash
+      )
+
+      if (verifyResponse.error) {
+        toast.error(verifyResponse.error.message)
+        return
+      }
+
+      toast.success("Minted successfully")
+      fetchCharacters() // Refresh the characters list
+    } catch (error) {
+      console.error("Minting error:", error)
+      toast.error("Failed to mint characters")
+    }
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none ">
         <div className="flex flex-col gap-4 z-10 relative justify-center items-center">
           <div className="px-20 w-max bg-white/10 border-white/10 border rounded-xl py-6 relative overflow-hidden font-volkhov text-xl">
@@ -70,19 +158,6 @@ const SummonModal = ({
           </div>
 
           <div className="flex gap-5 ">
-            <Link
-              href={summonType === "character" ? "/team" : "/inventory"}
-              className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
-            >
-              Next
-              <span
-                className={cn(
-                  "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
-                  "group-disabled:group-hover:h-[30px]",
-                  "bg-[#EF98E6]"
-                )}
-              />
-            </Link>
             {showCloseButton && (
               <button
                 onClick={() => setIsOpen(false)}
@@ -98,7 +173,7 @@ const SummonModal = ({
                 />
               </button>
             )}
-            {showMultiSummon && (
+            {/* {showMultiSummon && (
               <div className="bg-white/10 px-4 py-2 rounded-xl relative overflow-hidden border border-white/10">
                 <h3 className="font-volkhov">
                   {summonType === "character"
@@ -123,7 +198,35 @@ const SummonModal = ({
                 </button>
                 <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[50px] blur-[15px] z-[-1] group-hover:h-[40px] duration-500 transition-all bg-[#EF98E6]"></div>
               </div>
+            )} */}
+            {showMintButton && (
+              <button
+                onClick={handleMintCharacter}
+                className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
+              >
+                Mint {summonItems.length > 1 ? "All" : "Character"}
+                <span
+                  className={cn(
+                    "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+                    "group-disabled:group-hover:h-[30px]",
+                    "bg-[#EF98E6]"
+                  )}
+                />
+              </button>
             )}
+            <Link
+              href={summonType === "character" ? "/team" : "/inventory"}
+              className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
+            >
+              Next
+              <span
+                className={cn(
+                  "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+                  "group-disabled:group-hover:h-[30px]",
+                  "bg-[#EF98E6]"
+                )}
+              />
+            </Link>
           </div>
         </div>
 

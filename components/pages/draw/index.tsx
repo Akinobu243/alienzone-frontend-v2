@@ -376,6 +376,8 @@ const DrawPage = ({ portal }: { portal: number }) => {
         summonItems={summonItems}
         handleMultiSummon={() => handleSummon(true)}
         loading={loading}
+        showCloseButton
+        showMintButton={summonType === "character"}
       />
       <VideoPlayerModal
         isOpen={videoModalOpen}

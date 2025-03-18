@@ -1,30 +1,46 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Leaderboard } from "@/types"
+import Link from "next/link"
+import { Leaderboard, TeamResponse } from "@/types"
+import moment from "moment"
 
-import { getLeaderboard } from "@/lib/api"
+import { getLeaderboard, getTeam, likeUser } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import useDebounce from "@/hooks/useDebounce"
 import {
+  AddUserIcon,
   EnterpriseIcon,
   HeartIcon,
+  MessageIcon,
+  PlusIcon,
   SearchIcon,
   UserRound,
+  XLogo,
 } from "@/components/icons"
 
-const tabs = [
+enum LeaderboardTabs {
+  PLAYERS = "players",
+  ENTERPRISES = "enterprises",
+  LIKES = "likes",
+}
+const tabs: {
+  label: string
+  value: LeaderboardTabs
+  icon: React.ElementType
+}[] = [
   {
     label: "Players",
-    value: "players",
+    value: LeaderboardTabs.PLAYERS,
     icon: UserRound,
   },
   {
-    label: "Entreprises",
-    value: "entreprises",
+    label: "Enterprises",
+    value: LeaderboardTabs.ENTERPRISES,
     icon: EnterpriseIcon,
   },
   {
     label: "Liked",
-    value: "liked",
+    value: LeaderboardTabs.LIKES,
     icon: HeartIcon,
   },
 ]
@@ -74,18 +90,38 @@ const LEADERBOARD_COLUMNS = [
 
 const LeaderboardPage = () => {
   const [selectedUser, setSelectedUser] = useState<Leaderboard | null>(null)
-  const [activeTab, setActiveTab] = useState<string>("players")
+  const [selectedUserTeam, setSelectedUserTeam] = useState<TeamResponse | null>(
+    null
+  )
+  const [activeTab, setActiveTab] = useState<LeaderboardTabs>(
+    LeaderboardTabs.PLAYERS
+  )
   const [leaderboardData, setLeaderboardData] = useState<Leaderboard[]>([])
+  const [thisUser, setThisUser] = useState<Leaderboard | null>(null)
+  const [search, setSearch] = useState<string>("")
+  const debouncedSearch = useDebounce(search, 300)
 
   useEffect(() => {
-    getLeaderboard().then((res) => {
+    getLeaderboard({
+      filter: activeTab === LeaderboardTabs.PLAYERS ? undefined : activeTab,
+      search: debouncedSearch,
+    }).then((res) => {
       if (res.data) {
-        setLeaderboardData(res.data)
+        setLeaderboardData(res.data.users)
+        setThisUser(res.data.thisUser || null)
       }
     })
-  }, [])
+  }, [activeTab, debouncedSearch])
 
-  const handleTabChange = (tabValue: string) => {
+  useEffect(() => {
+    if (selectedUser) {
+      getTeam(selectedUser.walletAddress).then((res) => {
+        setSelectedUserTeam(res.data)
+      })
+    }
+  }, [selectedUser])
+
+  const handleTabChange = (tabValue: LeaderboardTabs) => {
     setActiveTab(tabValue)
     setSelectedUser(null)
   }
@@ -95,12 +131,25 @@ const LeaderboardPage = () => {
     0
   )
 
+  const handleLikeUser = (userId: number) => {
+    likeUser(userId).then((res) => {
+      if (res?.data?.liked !== undefined && selectedUser) {
+        const liked = res.data.liked
+        const updatedLeaderboardData = leaderboardData.map((user) =>
+          user.id === userId ? { ...user, isLiked: liked } : user
+        )
+        setLeaderboardData(updatedLeaderboardData)
+        setSelectedUser({ ...selectedUser, isLiked: liked })
+      }
+    })
+  }
+
   return (
     <div className="relative w-full h-full">
-      <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl  flex flex-col lg:flex-row gap-3 overflow-hidden">
+      <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl  flex flex-col lg:flex-row gap-3 overflow-hidden backdrop-blur-md">
         <div
           className={cn(
-            "w-full h-full backdrop-blur-md p-3",
+            "w-full h-full  p-3",
             selectedUser ? "hidden lg:block" : "block"
           )}
         >
@@ -128,11 +177,13 @@ const LeaderboardPage = () => {
                 type="text"
                 placeholder="Search"
                 className="bg-transparent outline-none w-full h-full"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 h-[calc(100vh-295px)] overflow-y-auto">
+          <div className="flex flex-col gap-2 h-[calc(100vh-295px)] overflow-y-auto bg-white/5 rounded px-2 py-1">
             {/* Table Header */}
             <div
               className={`grid grid-cols-${totalColSpan} gap-2 px-4 py-2 text-sm text-gray-400`}
@@ -156,78 +207,85 @@ const LeaderboardPage = () => {
               ))}
             </div>
 
-            {/* current user rank*/}
-            <div className="relative overflow-hidden min-h-max">
-              <div
-                className={cn(
-                  `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center`,
-                  "hover:bg-white/10 transition-colors duration-200",
-                  "bg-white/5"
-                )}
-                style={{
-                  gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
-                }}
-              >
-                {/* Rank Column */}
-                <div className="flex items-center">
+            {thisUser && (
+              <>
+                {/* current user rank*/}
+                <div className="relative overflow-hidden min-h-max">
                   <div
                     className={cn(
-                      "size-8 bg-white/10 rounded-full text-xs flex items-center justify-center font-inter"
+                      `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center`,
+                      "hover:bg-white/10 transition-colors duration-200",
+                      "bg-white/5"
                     )}
+                    style={{
+                      gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
+                    }}
                   >
-                    {1}
+                    {/* Rank Column */}
+                    <div className="flex items-center">
+                      <div
+                        className={cn(
+                          "size-8 bg-white/10 rounded-full text-xs flex items-center justify-center font-inter"
+                        )}
+                      >
+                        {thisUser?.rank}
+                      </div>
+                    </div>
+
+                    {/* Name Column */}
+                    <div className="flex items-center gap-2 col-span-2 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
+                        <img
+                          src="/images/user.png"
+                          alt="User"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <span className="font-medium truncate">
+                        {thisUser?.name}
+                      </span>
+                    </div>
+
+                    {/* Enterprise Column */}
+                    <div
+                      className={cn(
+                        "truncate",
+                        !LEADERBOARD_COLUMNS.find(
+                          (col) => col.id === "entreprise"
+                        )?.showOnSmall && "hidden md:block"
+                      )}
+                    >
+                      {thisUser?.enterprise}
+                    </div>
+
+                    {/* Level Column */}
+                    <div
+                      className={cn(
+                        "truncate",
+                        !LEADERBOARD_COLUMNS.find((col) => col.id === "level")
+                          ?.showOnSmall && "hidden md:block"
+                      )}
+                    >
+                      {thisUser?.level}
+                    </div>
+
+                    {/* Points Column */}
+                    <div className="flex items-center justify-between">
+                      <span>{thisUser?.reputation}</span>
+                    </div>
                   </div>
+                  <span
+                    className={cn(
+                      "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] duration-500 transition-all",
+                      "bg-[#5FFF95]"
+                    )}
+                  />
                 </div>
 
-                {/* Name Column */}
-                <div className="flex items-center gap-2 col-span-2 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
-                    <img
-                      src="/images/user.png"
-                      alt="User"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span className="font-medium truncate">John Doe</span>
-                </div>
-
-                {/* Enterprise Column */}
-                <div
-                  className={cn(
-                    "truncate",
-                    !LEADERBOARD_COLUMNS.find((col) => col.id === "entreprise")
-                      ?.showOnSmall && "hidden md:block"
-                  )}
-                >
-                  Appodial
-                </div>
-
-                {/* Level Column */}
-                <div
-                  className={cn(
-                    "truncate",
-                    !LEADERBOARD_COLUMNS.find((col) => col.id === "level")
-                      ?.showOnSmall && "hidden md:block"
-                  )}
-                >
-                  167
-                </div>
-
-                {/* Points Column */}
-                <div className="flex items-center justify-between">
-                  <span>2679</span>
-                </div>
-              </div>
-              <span
-                className={cn(
-                  "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] duration-500 transition-all",
-                  "bg-[#5FFF95]"
-                )}
-              />
-            </div>
-
-            {/* separator */}
-            <div className="w-full min-h-[1px] bg-white/10 my-2" />
+                {/* separator */}
+                <div className="w-full min-h-[1px] bg-white/10 my-2" />
+              </>
+            )}
 
             {/* Table Body */}
 
@@ -237,7 +295,7 @@ const LeaderboardPage = () => {
                 className={cn(
                   `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center`,
                   index % 2 === 0 ? "bg-white/5" : "bg-white/[0.02]",
-                  selectedUser?.name === item.name && "bg-white/30"
+                  selectedUser?.id === item.id && "bg-white/30"
                 )}
                 style={{
                   gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
@@ -313,27 +371,40 @@ const LeaderboardPage = () => {
             <div className="flex flex-col gap-4 h-full">
               {/* Main Profile Image with Gallery */}
               <div className="flex gap-2">
-                <div className="flex-1 aspect-square rounded overflow-hidden">
-                  <img
-                    src={selectedUser?.image}
-                    alt={selectedUser?.name}
-                    className="w-full h-full object-cover"
+                <div className="flex-1 aspect-square rounded overflow-hidden relative">
+                  <Image
+                    src={selectedUserTeam?.team[0].image || ""}
+                    alt="Character"
+                    fill
+                    className="object-cover z-10"
+                  />
+                  <Image
+                    src={selectedUserTeam?.team[0].element?.background || ""}
+                    alt="User's alien"
+                    fill
                   />
                 </div>
-                <div className="flex flex-col gap-2 w-[100px]">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <div
-                      key={index}
-                      className="aspect-square rounded overflow-hidden bg-white/5"
-                    >
-                      <img
-                        src="/images/user.png"
-                        alt="Gallery"
-                        className="w-full h-full object-cover"
-                      />
+                {selectedUserTeam?.team &&
+                  selectedUserTeam.team.filter(
+                    (teamMember) => !teamMember.isSelected
+                  ).length > 0 && (
+                    <div className="flex flex-col gap-2 w-[100px]">
+                      {selectedUserTeam.team
+                        .filter((teamMember) => !teamMember.isSelected)
+                        .map((teamMember) => (
+                          <div
+                            key={teamMember.id}
+                            className="aspect-square rounded overflow-hidden bg-white/5"
+                          >
+                            <img
+                              src={teamMember.image || ""}
+                              alt={teamMember.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ))}
                     </div>
-                  ))}
-                </div>
+                  )}
               </div>
 
               <div className="bg-white/5 rounded p-3">
@@ -369,7 +440,7 @@ const LeaderboardPage = () => {
                   <div className="flex justify-between items-center">
                     <span className=" font-inter">Entreprise</span>
                     <span className="font-medium">
-                      {selectedUser?.enterprise}
+                      {selectedUser?.enterprise || "-"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -384,24 +455,49 @@ const LeaderboardPage = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-inter">STAR earned</span>
-                    <span className="font-medium">1401 (1753.02$)</span>
+                    <span className="font-medium">
+                      {selectedUser?.stars} (0.02$)
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-inter">Account creation</span>
-                    <span className="font-medium">14 April 2024</span>
+                    <span className="font-medium">
+                      {moment(selectedUser?.createdAt).format("DD MMM YYYY")}
+                    </span>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="grid grid-cols-5 gap-2 mt-auto">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <button
-                      key={index}
-                      className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12"
+                  <button
+                    className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12"
+                    onClick={() => handleLikeUser(selectedUser.id)}
+                  >
+                    <HeartIcon
+                      className={cn(
+                        "w-5 h-5 mx-auto ",
+                        selectedUser?.isLiked && "fill-[#FF4141] text-[#FF4141]"
+                      )}
+                    />
+                  </button>
+                  <button className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12">
+                    <MessageIcon className="w-5 h-5 mx-auto" />
+                  </button>
+                  <button className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12">
+                    <AddUserIcon className="w-5 h-5 mx-auto" />
+                  </button>
+                  <button className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12">
+                    <PlusIcon className="w-5 h-5 mx-auto" />
+                  </button>
+                  {selectedUser?.twitterId && (
+                    <Link
+                      href={`https://x.com/${selectedUser?.twitterId}`}
+                      target="_blank"
+                      className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12 flex items-center justify-center"
                     >
-                      <HeartIcon className="w-5 h-5 mx-auto" />
-                    </button>
-                  ))}
+                      <XLogo className="size-4 mx-auto" />
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

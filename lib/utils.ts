@@ -1,6 +1,8 @@
 import { Raid, RaidHistoryResponse } from "@/types"
+import { ConnectedWallet } from "@privy-io/react-auth"
 import { clsx, type ClassValue } from "clsx"
 import { ethers } from "ethers"
+import toast from "react-hot-toast"
 import { twMerge } from "tailwind-merge"
 import * as chains from "viem/chains"
 
@@ -237,4 +239,38 @@ export async function getZoneBalance(
     console.error("Error fetching ZONE balance:", error)
     return 0
   }
+}
+
+export const handleSignMessage = async (
+  message: string,
+  wallet: ConnectedWallet,
+  signMessage: any
+): Promise<string | null> => {
+  let sign = ""
+
+  if (wallet.connectorType === "embedded") {
+    const response = await signMessage({
+      message,
+    })
+    sign = response.signature
+  } else {
+    const provider = await wallet.getEthereumProvider()
+    if (!provider) {
+      toast.error("Please connect a wallet")
+      return null
+    }
+
+    const ethersProvider = new ethers.BrowserProvider(provider)
+    const signer = await ethersProvider.getSigner()
+
+    const response = await signer.signMessage(message)
+    sign = response
+  }
+
+  if (!sign) {
+    toast.error("Please connect a wallet")
+    return null
+  }
+
+  return sign
 }

@@ -3,12 +3,11 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useLogout, usePrivy, useWallets } from "@privy-io/react-auth"
-import { ethers } from "ethers"
 import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
-import { getChain } from "@/lib/utils"
+import { getChain, handleSignMessage } from "@/lib/utils"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
@@ -81,28 +80,13 @@ const ConnectModal = ({
       )
     }
 
-    let sign = ""
+    let sign = null
 
-    if (wallet.connectorType === "embedded") {
-      const response = await signMessage({
-        message: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
-      })
-      sign = response.signature
-    } else {
-      const provider = await wallet.getEthereumProvider()
-      if (!provider) {
-        toast.error("Please connect a wallet")
-        return
-      }
-
-      const ethersProvider = new ethers.BrowserProvider(provider)
-      const signer = await ethersProvider.getSigner()
-
-      const response = await signer.signMessage(
-        process.env.NEXT_PUBLIC_SIGN_MESSAGE!
-      )
-      sign = response
-    }
+    sign = await handleSignMessage(
+      process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+      wallet,
+      signMessage
+    )
 
     if (!sign) {
       toast.error("Please connect a wallet")

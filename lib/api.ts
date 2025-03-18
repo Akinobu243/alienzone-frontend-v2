@@ -279,8 +279,17 @@ export const updateTeam = async ({
   })
 }
 
-export const getTeam = async (): Promise<ApiResponse<TeamResponse>> => {
-  const response = await apiManager.get<TeamResponse>("/profile/get-team")
+export const getTeam = async (
+  walletAddress?: string
+): Promise<ApiResponse<TeamResponse>> => {
+  const params: Record<string, string | number | boolean> = {}
+  if (walletAddress) {
+    params.walletAddress = walletAddress
+  }
+  const response = await apiManager.get<TeamResponse>(
+    "/profile/get-team",
+    params
+  )
   return response
 }
 
@@ -368,6 +377,7 @@ export const burnGear = async (
   )
   return response
 }
+
 export const getCharacterTiers = async (
   characterId: number
 ): Promise<ApiResponse<{ characters: Character[]; success: boolean }>> => {
@@ -380,9 +390,85 @@ export const getCharacterTiers = async (
   return response
 }
 
-export const getLeaderboard = async (): Promise<ApiResponse<Leaderboard[]>> => {
-  const response = await apiManager.get<Leaderboard[]>(
-    "/profile/get-leaderboard"
+export const getLeaderboard = async ({
+  offset,
+  limit,
+  filter,
+  search,
+}: {
+  offset?: number
+  limit?: number
+  filter?: "enterprises" | "likes"
+  search?: string
+}): Promise<ApiResponse<{ users: Leaderboard[]; thisUser?: Leaderboard }>> => {
+  const params: Record<string, string | number | boolean> = {}
+  if (offset) {
+    params.offset = offset
+  }
+  if (limit) {
+    params.limit = limit
+  }
+  if (filter) {
+    params.filter = filter
+  }
+  if (search) {
+    params.search = search
+  }
+
+  const response = await apiManager.get<{
+    users: Leaderboard[]
+    thisUser?: Leaderboard
+  }>(`/profile/get-leaderboard`, params)
+  return response
+}
+
+export const mintCharacters = async (
+  characterIds: number[],
+  signature: string
+): Promise<
+  ApiResponse<{
+    success: boolean
+    characterIds: number[]
+    serverSignature: string
+    transactionId: number
+  }>
+> => {
+  const response = await apiManager.post<{
+    success: true
+    characterIds: number[]
+    serverSignature: string
+    transactionId: number
+  }>("/character/mint-character", {
+    characterIds,
+    signature,
+  })
+  return response
+}
+
+export const verifyMintTransaction = async (
+  mintTransactionId: number,
+  serverSignature: string,
+  txHash: string
+): Promise<ApiResponse<boolean>> => {
+  const response = await apiManager.post<boolean>(
+    "/character/verify-mint-transaction",
+    {
+      mintTransactionId,
+      serverSignature,
+      txHash,
+    }
+  )
+  return response
+}
+
+export const likeUser = async (
+  userId: number
+): Promise<ApiResponse<{ liked: boolean }>> => {
+  const response = await apiManager.post<{ liked: boolean }>(
+    "/profile/like-user",
+    {
+      userId,
+    }
   )
   return response
 }
