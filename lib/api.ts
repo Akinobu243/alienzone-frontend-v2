@@ -3,6 +3,7 @@ import {
   AuthUserData,
   BurnGearResponse,
   Character,
+  DailyReward,
   Gear,
   InventoryItem,
   Leaderboard,
@@ -469,6 +470,22 @@ export const likeUser = async (
     {
       userId,
     }
+  )
+  return response
+}
+
+export const getDailyRewards = async (): Promise<
+  ApiResponse<DailyReward[]>
+> => {
+  const response = await apiManager.get<DailyReward[]>(
+    "/profile/get-daily-rewards"
+  )
+  return response
+}
+
+export const awardDailyRewards = async (): Promise<ApiResponse<boolean>> => {
+  const response = await apiManager.post<boolean>(
+    "/profile/award-daily-rewards"
   )
   return response
 }

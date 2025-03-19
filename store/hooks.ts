@@ -8,6 +8,12 @@ import {
   resetCreateStatus,
 } from "./slices/aliensSlice"
 import { clearCharacters, fetchCharacters } from "./slices/charactersSlice"
+import {
+  claimDailyRewards,
+  clearDailyRewards,
+  fetchDailyRewards,
+  resetAwardStatus,
+} from "./slices/dailyRewardsSlice"
 import { clearInventory, fetchUserInventory } from "./slices/inventorySlice"
 import { fetchRaidHistory, fetchRaids } from "./slices/raidsSlice"
 import {
@@ -108,5 +114,26 @@ export const useInventory = () => {
     ...useAppSelector((state) => state.inventory),
     fetchInventory: () => dispatch(fetchUserInventory()),
     clearInventory: () => dispatch(clearInventory()),
+  }
+}
+
+export const useDailyRewards = () => {
+  const dispatch = useAppDispatch()
+  const dailyRewardsState = useAppSelector((state) => state.dailyRewards)
+
+  const handleClaimRewards = async () => {
+    try {
+      await dispatch(claimDailyRewards()).unwrap()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  return {
+    ...dailyRewardsState,
+    fetchDailyRewards: () => dispatch(fetchDailyRewards()),
+    claimRewards: handleClaimRewards,
+    resetAwardStatus: () => dispatch(resetAwardStatus()),
+    clearDailyRewards: () => dispatch(clearDailyRewards()),
   }
 }

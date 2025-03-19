@@ -300,3 +300,52 @@ export enum ForgeTabs {
   PROMOTION = "promotion",
   FORGE = "forge",
 }
+
+export enum DailyRewardType {
+  STARS = "STARS",
+  ITEM = "ITEM",
+  XP = "XP",
+}
+
+export interface DailyReward {
+  id: number
+  type: DailyRewardType
+  item?: Item
+  itemId: number
+  amount: number
+  claimed: boolean
+  current: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Item {
+  id: number
+  type: ItemType
+  quality: ItemQuality
+  description: string
+  image: string
+  users: UserItem[]
+  dailyRewards: DailyReward[]
+}
+
+export enum ItemType {
+  SHEARS = "SHEARS",
+  CUT = "CUT",
+  KNIFE = "KNIFE",
+}
+
+export enum ItemQuality {
+  BRONZE = "BRONZE",
+  SILVER = "SILVER",
+  GOLDEN = "GOLDEN",
+}
+
+export interface UserItem {
+  id: number
+  userId: number
+  itemId: number
+  quantity: number
+  user: Profile
+  item: Item
+}
