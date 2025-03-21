@@ -39,7 +39,7 @@ const TopBar = ({ className }: { className?: string }) => {
         {topbarItems.map((item, index) => (
           <IconButton
             key={index}
-            className="size-10 lg:size-6 rounded-lg opacity-50 pointer-events-none p-1"
+            className="size-10 lg:size-11 rounded-lg opacity-50 pointer-events-none p-1"
           >
             <item.icon className="size-4 lg:size-5" />
           </IconButton>

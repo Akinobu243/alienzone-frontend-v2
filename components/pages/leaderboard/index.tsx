@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import useDebounce from "@/hooks/useDebounce"
 import {
   AddUserIcon,
+  ArrowBack,
   EnterpriseIcon,
   HeartIcon,
   MessageIcon,
@@ -363,12 +364,19 @@ const LeaderboardPage = () => {
         {selectedUser && (
           <div
             className={cn(
-              "  p-3 overflow-y-auto transition-all duration-300 rounded-r-xl",
+              "  p-3 overflow-y-auto transition-all duration-300 rounded-r-xl flex flex-col",
               "fixed inset-0 z-50 lg:static lg:z-auto lg:w-full lg:max-w-[550px] lg:inset-auto",
               "lg:opacity-100 lg:translate-y-0"
             )}
           >
-            <div className="flex flex-col gap-4 h-full">
+            <button
+              onClick={() => setSelectedUser(null)}
+              className="flex items-center justify-between gap-2 bg-white/5 rounded p-3 mb-3 lg:hidden border border-white/10 w-full"
+            >
+              <span>Back to Leadeboard list</span>
+              <ArrowBack className="w-4 h-4" />
+            </button>
+            <div className="flex flex-col gap-4 flex-1">
               {/* Main Profile Image with Gallery */}
               <div className="flex gap-2">
                 <div className="flex-1 aspect-square rounded overflow-hidden relative">
@@ -407,7 +415,7 @@ const LeaderboardPage = () => {
                   )}
               </div>
 
-              <div className="bg-white/5 rounded p-3">
+              <div className="bg-white/5 rounded p-3 flex-1 flex flex-col">
                 {/* Profile Info */}
                 <div className="flex items-center justify-between bg-white/5 rounded-xl p-3">
                   <div className="flex items-center gap-2">
