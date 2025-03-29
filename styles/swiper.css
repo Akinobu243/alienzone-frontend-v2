@@ -1,0 +1,46 @@
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+.swiper-slide {
+  transition: all 300ms ease;
+  opacity: 0.5;
+  transform: scale(0.85);
+}
+
+.swiper-slide-active {
+  z-index: 10;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.swiper-slide-active .forge-item {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.swiper-slide-prev,
+.swiper-slide-next {
+  opacity: 0.5;
+  transform: scale(0.85);
+}
+
+/* Hide all slides except active, prev and next */
+.swiper-slide:not(.swiper-slide-active):not(.swiper-slide-prev):not(
+    .swiper-slide-next
+  ) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Adjust spacing between slides */
+.swiper {
+  padding: 0 20px;
+}
+
+/* Hide navigation arrows when at the end */
+.swiper-button-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

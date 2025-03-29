@@ -1,0 +1,312 @@
+import { useState } from "react"
+import Image from "next/image"
+import { MessageSquare, Plus } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+
+interface Quest {
+  id: number
+  icon: string
+  title: string
+  timeLeft: string
+  action: string
+  type: "claim" | "action" | "progress"
+  progress?: string
+  completed?: boolean
+}
+
+interface Reward {
+  type: "XP" | "STAR" | "ITEM"
+  amount: string
+  day: number
+  claimed: boolean
+  icon: string
+}
+
+// Temp data for daily quests
+const DAILY_QUESTS: Quest[] = [
+  {
+    id: 1,
+    icon: "/images/cat.jpeg",
+    title: "Daily Login Bonus",
+    timeLeft: "1h left",
+    action: "Claim",
+    type: "claim",
+  },
+  {
+    id: 2,
+    icon: "/images/girl.jpeg",
+    title: "Complete 3 Raids",
+    timeLeft: "3h left",
+    progress: "2/3",
+    action: "Go",
+    type: "action",
+  },
+  {
+    id: 3,
+    icon: "/images/cat.jpeg",
+    title: "Spend 1000 Coins",
+    timeLeft: "5h left",
+    progress: "750/1000",
+    action: "Go",
+    type: "progress",
+  },
+]
+
+// Temp data for weekly quests
+const WEEKLY_QUESTS: Quest[] = [
+  {
+    id: 1,
+    icon: "/images/cat.jpeg",
+    title: "Connect on AlienRaids",
+    timeLeft: "1h left",
+    action: "Claim",
+    type: "claim",
+  },
+  {
+    id: 2,
+    icon: "/images/girl.jpeg",
+    title: "Use the Lucky Wheel 5 times",
+    timeLeft: "1h left",
+    progress: "20/20",
+    action: "Go",
+    type: "action",
+  },
+  {
+    id: 3,
+    icon: "/images/cat.jpeg",
+    title: "Buy 5 items in the Store",
+    timeLeft: "6h left",
+    progress: "5/5",
+    action: "Go",
+    type: "progress",
+    completed: true,
+  },
+  {
+    id: 4,
+    icon: "/images/girl.jpeg",
+    title: "Use the Lucky Wheel 5 times",
+    timeLeft: "12h left",
+    progress: "5/5",
+    action: "Go",
+    type: "action",
+  },
+  {
+    id: 5,
+    icon: "/images/cat.jpeg",
+    title: "Collect your first Raids rewards",
+    timeLeft: "24h left",
+    action: "Claim",
+    type: "claim",
+  },
+  {
+    id: 6,
+    icon: "/images/girl.jpeg",
+    title: "Send your team on a Raid",
+    timeLeft: "36h left",
+    action: "Go",
+    type: "progress",
+  },
+]
+
+const REWARDS: Reward[] = [
+  {
+    type: "XP",
+    amount: "3000XP",
+    day: 1,
+    claimed: true,
+    icon: "/images/xp.png",
+  },
+  {
+    type: "XP",
+    amount: "5000XP",
+    day: 2,
+    claimed: true,
+    icon: "/images/xp.png",
+  },
+  {
+    type: "STAR",
+    amount: "150 STAR",
+    day: 3,
+    claimed: true,
+    icon: "/images/stars.png",
+  },
+  {
+    type: "XP",
+    amount: "800XP",
+    day: 4,
+    claimed: true,
+    icon: "/images/xp.png",
+  },
+  {
+    type: "STAR",
+    amount: "300 STAR",
+    day: 5,
+    claimed: false,
+    icon: "/images/stars.png",
+  },
+  {
+    type: "STAR",
+    amount: "500 STAR",
+    day: 6,
+    claimed: false,
+    icon: "/images/stars.png",
+  },
+]
+
+const QuestsPage = () => {
+  const [activeTab, setActiveTab] = useState<"daily" | "weekly">("weekly")
+  const [timer, setTimer] = useState("06:54:09")
+
+  const currentQuests = activeTab === "daily" ? DAILY_QUESTS : WEEKLY_QUESTS
+
+  // Calculate progress percentage based on claimed rewards
+  const claimedCount = REWARDS.filter((reward) => reward.claimed).length
+  const progressPercentage = (claimedCount / REWARDS.length) * 100
+
+  return (
+    <div className="w-full h-full rounded-xl backdrop-blur-xl border border-white/10 p-3 flex flex-col gap-3">
+      {/* Tabs */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setActiveTab("daily")}
+          className={cn(
+            "flex items-center gap-3 min-w-32 px-4 py-3 rounded-lg  border border-white/10 transition-all duration-200 font-inter justify-between",
+            activeTab === "daily" ? "bg-white/20" : "bg-white/5"
+          )}
+        >
+          Daily
+          <MessageSquare className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => setActiveTab("weekly")}
+          className={cn(
+            "flex items-center gap-3 min-w-32 px-4 py-3 rounded-lg  border border-white/10 transition-all duration-200 font-inter justify-between",
+            activeTab === "weekly" ? "bg-white/20" : "bg-white/5"
+          )}
+        >
+          Weekly
+          <Plus className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Points Section */}
+      <div className="bg-white/5 rounded-lg p-3 flex gap-4 flex-col lg:flex-row">
+        {/* Left side - Title and Timer */}
+        <div className="flex flex-col gap-1 bg-white/5 rounded-lg p-3  items-center justify-center text-center h-full px-32">
+          <h2 className="text-2xl font-semibold text-white">
+            {activeTab === "daily" ? "Daily Points" : "Weekly Points"}
+          </h2>
+          <p className="text-sm text-[#8E9297]">
+            New Quests in{" "}
+            <span className="text-white font-medium tracking-wider">
+              {timer}
+            </span>
+          </p>
+        </div>
+
+        {/* Right side - Progress Bar and Rewards */}
+        <div className="flex-1 bg-white/5 rounded-lg p-3">
+          {/* Reward Points */}
+          <div className="flex justify-between mt-4">
+            {REWARDS.map((reward, index) => (
+              <div key={index} className="flex flex-col  gap-2">
+                {/* Reward Box */}
+                <div className="relative flex items-center gap-3 rounded-xl lg:min-w-[120px]">
+                  {/* Icon Container */}
+                  <div className="relative max-lg:hidden">
+                    <div className="w-10 h-10 rounded bg-white/5 border border-white/10 flex items-center justify-center p-1.5">
+                      <Image
+                        src={reward.icon}
+                        alt={reward.type}
+                        width={32}
+                        height={32}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Amount */}
+                  <div className="flex flex-col">
+                    <span className="text-[11px] text-[#8E9297]">
+                      Day {reward.day}
+                    </span>
+                    <span className="text-sm text-white font-medium">
+                      {reward.amount}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Progress Indicator */}
+                <div className="ml-4">
+                  <div
+                    className={cn(
+                      "size-2.5 rounded-full border-2  border-white/10",
+                      reward.claimed ? "bg-[#EA66FF]" : "bg-white/10"
+                    )}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Progress Bar */}
+          <div className="relative h-1.5 bg-white/10 rounded-full mt-4">
+            <div
+              className="absolute left-0 top-0 h-full bg-[#EA66FF] rounded-full"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Quests List */}
+      <div className="flex-1 overflow-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        {currentQuests.map((quest) => (
+          <div
+            key={quest.id}
+            className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
+          >
+            <div className="w-12 h-12 rounded-lg overflow-hidden">
+              <Image
+                src={quest.icon}
+                alt={quest.title}
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex-1">
+              <h3 className="text-white">{quest.title}</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-white/50">{quest.timeLeft}</span>
+                {quest.progress && (
+                  <>
+                    <span className="text-white/20">•</span>
+                    <span className="text-sm text-white/50">
+                      {quest.progress}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <button
+              className={cn(
+                "px-6 py-2 rounded-lg",
+                quest.type === "progress" && quest.completed
+                  ? "bg-[#62B67C] text-white"
+                  : "bg-white/10 text-white hover:bg-white/20"
+              )}
+            >
+              {quest.action}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default QuestsPage

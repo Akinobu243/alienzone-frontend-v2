@@ -65,8 +65,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <RightSidebar />
           </div>
           <p className="text-center text-sm text-white/50 py-4 max-lg:hidden z-10 ">
-            © 2024 Alienzone All rights reserved. Reach out to us at
-            team@alienzone.io
+            © {new Date().getFullYear()} Alienzone All rights reserved. Reach
+            out to us at team@alienzone.io
           </p>
         </div>
       </Loader>

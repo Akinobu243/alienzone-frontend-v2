@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react"
 import Link from "next/link"
-import { useAliens } from "@/store/hooks"
 
 import { cn } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
@@ -12,11 +11,10 @@ import RightSidebar from "@/components/common/right-sidebar"
 import TopBar from "@/components/common/top-bar"
 import { MenuIcon } from "@/components/icons"
 import AlienzoneIcon from "@/components/icons/alienzone"
-import FriendsPage from "@/components/pages/friends/page"
+import QuestsPage from "@/components/pages/quests"
 
 const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
-  const { alien } = useAliens()
   return (
     <Loader>
       <Suspense
@@ -26,6 +24,9 @@ const Page = () => {
           </div>
         }
       >
+        <div className="absolute top-10 left-24 flex gap-3 z-20 h-14 items-center max-lg:hidden">
+          <h1>Quests</h1>
+        </div>
         <div
           className={cn(
             " bg-black max-lg:py-4   relative flex flex-col h-screen"
@@ -33,14 +34,13 @@ const Page = () => {
         >
           <div className=" relative z-20 pb-2 lg:hidden">
             <div className=" flex justify-between items-center  ">
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2">
                 <Link
                   href="/"
                   className="border border-gray-light rounded-normal cursor-pointer backdrop-blur-[40px] flex justify-center items-center size-14 "
                 >
                   <AlienzoneIcon className="size-6" />
                 </Link>
-                <h1 className="text-white text-3xl ">Friends</h1>
               </div>
               <IconButton
                 onClick={() => setIsOpenMobileMenu(!isOpenMobileMenu)}
@@ -54,46 +54,32 @@ const Page = () => {
               <TopBar className="relative  top-auto right-auto lg:hidden items-center" />
             )}
           </div>
-          <div className="relative flex-1 w-full overflow-hidden flex flex-col">
-            <div className="relative z-10 h-full flex-1 flex flex-col overflow-hidden">
+          <div className="relative flex-1  w-full   overflow-hidden flex flex-col ">
+            <div className="relative z-10 h-full flex-1   flex flex-col overflow-auto">
               <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
               <TopBar className="absolute right-8 top-10 max-lg:hidden " />
-              <div className="absolute top-10 left-24  gap-3 z-20 hidden lg:flex h-14 items-center">
-                <h1 className="text-white text-3xl ">Friends</h1>
-              </div>
-              <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl lg:min-h-[calc(100vh-140px)] max-lg:hidden">
-                <div className="absolute inset-0 bg-cover bg-bottom bg-no-repeat bg-[url('/images/wheel/wheel-bg.png')]">
+
+              <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
+                <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('/images/pages/forge.jpeg')]">
                   <div
-                    className="absolute inset-0"
+                    className="absolute inset-0 "
                     style={{
                       background:
-                        "radial-gradient(91.36% 91.36% at 31.6% 44.58%, rgba(0, 0, 0, 0) 0%, #000000 100%)",
+                        "radial-gradient(74.8% 74.8% at 50% 35%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.54) 100%),radial-gradient(94.72% 94.72% at 50% 31.6%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.81) 100%)",
                     }}
                   ></div>
                 </div>
 
-                <div className="w-full h-full z-10 pb-12 pr-8 pl-24 pt-28">
-                  <div className="h-full">
-                    <FriendsPage />
-                  </div>
+                <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-28 relative flex flex-col items-center justify-center gap-8  mx-auto ">
+                  <QuestsPage />
                 </div>
               </div>
 
-              <div className="flex flex-col rounded-2xl z-10 gap-3 lg:hidden flex-1 h-full">
-                <div className="h-full">
-                  <FriendsPage />
-                </div>
+              <div className="flex flex-col rounded-2xl  z-10  gap-3 lg:hidden flex-1">
+                <QuestsPage />
               </div>
-              <div className="fixed inset-0 bg-cover bg-bottom bg-no-repeat bg-[url('/images/wheel/wheel-bg.png')]">
-                <div
-                  className="absolute inset-0 "
-                  style={{
-                    background:
-                      "radial-gradient(91.36% 91.36% at 31.6% 44.58%, rgba(0, 0, 0, 0) 0%, #000000 100%)",
-                  }}
-                ></div>
-              </div>
+
               {/* Background Gradients */}
               <div
                 className="fixed inset-0 "
