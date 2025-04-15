@@ -17,6 +17,7 @@ import DojoPage from "@/components/pages/dojo/page"
 const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
   const { alien } = useAliens()
+
   return (
     <Loader>
       <Suspense
@@ -59,33 +60,7 @@ const Page = () => {
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
               <TopBar className="absolute right-8 top-10 max-lg:hidden " />
 
-              <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
-                <div
-                  className="absolute inset-0 bg-[url('/images/pages/team-bg.jpg')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/team-bg.jpg')]"
-                  style={{
-                    backgroundImage: `url(${alien?.element?.background})`,
-                  }}
-                >
-                  <div
-                    className="absolute inset-0 "
-                    style={{
-                      background:
-                        "radial-gradient(74.8% 74.8% at 50% 35%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.54) 100%),radial-gradient(94.72% 94.72% at 50% 31.6%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.81) 100%)",
-                    }}
-                  ></div>
-
-                  <div
-                    style={{
-                      backgroundImage: `url(${alien?.image})`,
-                    }}
-                    className="w-full h-full bg-contain bg-center bg-no-repeat relative z-10"
-                  ></div>
-                </div>
-
-                <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-28 relative flex flex-col items-center justify-center gap-8  mx-auto ">
-                  <DojoPage />
-                </div>
-              </div>
+              <DojoPage />
 
               <div className="flex flex-col rounded-2xl  z-10  gap-3 lg:hidden flex-1">
                 <DojoPage />

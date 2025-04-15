@@ -26,12 +26,16 @@ interface CreateAlienProps {
   traits: Traits | null
   selectedTraits: {
     hair: string
+    hairId: number
     face: string
+    faceId: number
   }
   setSelectedTraits: Dispatch<
     SetStateAction<{
       hair: string
+      hairId: number
       face: string
+      faceId: number
     }>
   >
 }
@@ -105,6 +109,8 @@ const CreateAlien = ({
       formData.append("name", createAlienData.name)
       formData.append("elementId", createAlienData.elementId?.toString() || "")
       formData.append("image", file)
+      formData.append("hairId", selectedTraits.hairId?.toString() || "")
+      formData.append("faceId", selectedTraits.faceId?.toString() || "")
       formData.append("strengthPoints", "100") // Default strength points
 
       await createAlien(formData)
@@ -223,6 +229,7 @@ const CreateAlien = ({
                           setSelectedTraits({
                             ...selectedTraits,
                             hair: hair.image,
+                            hairId: hair.id,
                           })
                         }
                       >
@@ -260,6 +267,7 @@ const CreateAlien = ({
                           setSelectedTraits({
                             ...selectedTraits,
                             face: face.image,
+                            faceId: face.id,
                           })
                         }
                       >

@@ -70,9 +70,13 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
   const [selectedTraits, setSelectedTraits] = useState<{
     hair: string
     face: string
+    hairId: number
+    faceId: number
   }>({
     hair: "",
     face: "",
+    hairId: 0,
+    faceId: 0,
   })
 
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)
@@ -87,6 +91,8 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         setSelectedTraits({
           hair: res.data.alienParts.HAIR[0].image,
           face: res.data.alienParts.FACE[0].image,
+          hairId: res.data.alienParts.HAIR[0].id,
+          faceId: res.data.alienParts.FACE[0].id,
         })
       }
     })
@@ -131,6 +137,8 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
     // }
     setCurrentStep((previous) => previous + 1)
   }
+
+  console.log("selectedTraits ===>", selectedTraits)
 
   return (
     <main className="w-full h-screen relative">

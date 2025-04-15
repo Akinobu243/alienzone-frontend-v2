@@ -1,9 +1,11 @@
 import {
   Alien,
+  AlienPartsGroup,
   AuthUserData,
   BurnGearResponse,
   Character,
   DailyRewardsResponse,
+  EquippedAlienParts,
   Gear,
   InventoryItem,
   Leaderboard,
@@ -185,6 +187,16 @@ export const createAlien = async (
     // headers: {
     //   "Content-Type": "multipart/form-data",
     // },
+  })
+}
+
+export const updateAlien = async (
+  data: FormData
+): Promise<ApiResponse<{ alien: Alien; success: boolean }>> => {
+  return apiManager.call<{ alien: Alien; success: boolean }>({
+    url: "/profile/update-alien-image",
+    method: "POST",
+    data,
   })
 }
 
@@ -521,5 +533,64 @@ export const getWheelItems = async (): Promise<
   ApiResponse<{ name: string }[]>
 > => {
   const response = await apiManager.get<{ name: string }[]>("/wheel/rewards")
+  return response
+}
+
+export const getOwnedAlienParts = async (
+  walletAddress?: string
+): Promise<
+  ApiResponse<{ userAlienParts: AlienPartsGroup[]; elements: Element[] }>
+> => {
+  const params: Record<string, string | number | boolean> = {}
+  if (walletAddress) {
+    params.walletAddress = walletAddress
+  }
+  const response = await apiManager.get<{
+    userAlienParts: AlienPartsGroup[]
+    elements: Element[]
+  }>("/profile/get-owned-alien-parts", params)
+
+  if (response.data) {
+    return {
+      data: {
+        userAlienParts: response.data.userAlienParts,
+        elements: response.data.elements,
+      },
+      error: null,
+    }
+  }
+
+  return {
+    data: null,
+    error: response.error,
+  }
+}
+
+export const getEquippedAlienParts = async (
+  alienId?: number
+): Promise<ApiResponse<EquippedAlienParts>> => {
+  const params: Record<string, string | number | boolean> = {}
+  if (alienId) {
+    params.alienId = alienId
+  }
+  const response = await apiManager.get<EquippedAlienParts>(
+    "/profile/get-equipped-alien-parts",
+    params
+  )
+  console.log("getEquippedAlienParts response ===>", response)
+  return response
+}
+
+export const equipAlienPart = async ({
+  alienId,
+  partIds,
+}: {
+  alienId: number
+  partIds: number[]
+}): Promise<ApiResponse<{ success: boolean; message: string }>> => {
+  const response = await apiManager.post("/profile/equip-alien-part", {
+    alienId,
+    partIds,
+  })
   return response
 }

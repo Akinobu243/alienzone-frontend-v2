@@ -373,3 +373,52 @@ export enum RuneType {
   EPIC = "EPIC",
   LEGENDARY = "LEGENDARY",
 }
+
+export interface AlienPartItem {
+  id: number
+  type: string
+  image: string
+  name: string
+  description: string
+  price: number
+  isDefault: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AlienPartsGroup {
+  id: number
+  name: string
+  description: string
+  userId: number
+  createdAt: string
+  updatedAt: string
+  elementId: number
+  parts: AlienPartItem[]
+}
+
+interface TraitItem {
+  id: number
+  type: string
+  image: string
+  name: string
+  description: string
+  price: number
+  isDefault: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface EquippedAlienParts {
+  body: TraitItem | null
+  clothes: TraitItem | null
+  head: TraitItem | null
+  eyes: TraitItem | null
+  mouth: TraitItem | null
+  hair: TraitItem | null
+  marks: TraitItem | null
+  powers: TraitItem | null
+  accessories: TraitItem | null
+  face: TraitItem | null
+  background?: TraitItem | null
+}

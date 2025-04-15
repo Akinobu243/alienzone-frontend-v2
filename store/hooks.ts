@@ -6,6 +6,7 @@ import {
   createNewAlien,
   fetchAliens,
   resetCreateStatus,
+  updateAlienImage,
 } from "./slices/aliensSlice"
 import { clearCharacters, fetchCharacters } from "./slices/charactersSlice"
 import {
@@ -62,10 +63,20 @@ export const useAliens = () => {
     }
   }
 
+  const handleUpdateAlienImage = async (data: FormData) => {
+    try {
+      const response = await dispatch(updateAlienImage(data)).unwrap()
+      return response
+    } catch (error) {
+      throw error
+    }
+  }
+
   return {
     ...aliensState,
     fetchAliens: () => dispatch(fetchAliens()),
     createAlien: handleCreateAlien,
+    updateAlienImage: handleUpdateAlienImage,
     resetCreateStatus: () => dispatch(resetCreateStatus()),
   }
 }
