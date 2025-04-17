@@ -1,12 +1,16 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useAliens, useProfile } from "@/store/hooks"
 import { Search } from "lucide-react"
 
+import { getFriendsList, getMessages, sendMessage } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { ArrowBack } from "@/components/icons"
 
 type Message = {
   id: string
-  sender: string
+  sender?: string
+  senderId: number
+  senderWalletAddress: string
   content: string
   timestamp: number // Unix timestamp in milliseconds
 }
@@ -17,6 +21,7 @@ type MessageGroup = {
 }
 
 type Friend = {
+  id: number
   image: string
   name: string
   level: number
@@ -181,14 +186,40 @@ const FriendsPage = () => {
   const [activeTab, setActiveTab] = useState("all")
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null)
   const [messageInput, setMessageInput] = useState("")
-
+  const [friends, setFriends] = useState<Friend[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const openChat = (friend: Friend) => {
     setSelectedFriend(friend)
   }
+  const { alien } = useAliens()
+  const { data: profile } = useProfile()
+
+  console.log("alien ===>", alien)
+  console.log("profile ===>", profile)
 
   const handleBack = () => {
     setSelectedFriend(null)
   }
+
+  useEffect(() => {
+    getFriendsList().then((res) => {
+      console.log("getFriendsList response ===>", res)
+      if (res.data) {
+        setFriends(res.data)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    if (selectedFriend) {
+      getMessages(selectedFriend.id).then((res) => {
+        console.log("getMessages response ===>", res)
+        if (res.data) {
+          setMessages(res.data)
+        }
+      })
+    }
+  }, [selectedFriend])
 
   const groupMessagesByDate = (messages: Message[]): MessageGroup[] => {
     const groups: { [key: string]: Message[] } = {}
@@ -210,6 +241,37 @@ const FriendsPage = () => {
       date,
       messages,
     }))
+  }
+
+  const handleSendMessage = async () => {
+    if (!messageInput.trim() || !selectedFriend || !profile) return
+
+    const newMessage = {
+      id: `temp_${Date.now()}`,
+      senderId: profile.id,
+      senderWalletAddress: profile.walletAddress,
+      content: messageInput,
+      timestamp: Date.now(),
+    }
+
+    setMessages((prevMessages) => [...prevMessages, newMessage])
+
+    setMessageInput("")
+
+    await callSendMessage()
+  }
+
+  const callSendMessage = async () => {
+    if (!selectedFriend || !profile) return
+    await sendMessage(selectedFriend.id, messageInput)
+  }
+
+  // Handle Enter key press to send message
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSendMessage()
+    }
   }
 
   // Friends List Component
@@ -247,50 +309,56 @@ const FriendsPage = () => {
 
       <div className="flex-1 overflow-y-auto min-h-0 scrollbar-none ">
         <div className="flex flex-col gap-2 pb-4">
-          {friends.map((friend, index) => (
-            <div
-              key={index}
-              className="flex h-16 gap-2 cursor-pointer"
-              onClick={() => openChat(friend)}
-            >
-              <div className="relative shrink-0">
-                <img
-                  src={friend.image}
-                  alt={friend.name}
-                  className="size-16 rounded"
-                />
-                {friend.online && (
-                  <div className="absolute top-1/2 -translate-y-1/2 -right-[4px] size-2 rounded-full bg-green-400 border-4 border-[#5FFF954A]" />
-                )}
-              </div>
-              <div className="flex-1 bg-white/5 rounded p-2 h-16 flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-white text-sm font-medium">
-                    {friend.name}{" "}
-                    <span className="bg-white/5 border border-white/10 text-2xs py-0.5 rounded px-1.5 font-inter">
-                      Lvl. {friend.level}
-                    </span>
-                  </span>
-                  <span className="text-white/50 text-xs">{friend.time}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p
-                    className={cn(
-                      "text-xs truncate max-w-[200px] font-inter",
-                      friend.newMessageCount > 0 && "text-[#5FFF95]"
-                    )}
-                  >
-                    {friend.lastMessage}
-                  </p>
-                  {friend.newMessageCount > 0 && (
-                    <span className="text-2xs font-inter bg-[#5FFF95] text-black size-4 rounded-full flex items-center justify-center">
-                      {friend.newMessageCount}
-                    </span>
+          {friends.length > 0 ? (
+            friends.map((friend, index) => (
+              <div
+                key={index}
+                className="flex h-16 gap-2 cursor-pointer"
+                onClick={() => openChat(friend)}
+              >
+                <div className="relative shrink-0">
+                  <img
+                    src={friend.image}
+                    alt={friend.name}
+                    className="size-16 rounded"
+                  />
+                  {friend.online && (
+                    <div className="absolute top-1/2 -translate-y-1/2 -right-[4px] size-2 rounded-full bg-green-400 border-4 border-[#5FFF954A]" />
                   )}
                 </div>
+                <div className="flex-1 bg-white/5 rounded p-2 h-16 flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white text-sm font-medium">
+                      {friend.name}{" "}
+                      <span className="bg-white/5 border border-white/10 text-2xs py-0.5 rounded px-1.5 font-inter">
+                        Lvl. {friend.level}
+                      </span>
+                    </span>
+                    <span className="text-white/50 text-xs">{friend.time}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={cn(
+                        "text-xs truncate max-w-[200px] font-inter",
+                        friend.newMessageCount > 0 && "text-[#5FFF95]"
+                      )}
+                    >
+                      {friend.lastMessage}
+                    </p>
+                    {friend.newMessageCount > 0 && (
+                      <span className="text-2xs font-inter bg-[#5FFF95] text-black size-4 rounded-full flex items-center justify-center">
+                        {friend.newMessageCount}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-white/50 text-sm">No friends found</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
@@ -338,61 +406,66 @@ const FriendsPage = () => {
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto min-h-0 scrollbar-none">
                   <div className="flex flex-col gap-4 p-4">
-                    {groupMessagesByDate(selectedFriend.messages).map(
-                      (group, groupIndex) => (
-                        <div key={groupIndex} className="flex flex-col gap-2">
-                          <div className="text-white/50 text-xs text-center bg-white/5 py-1 px-3 rounded font-inter w-fit mx-auto">
-                            {group.date}
-                          </div>
+                    {groupMessagesByDate(messages).map((group, groupIndex) => (
+                      <div key={groupIndex} className="flex flex-col gap-2">
+                        <div className="text-white/50 text-xs text-center bg-white/5 py-1 px-3 rounded font-inter w-fit mx-auto">
+                          {group.date}
+                        </div>
 
-                          {group.messages.map((message, messageIndex) => (
+                        {group.messages.map((message, messageIndex) => (
+                          <div
+                            key={message.id}
+                            className={cn(
+                              "flex gap-3 max-w-[80%] items-end",
+                              message.senderWalletAddress ===
+                                profile?.walletAddress &&
+                                "ml-auto flex-row-reverse"
+                            )}
+                          >
+                            <div className="size-14 rounded bg-white/10 shrink-0 mt-1">
+                              <img
+                                src={
+                                  message.senderWalletAddress ===
+                                  profile?.walletAddress
+                                    ? selectedFriend.image
+                                    : "/images/user.png"
+                                }
+                                alt={message.sender}
+                                className="size-14 rounded"
+                              />
+                            </div>
                             <div
-                              key={message.id}
                               className={cn(
-                                "flex gap-3 max-w-[80%] items-end",
-                                message.sender === "You" &&
-                                  "ml-auto flex-row-reverse"
+                                "flex flex-col gap-1",
+                                message.senderWalletAddress ===
+                                  profile?.walletAddress && "items-end"
                               )}
                             >
-                              <div className="size-14 rounded bg-white/10 shrink-0 mt-1">
-                                <img
-                                  src={
-                                    message.sender === "You"
-                                      ? selectedFriend.image
-                                      : "/images/user.png"
-                                  }
-                                  alt={message.sender}
-                                  className="size-14 rounded"
-                                />
-                              </div>
                               <div
                                 className={cn(
-                                  "flex flex-col gap-1",
-                                  message.sender === "You" && "items-end"
+                                  "text-white/90 rounded-xl p-3",
+                                  message.senderWalletAddress ===
+                                    profile?.walletAddress
+                                    ? "bg-[#51A1FF33]"
+                                    : "bg-white/5"
                                 )}
                               >
-                                <div
-                                  className={cn(
-                                    "text-white/90 rounded-xl p-3",
-                                    message.sender === "You"
-                                      ? "bg-[#51A1FF33]"
-                                      : "bg-white/5"
-                                  )}
-                                >
-                                  <span className="text-white font-medium">
-                                    {message.sender}
-                                  </span>
-                                  <p className="text-xs">{message.content}</p>
-                                </div>
-                                <span className="text-white/50 text-xs font-inter">
-                                  {formatMessageTime(message.timestamp)}
+                                <span className="text-white font-medium">
+                                  {message.senderWalletAddress ===
+                                  profile?.walletAddress
+                                    ? "You"
+                                    : selectedFriend.name}
                                 </span>
+                                <p className="text-xs">{message.content}</p>
                               </div>
+                              <span className="text-white/50 text-xs font-inter">
+                                {formatMessageTime(message.timestamp)}
+                              </span>
                             </div>
-                          ))}
-                        </div>
-                      )
-                    )}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -405,11 +478,15 @@ const FriendsPage = () => {
                       onChange={(e) => setMessageInput(e.target.value)}
                       placeholder={`Send a message to ${selectedFriend.name}`}
                       className="flex-1 bg-white/5 rounded-xl px-4 py-3 text-white placeholder:text-white/50 outline-none border border-white/10 focus:border-white/20 font-inter"
+                      onKeyPress={handleKeyPress}
                     />
                     <button className="px-4 rounded-xl bg-brand text-white font-medium bg-white/5 border border-white/10 font-inter">
                       👀
                     </button>
-                    <button className="px-4 rounded-xl bg-brand text-white font-medium bg-white/5 border border-white/10 font-inter">
+                    <button
+                      className="px-4 rounded-xl bg-brand text-white font-medium bg-white/5 border border-white/10 font-inter"
+                      onClick={handleSendMessage}
+                    >
                       Send
                     </button>
                   </div>
@@ -420,9 +497,9 @@ const FriendsPage = () => {
                 <h2 className="text-white text-2xl font-medium mb-2">
                   Select friends and chat with them
                 </h2>
-                <p className="text-white/50 text-sm">
+                {/* <p className="text-white/50 text-sm">
                   Lorem ipsum dolor sit amet, consectetur adi...
-                </p>
+                </p> */}
               </div>
             )}
           </div>
@@ -477,61 +554,65 @@ const FriendsPage = () => {
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto min-h-0 scrollbar-none">
               <div className="flex flex-col gap-4 p-4">
-                {groupMessagesByDate(selectedFriend.messages).map(
-                  (group, groupIndex) => (
-                    <div key={groupIndex} className="flex flex-col gap-2">
-                      <div className="text-white/50 text-xs text-center bg-white/5 py-1 px-3 rounded font-inter w-fit mx-auto">
-                        {group.date}
-                      </div>
+                {groupMessagesByDate(messages).map((group, groupIndex) => (
+                  <div key={groupIndex} className="flex flex-col gap-2">
+                    <div className="text-white/50 text-xs text-center bg-white/5 py-1 px-3 rounded font-inter w-fit mx-auto">
+                      {group.date}
+                    </div>
 
-                      {group.messages.map((message, messageIndex) => (
+                    {group.messages.map((message, messageIndex) => (
+                      <div
+                        key={message.id}
+                        className={cn(
+                          "flex gap-3 lg:max-w-[80%] items-end",
+                          message.senderWalletAddress ===
+                            profile?.walletAddress && "ml-auto flex-row-reverse"
+                        )}
+                      >
+                        <div className="size-10 lg:size-14 rounded bg-white/10 shrink-0 mt-1">
+                          <img
+                            src={
+                              message.senderWalletAddress ===
+                              profile?.walletAddress
+                                ? selectedFriend.image
+                                : "/images/user.png"
+                            }
+                            alt={message.sender}
+                            className="size-10 lg:size-14 rounded"
+                          />
+                        </div>
                         <div
-                          key={message.id}
                           className={cn(
-                            "flex gap-3 lg:max-w-[80%] items-end",
-                            message.sender === "You" &&
-                              "ml-auto flex-row-reverse"
+                            "flex flex-col gap-1",
+                            message.senderWalletAddress ===
+                              profile?.walletAddress && "items-end"
                           )}
                         >
-                          <div className="size-10 lg:size-14 rounded bg-white/10 shrink-0 mt-1">
-                            <img
-                              src={
-                                message.sender === "You"
-                                  ? selectedFriend.image
-                                  : "/images/user.png"
-                              }
-                              alt={message.sender}
-                              className="size-10 lg:size-14 rounded"
-                            />
-                          </div>
                           <div
                             className={cn(
-                              "flex flex-col gap-1",
-                              message.sender === "You" && "items-end"
+                              "text-white/90 rounded-xl p-3",
+                              message.senderWalletAddress ===
+                                profile?.walletAddress
+                                ? "bg-[#51A1FF33]"
+                                : "bg-white/5"
                             )}
                           >
-                            <div
-                              className={cn(
-                                "text-white/90 rounded-xl p-3",
-                                message.sender === "You"
-                                  ? "bg-[#51A1FF33]"
-                                  : "bg-white/5"
-                              )}
-                            >
-                              <span className="text-white font-medium">
-                                {message.sender}
-                              </span>
-                              <p className="text-xs">{message.content}</p>
-                            </div>
-                            <span className="text-white/50 text-xs font-inter">
-                              {formatMessageTime(message.timestamp)}
+                            <span className="text-white font-medium">
+                              {message.senderWalletAddress ===
+                              profile?.walletAddress
+                                ? "You"
+                                : selectedFriend.name}
                             </span>
+                            <p className="text-xs">{message.content}</p>
                           </div>
+                          <span className="text-white/50 text-xs font-inter">
+                            {formatMessageTime(message.timestamp)}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  )
-                )}
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -544,8 +625,12 @@ const FriendsPage = () => {
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Send a message..."
                   className="flex-1 bg-white/5 rounded-xl px-4 py-3 text-white placeholder:text-white/50 outline-none border border-white/10 focus:border-white/20"
+                  onKeyPress={handleKeyPress}
                 />
-                <button className="px-4 rounded-xl bg-brand text-white font-medium">
+                <button
+                  className="px-4 rounded-xl bg-brand text-white font-medium"
+                  onClick={handleSendMessage}
+                >
                   Send
                 </button>
               </div>

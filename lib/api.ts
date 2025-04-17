@@ -594,3 +594,37 @@ export const equipAlienPart = async ({
   })
   return response
 }
+
+export const getFriendsList = async (): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/friends/list")
+  return response
+}
+
+export const addFriend = async (): Promise<
+  ApiResponse<{ success: boolean }>
+> => {
+  const response = await apiManager.post<{ success: boolean }>(
+    "/friends/add-friend"
+  )
+  return response
+}
+
+export const getMessages = async (
+  friendId: number
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/chat/messages", {
+    friendId,
+  })
+  return response
+}
+
+export const sendMessage = async (
+  receiverId: number,
+  content: string
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.post<any>("/chat/send", {
+    receiverId,
+    content,
+  })
+  return response
+}
