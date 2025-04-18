@@ -16,7 +16,6 @@ import FriendsPage from "@/components/pages/friends/page"
 
 const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
-  const { alien } = useAliens()
   return (
     <Loader>
       <Suspense

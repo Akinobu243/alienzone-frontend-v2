@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useAliens, useProfile } from "@/store/hooks"
 import { Loader2, Search } from "lucide-react"
 import { toast } from "react-hot-toast"
@@ -235,15 +235,70 @@ const FriendsPage = () => {
     useState<NodeJS.Timeout | null>(null)
   const [friendsPollingInterval, setFriendsPollingInterval] =
     useState<NodeJS.Timeout | null>(null)
-
-  const openChat = (friend: Friend) => {
-    setSelectedFriend(friend)
-  }
   const { alien } = useAliens()
   const { data: profile } = useProfile()
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+
+  // Function to open chat and scroll to bottom
+  const openChat = (friend: Friend) => {
+    setSelectedFriend(friend)
+
+    console.log("chatContainerRef ===>", chatContainerRef.current)
+    console.log(
+      "chatContainerRef.current.scrollHeight ===>",
+      chatContainerRef?.current?.scrollHeight
+    )
+
+    // Force scroll after a delay
+    const chatContainer = document.getElementById("chat-container")
+    const chatContainerMobile = document.getElementById("chat-container-mobile")
+
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight
+    }
+
+    if (chatContainerMobile) {
+      chatContainerMobile.scrollTop = chatContainerMobile.scrollHeight
+    }
+  }
+
+  // Force scroll when messages change
+  useEffect(() => {
+    if (selectedFriend) {
+      const chatContainer = document.getElementById("chat-container")
+      const chatContainerMobile = document.getElementById(
+        "chat-container-mobile"
+      )
+
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight
+      }
+
+      if (chatContainerMobile) {
+        chatContainerMobile.scrollTop = chatContainerMobile.scrollHeight
+      }
+    }
+  }, [messages, selectedFriend])
 
   console.log("alien ===>", alien)
   console.log("profile ===>", profile)
+
+  const scrollToBottom = (behavior: ScrollBehavior = "auto") => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior })
+    }
+  }
+
+  // Scroll to bottom when messages change or when a friend is selected
+  useEffect(() => {
+    // Small delay to ensure DOM is updated
+    const timeoutId = setTimeout(() => {
+      scrollToBottom()
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
+  }, [messages, selectedFriend])
 
   // Fetch friends list initially and set up polling
   useEffect(() => {
@@ -375,24 +430,6 @@ const FriendsPage = () => {
     }))
   }
 
-  // const handleSendMessage = async () => {
-  //   if (!messageInput.trim() || !selectedFriend || !profile) return
-
-  //   const newMessage = {
-  //     id: `temp_${Date.now()}`,
-  //     senderId: profile.id,
-  //     senderWalletAddress: profile.walletAddress,
-  //     content: messageInput,
-  //     timestamp: Date.now(),
-  //   }
-
-  //   setMessages((prevMessages) => [...prevMessages, newMessage])
-
-  //   setMessageInput("")
-
-  //   await callSendMessage()
-  // }
-
   const handleSendMessage = async () => {
     if (!messageInput.trim() || !selectedFriend || !profile) return
 
@@ -407,6 +444,9 @@ const FriendsPage = () => {
     }
 
     setMessages((prevMessages) => [...prevMessages, newMessage])
+
+    // Scroll to bottom after sending a message
+    setTimeout(() => scrollToBottom("smooth"), 100)
 
     // Update the friend's last message in the friends list
     setFriends((prevFriends) =>
@@ -562,7 +602,7 @@ const FriendsPage = () => {
             >
               All
             </button>
-            <button
+            {/* <button
               onClick={() => setActiveTab("online")}
               className={cn(
                 "h-10 px-4 rounded-lg bg-white/5 border border-white/10 text-white text-xs flex items-center gap-2 flex-1 font-inter",
@@ -571,7 +611,7 @@ const FriendsPage = () => {
             >
               <span className="w-2 h-2 rounded-full bg-green-500"></span>
               Online
-            </button>
+            </button> */}
             <button
               onClick={handleSearchClick}
               className="h-10 px-4 rounded-lg bg-white/5 border border-white/10 text-white text-xs flex items-center gap-2 flex-1 font-inter"
@@ -764,7 +804,11 @@ const FriendsPage = () => {
                 </div>
 
                 {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto min-h-0 scrollbar-none">
+                <div
+                  className="flex-1 overflow-y-auto min-h-0 scrollbar-none"
+                  ref={chatContainerRef}
+                  id="chat-container"
+                >
                   <div className="flex flex-col gap-4 p-4">
                     {groupMessagesByDate(messages).map((group, groupIndex) => (
                       <div key={groupIndex} className="flex flex-col gap-2">
@@ -839,6 +883,7 @@ const FriendsPage = () => {
                         ))}
                       </div>
                     ))}
+                    <div ref={messagesEndRef} />
                   </div>
                 </div>
 
@@ -925,7 +970,11 @@ const FriendsPage = () => {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto min-h-0 scrollbar-none">
+            <div
+              className="flex-1 overflow-y-auto min-h-0 scrollbar-none"
+              ref={chatContainerRef}
+              id="chat-container-mobile"
+            >
               <div className="flex flex-col gap-4 p-4">
                 {groupMessagesByDate(messages).map((group, groupIndex) => (
                   <div key={groupIndex} className="flex flex-col gap-2">
@@ -998,6 +1047,7 @@ const FriendsPage = () => {
                     ))}
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
             </div>
 
