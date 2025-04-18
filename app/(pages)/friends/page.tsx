@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react"
 import Link from "next/link"
-import { useAliens } from "@/store/hooks"
 
 import { cn } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
