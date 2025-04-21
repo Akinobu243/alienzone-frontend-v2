@@ -637,3 +637,8 @@ export const searchFriend = async (
   })
   return response
 }
+
+export const getQuestList = async (): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/quests/list")
+  return response
+}
