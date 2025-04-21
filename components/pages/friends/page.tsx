@@ -244,12 +244,6 @@ const FriendsPage = () => {
   const openChat = (friend: Friend) => {
     setSelectedFriend(friend)
 
-    console.log("chatContainerRef ===>", chatContainerRef.current)
-    console.log(
-      "chatContainerRef.current.scrollHeight ===>",
-      chatContainerRef?.current?.scrollHeight
-    )
-
     // Force scroll after a delay
     const chatContainer = document.getElementById("chat-container")
     const chatContainerMobile = document.getElementById("chat-container-mobile")

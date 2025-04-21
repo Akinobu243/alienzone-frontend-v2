@@ -610,20 +610,20 @@ export const addFriend = async (
 }
 
 export const getMessages = async (
-  friendId: number
+  friendId?: number
 ): Promise<ApiResponse<any>> => {
   const response = await apiManager.get<any>("/chat/messages", {
-    friendId,
+    friendId: friendId || "",
   })
   return response
 }
 
 export const sendMessage = async (
-  receiverId: number,
-  content: string
+  receiverId?: number | string,
+  content?: string
 ): Promise<ApiResponse<any>> => {
   const response = await apiManager.post<any>("/chat/send", {
-    receiverId,
+    receiverId: receiverId || "",
     content,
   })
   return response
