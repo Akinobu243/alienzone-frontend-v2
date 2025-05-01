@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useDailyRewards } from "@/store/hooks"
+import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { DailyReward } from "@/types"
 import { Check, Lock } from "lucide-react"
 import toast from "react-hot-toast"
@@ -20,9 +21,9 @@ const DailyLoginReward = () => {
   const [currentReward, setCurrentReward] = useState<DailyReward | null>(null)
   const [timeLeft, setTimeLeft] = useState("")
 
-  // const isClaimed = (reward: DailyReward) => {
-  //   return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
-  // }
+  const isClaimed = (reward: DailyReward) => {
+    return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
+  }
 
   const formatDate = (date: Date): string => {
     const day = date.getUTCDate()
@@ -31,7 +32,7 @@ const DailyLoginReward = () => {
     return `${day}-${month}-${year}`
   }
 
-  const isClaimed = (reward: DailyReward) => {
+  const isClaimedTodayReward = (reward: DailyReward) => {
     const rewardPresent = rewards?.claimedDailyRewards.some(
       (r) => r.id === reward.id
     )
@@ -57,12 +58,14 @@ const DailyLoginReward = () => {
 
   const handleClaim = async () => {
     if (currentReward && isClaimed(currentReward)) return
+
     try {
       const res = await claimRewards()
 
       if (res?.success) {
         toast.success("Daily rewards claimed successfully!")
         fetchDailyRewards()
+        fetchUserProfile()
       } else {
         toast.error(res?.error?.message || "Failed to claim rewards")
       }
@@ -124,8 +127,6 @@ const DailyLoginReward = () => {
         return "/images/xp.png"
     }
   }
-
-  console.log("Rewards ===>", rewards)
 
   return (
     <div>
@@ -272,9 +273,11 @@ const DailyLoginReward = () => {
         <BrandButton
           className="w-full mt-4"
           onClick={handleClaim}
-          disabled={loading}
+          disabled={
+            loading || (!!currentReward && isClaimedTodayReward(currentReward))
+          }
         >
-          {currentReward && !isClaimed(currentReward)
+          {currentReward && !isClaimedTodayReward(currentReward)
             ? "Claim Reward"
             : "Already Claimed"}
         </BrandButton>
