@@ -11,7 +11,7 @@ import {
   Provider,
 } from "ethers"
 
-import { getZoneBalance } from "@/lib/utils"
+import { getEthWallet, getZoneBalance } from "@/lib/utils"
 
 type WalletContextType = {
   isConnected: boolean
@@ -41,7 +41,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<WalletContextType["user"] | null>(null)
   const { user: privyUser } = usePrivy()
   const { wallets } = useWallets()
-  const wallet = wallets[0]
+  const wallet = wallets[0] ? getEthWallet(wallets) : null
   const [isConnected, setIsConnected] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
