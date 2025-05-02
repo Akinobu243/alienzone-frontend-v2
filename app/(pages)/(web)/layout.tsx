@@ -62,7 +62,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           >
             <div className="relative z-10 h-full flex-1   flex flex-col overflow-auto">
               <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
-              {/* <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" /> */}
               <TopBar className="absolute right-8  max-lg:hidden " />
 
               {children}
