@@ -7,7 +7,7 @@ import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
-import { getChain, handleSignMessage } from "@/lib/utils"
+import { getChain, getEthWallet, handleSignMessage } from "@/lib/utils"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
@@ -54,14 +54,6 @@ const ConnectModal = ({
     //   ),
     // },
   ]
-
-  const getEthWallet = () => {
-    const wallet = wallets.find((wallet) => wallet.connectorType !== "embedded")
-    if (wallet) {
-      return wallet
-    }
-    return null
-  }
 
   const handleOptionClick = (option: (typeof options)[0]) => {
     if (ready && authenticated) {
@@ -124,7 +116,7 @@ const ConnectModal = ({
   // }, [authenticated, ready, wallets[0]])
 
   const handleAuthenticate = async () => {
-    const wallet = getEthWallet()
+    const wallet = getEthWallet(wallets)
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
@@ -163,7 +155,7 @@ const ConnectModal = ({
   useEffect(() => {
     const checkUser = async () => {
       if (authenticated && ready && wallets.length > 0) {
-        const ethWallet = getEthWallet()
+        const ethWallet = getEthWallet(wallets)
         if (ethWallet) {
           const res = await checkUserExist(ethWallet.address)
 

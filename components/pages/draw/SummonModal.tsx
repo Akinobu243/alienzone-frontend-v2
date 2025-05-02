@@ -8,7 +8,7 @@ import { ethers } from "ethers"
 import toast from "react-hot-toast"
 
 import { mintCharacters } from "@/lib/api"
-import { cn, handleSignMessage } from "@/lib/utils"
+import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import CONTRACT_ABI from "@/app/assets/abi.json"
 
@@ -51,7 +51,7 @@ const SummonModal = ({
   const handleMintCharacter = async () => {
     if (summonType === "gear") return
 
-    const wallet = wallets[0]
+    const wallet = getEthWallet(wallets)
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
