@@ -296,12 +296,12 @@ const Wheel = ({
         winningSegmentIndexRef.current = randomIndex
         // }
         if (response?.data?.result) {
-          // @ts-ignore
+          // @ts-expect-error 'error' is not defined in the response
           toast.success(response?.data?.result?.message)
         }
       } else {
         toast.error(
-          // @ts-ignore
+          // @ts-expect-error 'error' is not defined in the response
           response?.data?.error ||
             "An error occurred while retrieving your prize"
         )

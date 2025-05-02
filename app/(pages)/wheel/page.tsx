@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { useAliens } from "@/store/hooks"
 
-import { canSpin, getSpinHistory, getWheelItems, spinWheel } from "@/lib/api"
+import { canSpin, getSpinHistory, getWheelItems } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import IconButton from "@/components/ui/icon-button"
@@ -17,7 +17,7 @@ import AlienzoneIcon from "@/components/icons/alienzone"
 import WheelPage from "@/components/pages/wheel/page"
 import Wheel from "@/components/pages/wheel/Wheel"
 
-export const colors = [
+const colors = [
   "#FF8A00", // Stars
   "#FFD600", // Bronze Cut
   "#FF69B4", // Silver Knife

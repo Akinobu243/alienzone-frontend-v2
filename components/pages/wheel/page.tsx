@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Calendar, Check, Grid2X2, X } from "lucide-react"
 
-import { getSpinHistory } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { GradientBorder } from "@/components/ui/gradient-border"
