@@ -18,17 +18,23 @@ interface WheelPageProps {
   isSpinning?: boolean
   wheelItems?: { name: string; color: string }[]
   userCanSpin: boolean
+  spinHistory: string[]
+  handleSpinComplete: (item: { color: string; name: string }) => void
+  setIsError: (isError: boolean) => void
 }
 
 const WheelPage = ({
   isSpinning: parentIsSpinning,
   wheelItems,
   userCanSpin,
+  spinHistory,
+  handleSpinComplete,
+  setIsError,
 }: WheelPageProps) => {
   const [openPopover, setOpenPopover] = useState<"calendar" | "items" | null>(
     null
   )
-  const [spinHistory, setSpinHistory] = useState<string[]>([])
+  // const [spinHistory, setSpinHistory] = useState<string[]>([])
   const [isSpinning, setIsSpinning] = useState(false)
   const [lastWonItem, setLastWonItem] = useState<{
     color: string
@@ -85,25 +91,25 @@ const WheelPage = ({
     return weeks
   }
 
-  useEffect(() => {
-    const fetchSpinHistory = async () => {
-      const response = await getSpinHistory()
-      setSpinHistory(response.data?.spinTimes ?? [])
-    }
-    fetchSpinHistory()
-  }, [])
+  // useEffect(() => {
+  //   const fetchSpinHistory = async () => {
+  //     const response = await getSpinHistory()
+  //     setSpinHistory(response.data?.spinTimes ?? [])
+  //   }
+  //   fetchSpinHistory()
+  // }, [])
 
   const handleSpin = async () => {
     if (!userCanSpin || isSpinning) return
     setIsSpinning(true)
   }
 
-  const handleSpinComplete = (item: { color: string; name: string }) => {
-    // Add current date to spin history
-    setSpinHistory([...spinHistory, new Date().toISOString()])
-    setLastWonItem(item)
-    setIsSpinning(false)
-  }
+  // const handleSpinComplete = (item: { color: string; name: string }) => {
+  //   // Add current date to spin history
+  //   setSpinHistory([...spinHistory, new Date().toISOString()])
+  //   setLastWonItem(item)
+  //   setIsSpinning(false)
+  // }
 
   const spinStatus = getCalendarData()
   const currentMonthName = new Date().toLocaleString("default", {
@@ -176,6 +182,7 @@ const WheelPage = ({
           isSpinning={isSpinning}
           onSpinComplete={handleSpinComplete}
           items={wheelItems}
+          setIsError={setIsError}
         />
         {/* Bottom Controls */}
         <div className="flex items-center gap-4 justify-center mt-auto">
