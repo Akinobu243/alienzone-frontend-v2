@@ -275,6 +275,14 @@ export const handleSignMessage = async (
   return sign
 }
 
+export const getEthWallet = (wallets: ConnectedWallet[]) => {
+  const wallet = wallets.find((wallet) => wallet.connectorType !== "embedded")
+  if (wallet) {
+    return wallet
+  }
+  return null
+}
+
 /**
  * Checks if a wallet is an external wallet (MetaMask, Rainbow, Coinbase Wallet, etc.)
  * @param wallet The wallet object to check
