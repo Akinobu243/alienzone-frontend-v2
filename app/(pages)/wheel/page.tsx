@@ -39,6 +39,44 @@ const colors = [
   // "#20B2AA",
 ]
 
+const formatTimeRemaining = (
+  timestamp: string | number,
+  frequency: "daily" | "weekly"
+): string => {
+  if (!timestamp) return "Time remaining"
+
+  let targetTime: Date
+
+  if (typeof timestamp === "string") {
+    targetTime = new Date(timestamp)
+  } else {
+    // If timestamp is a number (seconds since epoch)
+    targetTime = new Date(timestamp * 1000)
+  }
+
+  const now = new Date()
+  let diffInSeconds = Math.floor((targetTime.getTime() - now.getTime()) / 1000)
+
+  // Don't go below zero
+  diffInSeconds = Math.max(0, diffInSeconds)
+
+  // Calculate time units
+  const days = Math.floor(diffInSeconds / (3600 * 24))
+  const hours = Math.floor((diffInSeconds % (3600 * 24)) / 3600)
+  const minutes = Math.floor((diffInSeconds % 3600) / 60)
+
+  // Format based on time remaining
+  if (days > 0) {
+    return days === 1 ? "1 day left" : `${days} days left`
+  } else if (hours > 0) {
+    return `${hours}h left`
+  } else if (minutes > 0) {
+    return minutes === 1 ? "1 min left" : `${minutes} mins left`
+  } else {
+    return "Less than 1 min"
+  }
+}
+
 const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
   const [isSpinning, setIsSpinning] = useState(false)
@@ -51,18 +89,55 @@ const Page = () => {
   const [userCanSpin, setUserCanSpin] = useState(false)
   const [spinHistory, setSpinHistory] = useState<string[]>([])
   const [isError, setIsError] = useState(false)
-
   const [winningItem, setWinningItem] = useState<{
     color: string
     name: string
   } | null>(null)
   const { alien } = useAliens()
+  // Add new state for countdown
+  const [nextSpinTime, setNextSpinTime] = useState<number>(0)
+  const [timeRemaining, setTimeRemaining] = useState<string>("")
 
   useEffect(() => {
     fetchCanSpin()
     fetchWheelItems()
     fetchSpinHistory()
   }, [])
+
+  // Add new useEffect for countdown timer
+  useEffect(() => {
+    if (!userCanSpin) {
+      // Calculate next day's start time (midnight)
+      const updateTimer = () => {
+        const now = new Date()
+        const tomorrow = new Date(now)
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        tomorrow.setHours(0, 0, 0, 0)
+
+        const nextSpinTimestamp = Math.floor(tomorrow.getTime() / 1000)
+        const currentTimestamp = Math.floor(now.getTime() / 1000)
+        const secondsRemaining = nextSpinTimestamp - currentTimestamp
+
+        // Format time as HH:MM:SS
+        const hours = Math.floor(secondsRemaining / 3600)
+        const minutes = Math.floor((secondsRemaining % 3600) / 60)
+        const seconds = secondsRemaining % 60
+
+        setTimeRemaining(
+          `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+        )
+      }
+
+      // Initial update
+      updateTimer()
+
+      // Update timer every second
+      const interval = setInterval(updateTimer, 1000)
+
+      // Clean up interval on component unmount
+      return () => clearInterval(interval)
+    }
+  }, [userCanSpin])
 
   const fetchCanSpin = async () => {
     const response = await canSpin()
@@ -148,7 +223,7 @@ const Page = () => {
               <div className="absolute top-10 left-24  gap-3 z-20 hidden lg:flex h-14 items-center">
                 <h1 className="text-white text-3xl ">Wheel</h1>
               </div>
-              <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
+              <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
                 <div className="absolute inset-0 bg-cover bg-bottom bg-no-repeat bg-[url('/images/wheel/wheel-bg.png')]">
                   <div
                     className="absolute inset-0 "
@@ -174,14 +249,18 @@ const Page = () => {
                     handleSpinComplete={handleSpinComplete}
                     setIsError={setIsError}
                   />
-                  <div className="absolute bottom-5 left-1/2 -translate-x-1/2 max-lg:hidden">
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 max-lg:hidden">
                     <BrandButton
                       blurColor="bg-[#F49696]"
                       className="px-14"
                       onClick={handleSpin}
                       disabled={!userCanSpin || isSpinning}
                     >
-                      {isSpinning ? "Spinning..." : "Spin"}
+                      {isSpinning
+                        ? "Spin in progress..."
+                        : userCanSpin
+                          ? "Spin"
+                          : `Spin again in ${timeRemaining}`}
                     </BrandButton>
                   </div>
                 </div>

@@ -366,6 +366,7 @@ export interface SpinResult {
   itemType?: ItemType
   itemQuality?: ItemQuality
   runeType?: RuneType
+  message: string
 }
 
 export enum RuneType {

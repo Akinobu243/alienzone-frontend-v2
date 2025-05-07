@@ -10,6 +10,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 import Wheel from "./Wheel"
 
@@ -40,29 +46,32 @@ const WheelPage = ({
     name: string
   } | null>(null)
 
-  const getCalendarData = () => {
-    const now = new Date()
-    const currentMonth = now.getMonth()
-    const currentYear = now.getFullYear()
+  console.log("spinHistory", spinHistory)
 
-    // Get first day and total days in month
-    const firstDay = new Date(currentYear, currentMonth, 1)
-    const lastDay = new Date(currentYear, currentMonth + 1, 0)
-    const totalDays = lastDay.getDate()
+  const getCalendarData = () => {
+    // Use UTC methods to avoid timezone issues
+    const now = new Date()
+    const currentMonth = now.getUTCMonth()
+    const currentYear = now.getUTCFullYear()
+
+    // Get first day and total days in month using UTC
+    const firstDay = new Date(Date.UTC(currentYear, currentMonth, 1))
+    const lastDay = new Date(Date.UTC(currentYear, currentMonth + 1, 0))
+    const totalDays = lastDay.getUTCDate()
 
     // Create calendar grid
     const weeks: boolean[][] = []
     let currentWeek: boolean[] = []
 
     // Fill in empty days before first day of month
-    const firstDayOfWeek = firstDay.getDay()
+    const firstDayOfWeek = firstDay.getUTCDay()
     for (let i = 0; i < firstDayOfWeek; i++) {
       currentWeek.push(false)
     }
 
     // Fill in days of month
     for (let day = 1; day <= totalDays; day++) {
-      const date = new Date(currentYear, currentMonth, day)
+      const date = new Date(Date.UTC(currentYear, currentMonth, day))
 
       // Check if user spun on this day
       const dateString = date.toISOString().split("T")[0]
@@ -115,6 +124,42 @@ const WheelPage = ({
     month: "long",
   })
 
+  const getDateForPosition = (weekIndex: number, dayIndex: number) => {
+    const now = new Date()
+
+    console.log("now", now)
+    // Use UTC methods to avoid timezone issues
+    const currentMonth = now.getUTCMonth()
+    const currentYear = now.getUTCFullYear()
+
+    // Get first day of month in UTC
+    const firstDay = new Date(Date.UTC(currentYear, currentMonth, 1))
+
+    // Calculate the day offset based on the first day of the month
+    const firstDayOfWeek = firstDay.getUTCDay()
+
+    // Calculate the actual day number in the month
+    const dayNumber = weekIndex * 7 + dayIndex - firstDayOfWeek + 1
+
+    // Create a new date object for this position using UTC
+    const date = new Date(Date.UTC(currentYear, currentMonth, dayNumber))
+
+    // Only return a formatted date if it's a valid day in the current month
+    if (
+      dayNumber > 0 &&
+      dayNumber <=
+        new Date(Date.UTC(currentYear, currentMonth + 1, 0)).getUTCDate()
+    ) {
+      // Format the date using UTC values
+      return `${date.getUTCDate()} ${date.toLocaleString("en-US", { month: "long", timeZone: "UTC" })}, ${date.getUTCFullYear()}`
+    }
+
+    // For days outside the current month
+    return ""
+  }
+
+  console.log("spinStatus", spinStatus)
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* Desktop Version */}
@@ -127,26 +172,38 @@ const WheelPage = ({
               <span className="text-sm">{currentMonthName}</span>
             </div>
             <div className="mt-4 grid grid-cols-7 gap-1">
-              {spinStatus.map((week, weekIndex) =>
-                week.map((claimed, dayIndex) => (
-                  <GradientBorder
-                    key={`${weekIndex}-${dayIndex}`}
-                    isSelected={claimed}
-                  >
-                    <div
-                      className={cn(
-                        "size-10 flex items-center justify-center rounded transition-all bg-white/5"
-                      )}
-                    >
-                      {claimed ? (
-                        <Check className="w-4 h-4 text-white" />
-                      ) : (
-                        <X className="w-4 h-4 text-white" />
-                      )}
-                    </div>
-                  </GradientBorder>
-                ))
-              )}
+              <TooltipProvider>
+                {spinStatus.map((week, weekIndex) =>
+                  week.map((claimed, dayIndex) => {
+                    const dateString = getDateForPosition(weekIndex, dayIndex)
+
+                    return (
+                      <Tooltip key={`${weekIndex}-${dayIndex}`}>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <GradientBorder isSelected={claimed}>
+                              <div
+                                className={cn(
+                                  "size-10 flex items-center justify-center rounded transition-all bg-white/5"
+                                )}
+                              >
+                                {claimed ? (
+                                  <Check className="w-4 h-4 text-white" />
+                                ) : (
+                                  <X className="w-4 h-4 text-white" />
+                                )}
+                              </div>
+                            </GradientBorder>
+                          </div>
+                        </TooltipTrigger>
+                        {dateString && (
+                          <TooltipContent>{dateString}</TooltipContent>
+                        )}
+                      </Tooltip>
+                    )
+                  })
+                )}
+              </TooltipProvider>
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur-lg p-4 rounded-2xl group border border-white/10 flex-1 mt-10 min-h-0 overflow-hidden flex flex-col">
