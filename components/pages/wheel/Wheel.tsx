@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
 import frameImageSrc from "@/public/images/wheel/frame.png"
 import toast from "react-hot-toast"
 
@@ -21,6 +22,28 @@ const itemColorMap = {
   EPIC: "#4169E1",
   LEGENDARY: "#FF0000",
 }
+
+// First, let's define interfaces for the API response types
+interface StarsPrize {
+  type: "stars"
+  amount: number
+  message: string
+}
+
+interface ItemPrize {
+  type: "item"
+  itemType: string // CUT, KNIFE, SHEARS
+  itemQuality: string // BRONZE, SILVER, GOLDEN
+  message: string
+}
+
+interface RunePrize {
+  type: "rune"
+  itemType: string // UNCOMMON, COMMON, RARE, EPIC, LEGENDARY
+  message: string
+}
+
+type WheelPrize = StarsPrize | ItemPrize | RunePrize
 
 // Simulate API call to get winning item
 const getWinningItem = async (
@@ -64,8 +87,8 @@ const Wheel = ({
 
   // Configuration constants
   const WINNING_ANGLE = Math.PI * 2 // 180 degrees (bottom of wheel)
-  const SPIN_DURATION = 5000 // 5 seconds
-  const MIN_ROTATIONS = 10 // Minimum number of full rotations
+  const SPIN_DURATION = 5000 // 5 seconds for smoother animation
+  const MIN_ROTATIONS = 12 // Increased minimum rotations for more excitement
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -80,6 +103,9 @@ const Wheel = ({
 
   // Add spin request flag to prevent multiple calls
   const spinRequestedRef = useRef<boolean>(false)
+
+  // Add a new state to track if we've received a response
+  const [apiResponseReceived, setApiResponseReceived] = useState(false)
 
   const segmentItems = items
 
@@ -116,22 +142,22 @@ const Wheel = ({
   }, [segmentItems])
 
   // Handle spin state change
-  // useEffect(() => {
-  //   if (isSpinning && !isAnimating && !spinRequestedRef.current) {
-  //     // Set flag to prevent multiple calls
-  //     spinRequestedRef.current = true
+  useEffect(() => {
+    if (isSpinning && !isAnimating && !spinRequestedRef.current) {
+      // Set flag to prevent multiple calls
+      spinRequestedRef.current = true
 
-  //     // Call startSpin but don't wait for it to complete in the effect
-  //     startSpin().catch((error) => {
-  //       console.error("Error in spin effect:", error)
-  //       // Reset flag on error
-  //       spinRequestedRef.current = false
-  //     })
-  //   } else if (!isSpinning) {
-  //     // Reset flag when spinning state is turned off
-  //     spinRequestedRef.current = false
-  //   }
-  // }, [isSpinning, isAnimating])
+      // Call startSpin with API call
+      startSpin().catch((error) => {
+        console.error("Error in spin effect:", error)
+        // Reset flag on error
+        spinRequestedRef.current = false
+      })
+    } else if (!isSpinning) {
+      // Reset flag when spinning state is turned off
+      spinRequestedRef.current = false
+    }
+  }, [isSpinning, isAnimating])
 
   const drawWheel = () => {
     const canvas = canvasRef.current
@@ -161,91 +187,108 @@ const Wheel = ({
     // Ensure radius is positive and at least 10px
     const radius = Math.max(size / 2 - 10, 10) // Smaller to leave space for border
 
-    // Draw segments
+    // Draw segments with improved styling
     const segments = segmentsRef.current
     const segmentAngle = (2 * Math.PI) / segments.length
 
+    // First, draw a black background circle for the wheel
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+    ctx.fillStyle = "#000000"
+    ctx.fill()
+
+    // Draw each segment with enhanced styling
     segments.forEach((segment, index) => {
       const startAngle = index * segmentAngle + angleCurrent.current
       const endAngle = (index + 1) * segmentAngle + angleCurrent.current
 
-      // Draw segment
+      // Draw segment with gradient for better visual appeal
       ctx.beginPath()
       ctx.moveTo(centerX, centerY)
       ctx.arc(centerX, centerY, radius, startAngle, endAngle)
       ctx.closePath()
-      ctx.fillStyle = segment.color
+
+      // Create gradient that goes from lighter at center to deeper at edge
+      const gradient = ctx.createRadialGradient(
+        centerX,
+        centerY,
+        0,
+        centerX,
+        centerY,
+        radius
+      )
+
+      // Create a more vibrant gradient like in the reference image
+      gradient.addColorStop(0, lightenColor(segment.color, 40)) // Much lighter at center
+      gradient.addColorStop(0.5, segment.color) // Original color in middle
+      gradient.addColorStop(1, darkenColor(segment.color, 20)) // Darker at edge
+
+      ctx.fillStyle = gradient
       ctx.fill()
 
-      // Draw segment border
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.3)"
-      ctx.lineWidth = 2
+      // Draw thicker black lines between segments for more definition
+      ctx.beginPath()
+      ctx.moveTo(centerX, centerY)
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle)
+      ctx.lineTo(centerX, centerY)
+      ctx.closePath()
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.8)" // Deep black lines
+      ctx.lineWidth = 3 // Thicker lines
       ctx.stroke()
 
-      // Draw text only if radius is large enough
-      // if (radius > 30) {
-      //   ctx.save()
-      //   ctx.translate(centerX, centerY)
-      //   ctx.rotate(startAngle + segmentAngle / 2)
-      //   ctx.textAlign = "right"
-      //   ctx.fillStyle = "white"
-      //   ctx.font = `bold ${Math.min(14, radius / 10)}px Arial`
-      //   // Add text shadow for better visibility
-      //   ctx.shadowColor = "rgba(0, 0, 0, 0.5)"
-      //   ctx.shadowBlur = 3
-      //   ctx.shadowOffsetX = 1
-      //   ctx.shadowOffsetY = 1
-      //   // Position text in the middle of the segment, leaving room for center circle
-      //   ctx.fillText(segment.name, radius - 20, 0)
-      //   ctx.restore()
-      // }
+      // Draw text with improved styling
+      if (radius > 30) {
+        ctx.save()
+        ctx.translate(centerX, centerY)
+        ctx.rotate(startAngle + segmentAngle / 2)
+        ctx.textAlign = "right"
+        ctx.fillStyle = "white"
+        ctx.font = `bold ${Math.min(16, radius / 8)}px Arial`
+
+        // Add text shadow for better visibility
+        ctx.shadowColor = "rgba(0, 0, 0, 0.9)"
+        ctx.shadowBlur = 4
+        ctx.shadowOffsetX = 1
+        ctx.shadowOffsetY = 1
+
+        // Position text in the middle of the segment
+        // ctx.fillText(segment.name, radius - 20, 5)
+        ctx.restore()
+      }
     })
 
-    // Draw frame image if loaded
-    if (frameImage) {
-      ctx.save()
-      ctx.translate(centerX, centerY)
-      // Don't rotate the frame with the wheel
-      ctx.rotate(angleCurrent.current)
-      const frameSize = radius * 2 + 10
-      ctx.drawImage(
-        frameImage,
-        -frameSize / 2,
-        -frameSize / 2,
-        frameSize,
-        frameSize
-      )
-      ctx.restore()
-    }
-
-    // // Draw outer circle
-    // ctx.beginPath()
-    // ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-    // ctx.strokeStyle = "white"
-    // ctx.lineWidth = 4
-    // ctx.stroke()
+    // Draw center circle for better appearance - make it larger and white like in reference
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, radius * 0.2, 0, 2 * Math.PI)
+    ctx.fillStyle = "white"
+    ctx.fill()
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.5)"
+    ctx.lineWidth = 2
+    ctx.stroke()
   }
 
-  // Handle spin state change
-  useEffect(() => {
-    if (isSpinning && !isAnimating && !spinRequestedRef.current) {
-      // Set flag to prevent multiple calls
-      spinRequestedRef.current = true
+  // Helper function to lighten colors
+  function lightenColor(color: string, percent: number) {
+    const num = parseInt(color.replace("#", ""), 16),
+      amt = Math.round(2.55 * percent),
+      R = (num >> 16) + amt,
+      G = ((num >> 8) & 0x00ff) + amt,
+      B = (num & 0x0000ff) + amt
+    return `#${(0x1000000 + (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 + (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 + (B < 255 ? (B < 1 ? 0 : B) : 255)).toString(16).slice(1)}`
+  }
 
-      // Call startSpin without the API call here
-      startSpinWithoutAPI().catch((error) => {
-        console.error("Error in spin effect:", error)
-        // Reset flag on error
-        spinRequestedRef.current = false
-      })
-    } else if (!isSpinning) {
-      // Reset flag when spinning state is turned off
-      spinRequestedRef.current = false
-    }
-  }, [isSpinning, isAnimating])
+  // Add a function to darken colors
+  const darkenColor = (color: string, percent: number): string => {
+    const num = parseInt(color.replace("#", ""), 16),
+      amt = Math.round(2.55 * percent),
+      R = Math.max((num >> 16) - amt, 0),
+      G = Math.max(((num >> 8) & 0x00ff) - amt, 0),
+      B = Math.max((num & 0x0000ff) - amt, 0)
+    return `#${(0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)}`
+  }
 
-  // New method that starts the animation without calling the API
-  const startSpinWithoutAPI = async () => {
+  // Update the startSpin function to better handle the API response
+  const startSpin = async () => {
     // Don't start spinning if already in progress
     if (isAnimating) {
       spinRequestedRef.current = false
@@ -253,58 +296,137 @@ const Wheel = ({
     }
 
     setIsAnimating(true)
+    setApiResponseReceived(false) // Reset the response received flag
 
     try {
-      // Set the winning segment based on a random index for now
-      // The actual result will be fetched in finishSpin
-      const randomIndex = Math.floor(Math.random() * segmentsRef.current.length)
-      winningSegmentIndexRef.current = randomIndex
-      setCurrentItem(null) // Clear any previous result
-      setFinished(false)
+      // Call the API to get the winning item BEFORE starting the animation
+      const response = await spinWheel()
 
-      // Determine the winning segment based on the winning angle
-      const segmentAngle = (2 * Math.PI) / segmentsRef.current.length
+      // Store the response and mark as received
+      setSpinWheelResponse(response)
+      setApiResponseReceived(true)
 
-      // Randomize starting position to make it unpredictable
-      const randomStartAngle = Math.random() * 2 * Math.PI
-      angleCurrent.current = randomStartAngle
+      // Determine the winning segment based on API response
+      let winningIndex = 0
 
-      // Generate random position within segment (0 to segmentAngle)
-      randomPositionRef.current = Math.random() * segmentAngle
+      if (response?.data?.success && response?.data?.result) {
+        const result = response.data.result as WheelPrize
 
-      // Start animation
-      startTimeRef.current = performance.now()
-      requestRef.current = requestAnimationFrame(animateSpin)
+        // Find the winning item based on the API response type
+        let matchingSegmentIndex = -1
+
+        if (result.type === "stars") {
+          // Match stars prize
+          matchingSegmentIndex = segmentsRef.current.findIndex((item) =>
+            item.name.toLowerCase().includes("stars")
+          )
+        } else if (result.type === "item") {
+          // Match item prize by itemType (CUT, KNIFE, SHEARS)
+          matchingSegmentIndex = segmentsRef.current.findIndex((item) =>
+            item.name.toLowerCase().includes(result.itemType.toLowerCase())
+          )
+        } else if (result.type === "rune") {
+          // Match rune prize by itemType (UNCOMMON, COMMON, RARE, EPIC, LEGENDARY)
+          matchingSegmentIndex = segmentsRef.current.findIndex((item) =>
+            item.name.toLowerCase().includes(result.itemType.toLowerCase())
+          )
+        }
+
+        // If we found a matching item, use that index
+        if (matchingSegmentIndex >= 0) {
+          winningIndex = matchingSegmentIndex
+        } else {
+          // Fallback to a random index if no match found
+          winningIndex = Math.floor(Math.random() * segmentsRef.current.length)
+          console.warn("No matching segment found for prize:", result)
+        }
+      } else {
+        // If API call failed, use a random index
+        winningIndex = Math.floor(Math.random() * segmentsRef.current.length)
+      }
+
+      // Store the winning index in a ref so it persists through renders
+      winningSegmentIndexRef.current = winningIndex
+
+      // Start the animation
+      startAnimation()
     } catch (error) {
       setIsAnimating(false)
       spinRequestedRef.current = false
       console.error("Error starting spin:", error)
+      toast.error("Failed to start the wheel")
     }
+  }
+
+  // New function to start the animation separately from the API call
+  const startAnimation = () => {
+    setCurrentItem(null) // Clear any previous result
+    setFinished(false)
+
+    // Determine the winning segment based on the winning angle
+    const segmentAngle = (2 * Math.PI) / segmentsRef.current.length
+
+    // Randomize starting position to make it unpredictable
+    const randomStartAngle = Math.random() * 2 * Math.PI
+    angleCurrent.current = randomStartAngle
+
+    // Generate random position within segment (0 to segmentAngle)
+    randomPositionRef.current = Math.random() * segmentAngle
+
+    // Start animation
+    startTimeRef.current = performance.now()
+    requestRef.current = requestAnimationFrame(animateSpin)
   }
 
   const finishSpin = async () => {
     try {
       // Call the API when the animation is finishing
       const response = await spinWheel()
-      setSpinWheelResponse(response.data)
+      setSpinWheelResponse(response)
 
       // Use the API response to determine the actual winning item
       if (response?.data?.success) {
-        // If API provides a winning index, update it
-        // if (response.data?.winningIndex !== undefined) {
-        const randomIndex = Math.floor(Math.random() * 9)
-        winningSegmentIndexRef.current = randomIndex
-        // }
+        const result = response.data.result as WheelPrize
+
+        // Find the winning item based on the API response type
+        let matchingSegmentIndex = -1
+
+        if (result.type === "stars") {
+          // Match stars prize
+          matchingSegmentIndex = segmentsRef.current.findIndex((item) =>
+            item.name.toLowerCase().includes("stars")
+          )
+        } else if (result.type === "item") {
+          // Match item prize by itemType (CUT, KNIFE, SHEARS)
+          matchingSegmentIndex = segmentsRef.current.findIndex((item) =>
+            item.name.toLowerCase().includes(result.itemType.toLowerCase())
+          )
+        } else if (result.type === "rune") {
+          // Match rune prize by itemType (UNCOMMON, COMMON, RARE, EPIC, LEGENDARY)
+          matchingSegmentIndex = segmentsRef.current.findIndex((item) =>
+            item.name.toLowerCase().includes(result.itemType.toLowerCase())
+          )
+        }
+
+        // If we found a matching item, update the winning index
+        if (matchingSegmentIndex >= 0) {
+          winningSegmentIndexRef.current = matchingSegmentIndex
+        } else {
+          // Fallback to a random index if no match found
+          winningSegmentIndexRef.current = Math.floor(
+            Math.random() * segmentsRef.current.length
+          )
+          console.warn("No matching segment found for prize:", result)
+        }
+
         if (response?.data?.result) {
-          // @ts-expect-error 'error' is not defined in the response
-          toast.success(response?.data?.result?.message)
+          toast.success(response?.data?.result?.message, {
+            icon: "🎉",
+            duration: 5000,
+          })
         }
       } else {
-        toast.error(
-          // @ts-expect-error 'error' is not defined in the response
-          response?.data?.error ||
-            "An error occurred while retrieving your prize"
-        )
+        toast.error("An error occurred while retrieving your prize")
         setIsError(true)
       }
     } catch (error) {
@@ -328,89 +450,13 @@ const Wheel = ({
     }
   }
 
-  const startSpin = async () => {
-    // Don't start spinning if already in progress
-    if (isAnimating) {
-      spinRequestedRef.current = false
-      return
-    }
-
-    setIsAnimating(true)
-
-    try {
-      const response = await spinWheel()
-
-      if (response?.data?.success && response.data) {
-        setSpinWheelResponse(response.data)
-
-        // Set the winning segment based on API response
-        const randomIndex = Math.floor(Math.random() * 9)
-        winningSegmentIndexRef.current = randomIndex
-        setCurrentItem(null) // Clear any previous result
-        setFinished(false)
-
-        // Determine the winning segment based on the winning angle
-        const segmentAngle = (2 * Math.PI) / segmentsRef.current.length
-
-        // Randomize starting position to make it unpredictable
-        const randomStartAngle = Math.random() * 2 * Math.PI
-        angleCurrent.current = randomStartAngle
-
-        // Generate random position within segment (0 to segmentAngle)
-        randomPositionRef.current = Math.random() * segmentAngle
-
-        // Start animation
-        startTimeRef.current = performance.now()
-        requestRef.current = requestAnimationFrame(animateSpin)
-      } else {
-        // Handle API error
-        setIsAnimating(false)
-        spinRequestedRef.current = false
-        console.error("Failed to get winning item from API")
-      }
-
-      // Get winning item from API (simulated)
-      // const response = await getWinningItem(segmentsRef.current)
-      // console.log("response", response)
-      // if (response.success && response.data) {
-      //   // Set the winning segment based on API response
-      //   winningSegmentIndexRef.current = response.data.winningIndex
-      //   setCurrentItem(null) // Clear any previous result
-      //   setFinished(false)
-
-      //   // Determine the winning segment based on the winning angle
-      //   const segmentAngle = (2 * Math.PI) / segmentsRef.current.length
-
-      //   // Randomize starting position to make it unpredictable
-      //   const randomStartAngle = Math.random() * 2 * Math.PI
-      //   angleCurrent.current = randomStartAngle
-
-      //   // Generate random position within segment (0 to segmentAngle)
-      //   randomPositionRef.current = Math.random() * segmentAngle
-
-      //   // Start animation
-      //   startTimeRef.current = performance.now()
-      //   requestRef.current = requestAnimationFrame(animateSpin)
-      // } else {
-      //   // Handle API error
-      //   setIsAnimating(false)
-      //   spinRequestedRef.current = false
-      //   console.error("Failed to get winning item from API")
-      // }
-    } catch (error) {
-      setIsAnimating(false)
-      spinRequestedRef.current = false
-      console.error("Error getting winning item:", error)
-    }
-  }
-
   const animateSpin = (timestamp: number) => {
     const runtime = timestamp - startTimeRef.current
     const progress = Math.min(runtime / SPIN_DURATION, 1)
 
-    // Ease out function for natural deceleration
+    // Improved easing function for more natural deceleration
     const easeOut = (t: number) => {
-      return 1 - Math.pow(1 - t, 3)
+      return 1 - Math.pow(1 - t, 5) // Changed to quintic for even smoother deceleration
     }
 
     // Calculate stopping position based on winning angle
@@ -420,10 +466,11 @@ const Wheel = ({
     // Use the stored random position within segment for consistent animation
     const randomPositionWithinSegment = randomPositionRef.current
 
-    // Target angle: min rotations + angle needed to align winning segment with winning angle
+    // Target angle: min rotations + angle needed to align winning segment with pointer at 0 degrees (right side)
+    // Note: We're using 0 as the pointer angle since our arrow is on the right
     const spinAngle = MIN_ROTATIONS * (2 * Math.PI)
     const targetAngle =
-      spinAngle + (WINNING_ANGLE - segmentOffset - randomPositionWithinSegment)
+      spinAngle + (0 - segmentOffset - randomPositionWithinSegment)
     const angle = easeOut(progress) * targetAngle
 
     // Update current angle
@@ -434,49 +481,84 @@ const Wheel = ({
       requestRef.current = requestAnimationFrame(animateSpin)
     } else {
       // Animation complete
-      finishSpin()
+      setIsAnimating(false)
+      setFinished(true)
+
+      // Get winning item
+      const winningItem = segmentsRef.current[winningSegmentIndexRef.current]
+      setCurrentItem(winningItem)
+
+      // Call the completion callback
+      if (onSpinComplete) {
+        onSpinComplete(winningItem)
+      }
+
+      // Show success message if we have one from the API
+      if (apiResponseReceived && spinWheelResponse?.data?.result?.message) {
+        toast.success(spinWheelResponse.data.result.message, {
+          icon: "🎉",
+          duration: 5000,
+        })
+      } else {
+        // Fallback message if API response is not available
+        toast.success(`You won ${winningItem.name}!`, {
+          icon: "🎉",
+          duration: 5000,
+        })
+      }
+
+      // Reset spin request flag
+      spinRequestedRef.current = false
     }
   }
-
-  // const finishSpin = () => {
-  //   setIsAnimating(false)
-  //   setFinished(true)
-
-  //   // Reset spin request flag
-  //   spinRequestedRef.current = false
-
-  //   // Get winning item
-  //   const winningItem = segmentsRef.current[winningSegmentIndexRef.current]
-  //   console.log("winningItem", winningItem.name)
-  //   // toast.success(`You won ${winningItem.name}`)
-  //   toast.success(`You won ${spinWheelResponse.data.message}`)
-  //   setCurrentItem(winningItem)
-
-  //   if (onSpinComplete) {
-  //     onSpinComplete(winningItem)
-  //   }
-  // }
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex-1 flex justify-center items-center z-10 relative mx-auto"
-      style={{ maxWidth: "600px" }}
+      className="w-full h-full flex-1 flex justify-center items-center z-10 relative mx-auto max-w-[550px]"
+      // style={{ maxWidth: "550px" }}
     >
       {/* Frame image that's always visible */}
-      {/* <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <Image
-          src={"/images/wheel/fire.png"}
+          src={frameImageSrc.src}
           alt="Wheel frame"
-          width={600}
-          height={600}
-          className="w-full h-full object-contain"
+          width={550}
+          height={550}
+          className="w-full h-full object-contain z-20"
           priority
         />
-      </div> */}
+      </div>
 
+      {/* Wheel container with arrow indicator */}
       <div ref={wheelRef} className="relative">
         <canvas ref={canvasRef} className="will-change-transform" />
+
+        {/* Arrow indicator on the right side */}
+        {/* <div className="absolute top-1/2 right-[8.15rem] transform -translate-y-1/2 translate-x-1/2 z-10">
+          <Image
+            src="/images/arrow.png"
+            alt="Wheel pointer"
+            width={600}
+            height={600}
+            className="filter drop-shadow-lg"
+          />
+        </div> */}
+        <div
+          ref={pointerRef}
+          className="absolute top-1/2 right-0 transform -translate-y-1/2 z-30"
+          style={{
+            right: "-4.15rem",
+          }}
+        >
+          <Image
+            src="/images/arrow.png"
+            alt="Wheel pointer"
+            width={450}
+            height={450}
+            className="filter drop-shadow-lg"
+          />
+        </div>
       </div>
     </div>
   )

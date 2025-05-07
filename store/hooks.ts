@@ -133,12 +133,8 @@ export const useDailyRewards = () => {
   const dailyRewardsState = useAppSelector((state) => state.dailyRewards)
 
   const handleClaimRewards = async () => {
-    try {
-      const response = await dispatch(claimDailyRewards()).unwrap()
-      return response
-    } catch (error) {
-      throw error
-    }
+    const response = await dispatch(claimDailyRewards()).unwrap()
+    return response
   }
 
   return {
