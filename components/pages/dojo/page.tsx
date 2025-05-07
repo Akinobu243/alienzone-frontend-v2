@@ -164,6 +164,128 @@ const DojoPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [totalPower, setTotalPower] = useState(0)
   const dispatch = useDispatch<AppDispatch>()
+  const [bonusDetails, setBonusDetails] = useState({
+    starBoost: 0,
+    xpBoost: 0,
+    raidTimeBoost: 0,
+  })
+
+  // Update bonus details whenever selected traits change
+  // useEffect(() => {
+  //   // Only calculate bonuses for traits that differ from default
+  //   const newBonusDetails = {
+  //     starBoost: 0,
+  //     xpBoost: 0,
+  //     raidTimeBoost: 0,
+  //   }
+
+  //   // Check if traits have changed and add their bonuses
+  //   if (selectedTraits.hairId !== defaultTraits.hairId) {
+  //     const selectedHair = traits.HAIR.find(
+  //       (hair) => hair.id === selectedTraits.hairId
+  //     )
+  //     if (selectedHair) {
+  //       newBonusDetails.starBoost += selectedHair.starBoost || 0
+  //       newBonusDetails.xpBoost += selectedHair.xpBoost || 0
+  //       newBonusDetails.raidTimeBoost += selectedHair.raidTimeBoost || 0
+  //     }
+  //   }
+
+  //   if (selectedTraits.eyesId !== defaultTraits.eyesId) {
+  //     const selectedEyes = traits.EYES.find(
+  //       (eyes) => eyes.id === selectedTraits.eyesId
+  //     )
+  //     if (selectedEyes) {
+  //       newBonusDetails.starBoost += selectedEyes.starBoost || 0
+  //       newBonusDetails.xpBoost += selectedEyes.xpBoost || 0
+  //       newBonusDetails.raidTimeBoost += selectedEyes.raidTimeBoost || 0
+  //     }
+  //   }
+
+  //   if (selectedTraits.mouthId !== defaultTraits.mouthId) {
+  //     const selectedMouth = traits.MOUTH.find(
+  //       (mouth) => mouth.id === selectedTraits.mouthId
+  //     )
+  //     if (selectedMouth) {
+  //       newBonusDetails.starBoost += selectedMouth.starBoost || 0
+  //       newBonusDetails.xpBoost += selectedMouth.xpBoost || 0
+  //       newBonusDetails.raidTimeBoost += selectedMouth.raidTimeBoost || 0
+  //     }
+  //   }
+
+  //   if (selectedTraits.elementId !== defaultTraits.elementId) {
+  //     const selectedElement = traits.ELEMENT.find(
+  //       (element) => element.id === selectedTraits.elementId
+  //     )
+  //     if (selectedElement) {
+  //       newBonusDetails.starBoost += selectedElement.starBoost || 0
+  //       newBonusDetails.xpBoost += selectedElement.xpBoost || 0
+  //       newBonusDetails.raidTimeBoost += selectedElement.raidTimeBoost || 0
+  //     }
+  //   }
+
+  //   setBonusDetails(newBonusDetails)
+  // }, [selectedTraits, defaultTraits, traits])
+
+  // Update bonus details whenever selected traits change
+  useEffect(() => {
+    // Calculate bonuses for all selected traits, not just those that differ from default
+    const newBonusDetails = {
+      starBoost: 0,
+      xpBoost: 0,
+      raidTimeBoost: 0,
+    }
+
+    // Add bonuses from selected hair
+    if (selectedTraits.hairId) {
+      const selectedHair = traits.HAIR.find(
+        (hair) => hair.id === selectedTraits.hairId
+      )
+      if (selectedHair) {
+        newBonusDetails.starBoost += selectedHair.starBoost || 0
+        newBonusDetails.xpBoost += selectedHair.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedHair.raidTimeBoost || 0
+      }
+    }
+
+    // Add bonuses from selected eyes
+    if (selectedTraits.eyesId) {
+      const selectedEyes = traits.EYES.find(
+        (eyes) => eyes.id === selectedTraits.eyesId
+      )
+      if (selectedEyes) {
+        newBonusDetails.starBoost += selectedEyes.starBoost || 0
+        newBonusDetails.xpBoost += selectedEyes.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedEyes.raidTimeBoost || 0
+      }
+    }
+
+    // Add bonuses from selected mouth
+    if (selectedTraits.mouthId) {
+      const selectedMouth = traits.MOUTH.find(
+        (mouth) => mouth.id === selectedTraits.mouthId
+      )
+      if (selectedMouth) {
+        newBonusDetails.starBoost += selectedMouth.starBoost || 0
+        newBonusDetails.xpBoost += selectedMouth.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedMouth.raidTimeBoost || 0
+      }
+    }
+
+    // Add bonuses from selected element
+    if (selectedTraits.elementId) {
+      const selectedElement = traits.ELEMENT.find(
+        (element) => element.id === selectedTraits.elementId
+      )
+      if (selectedElement) {
+        newBonusDetails.starBoost += selectedElement.starBoost || 0
+        newBonusDetails.xpBoost += selectedElement.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedElement.raidTimeBoost || 0
+      }
+    }
+
+    setBonusDetails(newBonusDetails)
+  }, [selectedTraits, traits])
 
   useEffect(() => {
     if (alien?.id) {
@@ -366,19 +488,56 @@ const DojoPage = () => {
       return
     }
 
-    // Get the part IDs directly from the selectedTraits object
-    let selectedPartIds = []
+    // // Get the part IDs directly from the selectedTraits object
+    // let selectedPartIds = []
 
-    // Add each selected trait ID if it exists
-    if (selectedTraits.hairId) selectedPartIds.push(selectedTraits.hairId)
-    if (selectedTraits.eyesId) selectedPartIds.push(selectedTraits.eyesId)
-    if (selectedTraits.mouthId) selectedPartIds.push(selectedTraits.mouthId)
-    if (selectedTraits.elementId) selectedPartIds.push(selectedTraits.elementId)
-    // remove duplicates
-    selectedPartIds = Array.from(new Set(selectedPartIds))
+    // // Add each selected trait ID if it exists
+    // if (selectedTraits.hairId) selectedPartIds.push(selectedTraits.hairId)
+    // if (selectedTraits.eyesId) selectedPartIds.push(selectedTraits.eyesId)
+    // if (selectedTraits.mouthId) selectedPartIds.push(selectedTraits.mouthId)
+    // if (selectedTraits.elementId) selectedPartIds.push(selectedTraits.elementId)
 
-    if (selectedPartIds.length === 0) {
+    // // remove duplicates
+    // selectedPartIds = Array.from(new Set(selectedPartIds))
+
+    // if (selectedPartIds.length === 0) {
+    //   toast.error("Some traits are not selected")
+    //   return
+    // }
+
+    // Create an array of objects with part type and ID
+    const selectedParts = []
+
+    if (selectedTraits.hairId)
+      selectedParts.push({ type: "hair", id: selectedTraits.hairId })
+
+    if (selectedTraits.eyesId)
+      selectedParts.push({ type: "eyes", id: selectedTraits.eyesId })
+
+    if (selectedTraits.mouthId)
+      selectedParts.push({ type: "mouth", id: selectedTraits.mouthId })
+
+    if (selectedTraits.elementId)
+      selectedParts.push({ type: "element", id: selectedTraits.elementId })
+
+    if (selectedParts.length === 0) {
       toast.error("Some traits are not selected")
+      return
+    }
+
+    // Check for duplicate IDs and ensure each part type has a unique ID
+    const seenIds = new Set<number>()
+    const uniqueParts = selectedParts.filter((part) => {
+      if (seenIds.has(part.id)) {
+        console.warn(`Duplicate ID detected: ${part.id} for type ${part.type}`)
+        return false
+      }
+      seenIds.add(part.id)
+      return true
+    })
+
+    if (uniqueParts.length !== selectedParts.length) {
+      toast.error("Duplicate part IDs detected. Please select different parts.")
       return
     }
 
@@ -388,7 +547,7 @@ const DojoPage = () => {
       // Equip each part one by one
       const response = await equipAlienPart({
         alienId: alien.id,
-        partIds: selectedPartIds,
+        parts: uniqueParts,
       })
 
       if (response.data && response.data.success) {
@@ -463,9 +622,9 @@ const DojoPage = () => {
     }
   }
 
-  console.log("alien ===>", alien)
-
-  console.log("profile ===>", profile)
+  console.log("Traits ===>", traits)
+  console.log("selectedTraits ===>", selectedTraits)
+  console.log("defaultTraits ===>", defaultTraits)
 
   return (
     <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
@@ -952,7 +1111,37 @@ const DojoPage = () => {
                   return (
                     <>
                       {/* First row with first two entries */}
-                      {entries.length > 0 && (
+
+                      <div className="flex gap-2">
+                        <div className="flex-1 flex justify-between items-center gap-2 bg-white/10 rounded px-2 py-1">
+                          <span className="text-xs font-inter text-white/70">
+                            starsBoost
+                          </span>
+                          <span className="text-xs font-volkhov">
+                            {bonusDetails.starBoost}
+                          </span>
+                        </div>
+                        <div className="flex-1 flex justify-between items-center gap-2 bg-white/10 rounded px-2 py-1">
+                          <span className="text-xs font-inter text-white/70">
+                            xpBoost
+                          </span>
+                          <span className="text-xs font-volkhov">
+                            {bonusDetails.xpBoost}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex">
+                        <div className="flex-1 flex justify-between items-center gap-2 bg-white/10 rounded px-2 py-1">
+                          <span className="text-xs font-inter text-white/70">
+                            raidTimeBoost
+                          </span>
+                          <span className="text-xs font-volkhov">
+                            {bonusDetails.raidTimeBoost}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* {entries.length > 0 && (
                         <div className="flex gap-2">
                           {entries.slice(0, 2).map(([key, value]) => (
                             <div
@@ -968,10 +1157,9 @@ const DojoPage = () => {
                             </div>
                           ))}
                         </div>
-                      )}
-
+                      )} */}
                       {/* Second row with third entry */}
-                      {entries.length > 2 && (
+                      {/* {entries.length > 2 && (
                         <div className="flex">
                           <div
                             key={entries[2][0]}
@@ -985,7 +1173,7 @@ const DojoPage = () => {
                             </span>
                           </div>
                         </div>
-                      )}
+                      )} */}
                     </>
                   )
                 })()}

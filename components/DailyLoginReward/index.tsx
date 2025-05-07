@@ -211,15 +211,21 @@ const DailyLoginReward = () => {
           <div className="lg:w-[240px] flex-shrink-0">
             <div className="bg-white/15 border border-white/10 rounded-xl p-4 flex flex-col gap-4 h-full">
               <div className="flex flex-col gap-2 bg-white/5 p-3 rounded text-center">
-                <div className="text-lg font-medium">Today&apos;s Claim</div>
-                <div className="font-inter text-sm">
-                  <span>{timeLeft.split(":")[0]}</span>
-                  <span className="mx-1">:</span>
-                  <span>{timeLeft.split(":")[1]}</span>
-                  <span className="mx-1">:</span>
-                  <span>{timeLeft.split(":")[2]}</span>
-                  <span className="ml-2 text-gray-400">Left</span>
+                <div className="text-lg font-medium">
+                  {currentReward && !isClaimedTodayReward(currentReward)
+                    ? `Today's Claim`
+                    : "Bonus Claimed"}
                 </div>
+                {currentReward && !isClaimedTodayReward(currentReward) && (
+                  <div className="font-inter text-sm">
+                    <span>{timeLeft.split(":")[0]}</span>
+                    <span className="mx-1">:</span>
+                    <span>{timeLeft.split(":")[1]}</span>
+                    <span className="mx-1">:</span>
+                    <span>{timeLeft.split(":")[2]}</span>
+                    <span className="ml-2 text-gray-400">Left</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col gap-3 flex-1">
