@@ -578,16 +578,30 @@ export const getEquippedAlienParts = async (
   return response
 }
 
+// export const equipAlienPart = async ({
+//   alienId,
+//   partIds,
+// }: {
+//   alienId: number
+//   partIds: number[]
+// }): Promise<ApiResponse<{ success: boolean; message: string }>> => {
+//   const response = await apiManager.post("/profile/equip-alien-part", {
+//     alienId,
+//     partIds,
+//   })
+//   return response
+// }
+
 export const equipAlienPart = async ({
   alienId,
-  partIds,
+  parts,
 }: {
   alienId: number
-  partIds: number[]
+  parts: { type: string; id: number }[]
 }): Promise<ApiResponse<{ success: boolean; message: string }>> => {
   const response = await apiManager.post("/profile/equip-alien-part", {
     alienId,
-    partIds,
+    parts,
   })
   return response
 }

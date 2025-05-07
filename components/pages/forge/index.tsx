@@ -78,37 +78,80 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     fetchForgeList()
   }, [])
 
-  const fetchForgeList = async () => {
-    getForgeList().then((res) => {
-      setForgeList(res.data?.alienParts)
-      setUserRuneAmounts(res.data?.userRuneAmounts)
-      // Set initial active item ID if data is available
-      if (res.data?.alienParts?.length > 0) {
-        setActiveItem(res.data.alienParts[0])
-        setActiveItemId(res.data.alienParts[0].id)
-      }
-    })
-  }
+  // const fetchForgeList = async () => {
+  //   getForgeList().then((res) => {
+  //     setForgeList(res.data?.alienParts)
+  //     setUserRuneAmounts(res.data?.userRuneAmounts)
+  //     // Set initial active item ID if data is available
+  //     if (res.data?.alienParts?.length > 0) {
+  //       setActiveItem(res.data.alienParts[0])
+  //       setActiveItemId(res.data.alienParts[0].id)
+  //     }
+  //   })
+  // }
 
   // Function to handle forge request
   const handleForge = async () => {
     if (!activeItemId) return
     setIsLoading(true)
     try {
-      forgeAlienPart(Number(activeItemId)).then((res) => {
-        if (res.data?.success) {
-          fetchForgeList()
-          toast.success("Forge successful")
-        } else {
-          toast.error(res.data?.error?.message || "Forge failed")
+      const response = await forgeAlienPart(Number(activeItemId))
+      if (response.data?.success) {
+        await fetchForgeList()
+        // Get the current real index from the swiper
+        const currentRealIndex = swiperRef.current?.realIndex || 0
+        // Update active item based on the current slide after refetching
+        if (forgeList[currentRealIndex]) {
+          setActiveItem(forgeList[currentRealIndex])
+          setActiveItemId(forgeList[currentRealIndex].id)
         }
-      })
-
-      // Handle success/error as needed
+        toast.success("Forge successful")
+      } else {
+        toast.error(
+          response.data?.error?.message ||
+            response?.data?.message ||
+            "Forge failed"
+        )
+      }
     } catch (error) {
       console.error("Error forging item:", error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchForgeList = async () => {
+    try {
+      const res = await getForgeList()
+      setForgeList(res.data?.alienParts || [])
+      setUserRuneAmounts(
+        res.data?.userRuneAmounts || {
+          COMMON: 0,
+          UNCOMMON: 0,
+          RARE: 0,
+          EPIC: 0,
+          LEGENDARY: 0,
+        }
+      )
+
+      // Get the current real index from the swiper
+      const currentRealIndex = swiperRef.current?.realIndex || 0
+
+      // Set active item based on the current slide after refetching
+      if (res.data?.alienParts && res.data.alienParts.length > 0) {
+        if (res.data.alienParts[currentRealIndex]) {
+          setActiveItem(res.data.alienParts[currentRealIndex])
+          setActiveItemId(res.data.alienParts[currentRealIndex].id)
+        } else {
+          // Fallback to first item if current index is no longer valid
+          setActiveItem(res.data.alienParts[0])
+          setActiveItemId(res.data.alienParts[0].id)
+        }
+      }
+      return res
+    } catch (error) {
+      console.error("Error fetching forge list:", error)
+      return { data: { alienParts: [], userRuneAmounts: {} } }
     }
   }
 
