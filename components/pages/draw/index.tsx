@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { useCharacters, useProfile } from "@/store/hooks"
+import { AppDispatch } from "@/store"
+import { useCharacters } from "@/store/hooks"
+import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { Character, Gear } from "@/types"
 import { createPortal } from "react-dom"
 import toast from "react-hot-toast"
+import { useDispatch } from "react-redux"
 
 import {
   multiSummonCharacter,
@@ -140,7 +143,8 @@ const DrawPage = ({ portal }: { portal: number }) => {
   const [singleSummonItem, setSingleSummonItem] = useState<
     Character | Gear | null
   >(null)
-  const { fetchUserProfile } = useProfile()
+  // const { fetchUserProfile } = useProfile()
+  const dispatch = useDispatch<AppDispatch>()
 
   // Get the fetchCharacters function from the useCharacters hook
   const { fetchCharacters } = useCharacters()
@@ -167,7 +171,8 @@ const DrawPage = ({ portal }: { portal: number }) => {
 
       // Refresh characters list after successful summon
       fetchCharacters()
-      fetchUserProfile()
+      // fetchUserProfile()
+      dispatch(fetchUserProfile())
 
       // Set summon type to character
       setSummonType("character")
@@ -202,7 +207,8 @@ const DrawPage = ({ portal }: { portal: number }) => {
 
       // Refresh characters list after successful multi-summon
       fetchCharacters()
-      fetchUserProfile()
+      // fetchUserProfile()
+      dispatch(fetchUserProfile())
 
       // Set summon type to character
       setSummonType("character")
