@@ -50,45 +50,9 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     LEGENDARY: 0,
   })
 
-  // Example items - replace with your actual data
-  const items = [
-    {
-      name: "Pepe Frog Helmet",
-      power: "+54",
-      image: "/images/cat.jpeg",
-    },
-    {
-      name: "Pepe Frog Helmet",
-      power: "+60",
-      image: "/images/girl.jpeg",
-    },
-    {
-      name: "Pepe Frog Helmet",
-      power: "+70",
-      image: "/images/cat.jpeg",
-    },
-    {
-      name: "Pepe Frog Helmet",
-      power: "+60",
-      image: "/images/girl.jpeg",
-    },
-  ]
-
   useEffect(() => {
     fetchForgeList()
   }, [])
-
-  // const fetchForgeList = async () => {
-  //   getForgeList().then((res) => {
-  //     setForgeList(res.data?.alienParts)
-  //     setUserRuneAmounts(res.data?.userRuneAmounts)
-  //     // Set initial active item ID if data is available
-  //     if (res.data?.alienParts?.length > 0) {
-  //       setActiveItem(res.data.alienParts[0])
-  //       setActiveItemId(res.data.alienParts[0].id)
-  //     }
-  //   })
-  // }
 
   // Function to handle forge request
   const handleForge = async () => {

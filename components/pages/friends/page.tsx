@@ -526,7 +526,6 @@ const FriendsPage = () => {
   }
 
   const handleAddFriend = async () => {
-    console.log("selectedSearchResults ===>", selectedSearchResults)
     if (selectedSearchResults.length > 0) {
       try {
         setIsLoading(true)

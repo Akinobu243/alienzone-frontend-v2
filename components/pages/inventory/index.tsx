@@ -99,6 +99,7 @@ const InventoryPage = () => {
       // Cast the response data to BurnGearResponse type
       const burnResponse = response.data
 
+      console.log("Burn Response ==>", burnResponse)
       if (burnResponse && burnResponse.success && burnResponse.character) {
         // Show success message
         toast.success("Gear burned successfully!")
@@ -112,6 +113,8 @@ const InventoryPage = () => {
 
         // Refresh inventory
         fetchInventory()
+      } else {
+        toast.error(burnResponse?.error?.message || "Failed to burn gear")
       }
     } catch (error) {
       console.error("Error burning gear:", error)

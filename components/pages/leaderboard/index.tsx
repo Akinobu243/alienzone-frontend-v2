@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAliens, useProfile } from "@/store/hooks"
 import { Leaderboard, TeamResponse } from "@/types"
 import moment from "moment"
+import toast from "react-hot-toast"
 
-import { getLeaderboard, getTeam, likeUser } from "@/lib/api"
+import {
+  addFriend,
+  getFriendsList,
+  getLeaderboard,
+  getTeam,
+  likeUser,
+} from "@/lib/api"
 import { cn } from "@/lib/utils"
 import useDebounce from "@/hooks/useDebounce"
 import {
@@ -101,6 +110,14 @@ const LeaderboardPage = () => {
   const [thisUser, setThisUser] = useState<Leaderboard | null>(null)
   const [search, setSearch] = useState<string>("")
   const debouncedSearch = useDebounce(search, 300)
+  const [friends, setFriends] = useState<any[]>([])
+  const { data: profile } = useProfile()
+  const { alien } = useAliens()
+  const router = useRouter()
+
+  useEffect(() => {
+    fetchFriendsList()
+  }, [])
 
   useEffect(() => {
     getLeaderboard({
@@ -144,6 +161,43 @@ const LeaderboardPage = () => {
       }
     })
   }
+
+  const fetchFriendsList = async () => {
+    try {
+      const res = await getFriendsList()
+      if (res.data) {
+        setFriends(res.data)
+      }
+    } catch (error) {
+      console.error("Error fetching friends list:", error)
+    }
+  }
+
+  const handleAddFriend = async () => {
+    if (selectedUser) {
+      try {
+        // setIsLoading(true)
+        // Call the API with an array of all selected user IDs
+        // This assumes the API endpoint has been updated to accept an array
+        const response = await addFriend([selectedUser.id])
+        if (response.data?.success) {
+          toast.success("Friend added successfully")
+          // Refresh friends list
+          fetchFriendsList()
+        } else {
+          toast.error("Failed to add friend")
+        }
+      } catch (error) {
+        console.error("Error adding friend:", error)
+      } finally {
+        // setIsLoading(false)
+      }
+    }
+  }
+
+  console.log("selectedUser ===>", selectedUser)
+  console.log("Profile ===>", profile)
+  console.log("friends ===>", friends)
 
   return (
     <div className="relative w-full h-full">
@@ -379,9 +433,9 @@ const LeaderboardPage = () => {
             <div className="flex flex-col gap-4 flex-1">
               {/* Main Profile Image with Gallery */}
               <div className="flex gap-2">
-                <div className="flex-1 aspect-square rounded overflow-hidden relative">
+                {/* <div className="flex-1 aspect-square rounded overflow-hidden relative">
                   <Image
-                    src={selectedUserTeam?.team[0].image || ""}
+                    src={selectedUserTeam?.team[0]?.image || ""}
                     alt="Character"
                     fill
                     className="object-cover z-10"
@@ -391,7 +445,7 @@ const LeaderboardPage = () => {
                     alt="User's alien"
                     fill
                   />
-                </div>
+                </div> */}
                 {selectedUserTeam?.team &&
                   selectedUserTeam.team.filter(
                     (teamMember) => !teamMember.isSelected
@@ -488,10 +542,22 @@ const LeaderboardPage = () => {
                       )}
                     />
                   </button>
-                  <button className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12">
+                  <button
+                    className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12"
+                    onClick={() =>
+                      router.push(`/friends?id=${selectedUser.id}`)
+                    }
+                  >
                     <MessageIcon className="w-5 h-5 mx-auto" />
                   </button>
-                  <button className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12">
+                  <button
+                    className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl transition-colors h-12 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black/5"
+                    onClick={handleAddFriend}
+                    disabled={
+                      selectedUser.id === (alien?.userId || profile?.id) ||
+                      friends.some((friend) => friend.id === selectedUser.id)
+                    }
+                  >
                     <AddUserIcon className="w-5 h-5 mx-auto" />
                   </button>
                   <button className="bg-black/5 border border-white/10 hover:bg-white/10 rounded-xl  transition-colors h-12">
