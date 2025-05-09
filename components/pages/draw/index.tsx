@@ -160,12 +160,15 @@ const DrawPage = ({ portal }: { portal: number }) => {
   }
 
   const handleSummonCharacter = async () => {
+    console.log("handleSummonCharacter")
     try {
       setLoading(true)
       const response = await summonCharacter({ portal })
       console.log(response)
-      if (response.error) {
-        toast.error(response.error.message)
+      if (!response?.data?.success || response.error) {
+        toast.error(
+          response?.data?.error?.message || "Error summoning character"
+        )
         return
       }
 
@@ -200,8 +203,10 @@ const DrawPage = ({ portal }: { portal: number }) => {
     try {
       setLoading(true)
       const response = await multiSummonCharacter({ portal })
-      if (response.error) {
-        toast.error(response.error.message)
+      if (!response?.data?.success || response.error) {
+        toast.error(
+          response?.data?.error?.message || "Error summoning character"
+        )
         return
       }
 
@@ -231,8 +236,10 @@ const DrawPage = ({ portal }: { portal: number }) => {
     try {
       setLoading(true)
       const response = await summonGear()
-      if (response.error) {
-        toast.error(response.error.message)
+      if (!response?.data?.success || response.error) {
+        toast.error(
+          response?.data?.error?.message || "Error summoning character"
+        )
         return
       }
 
@@ -257,8 +264,10 @@ const DrawPage = ({ portal }: { portal: number }) => {
     try {
       setLoading(true)
       const response = await multiSummonGear()
-      if (response.error) {
-        toast.error(response.error.message)
+      if (!response?.data?.success || response.error) {
+        toast.error(
+          response?.data?.error?.message || "Error summoning character"
+        )
         return
       }
 
@@ -316,7 +325,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
               disabled={loading}
             >
               <div className="flex items-center gap-2 justify-between z-10 w-full ">
-                <span>100</span>
+                <span>{portal === 1 ? 100 : 50}</span>
                 <span className="size-6 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border border-white/10">
                   <Image
                     src="/images/stars.png"
@@ -344,7 +353,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
               disabled={loading}
             >
               <div className="flex items-center gap-2 justify-between z-10 w-full ">
-                <span>1000</span>
+                <span>{portal === 1 ? 1000 : 500}</span>
                 <span className="size-6 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border border-white/10">
                   <Image
                     src="/images/stars.png"

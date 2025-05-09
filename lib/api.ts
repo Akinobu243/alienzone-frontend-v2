@@ -308,10 +308,13 @@ export const summonCharacter = async ({
   portal,
 }: {
   portal: number
-}): Promise<ApiResponse<{ character: Character; success: boolean }>> => {
+}): Promise<
+  ApiResponse<{ character: Character; success: boolean; error: ApiError }>
+> => {
   const response = await apiManager.post<{
     character: Character
     success: boolean
+    error: ApiError
   }>("/character/summon-character", {
     portal,
   })
@@ -325,11 +328,13 @@ export const multiSummonCharacter = async ({
   ApiResponse<{
     summonResults: { character: Character; isNew: boolean }[]
     success: boolean
+    error: ApiError
   }>
 > => {
   const response = await apiManager.post<{
     summonResults: { character: Character; isNew: boolean }[]
     success: boolean
+    error: ApiError
   }>("/character/multi-summon-characters", {
     portal,
   })
@@ -347,11 +352,12 @@ export const getAllCharacters = async (): Promise<
 }
 
 export const summonGear = async (): Promise<
-  ApiResponse<{ gear: Gear; success: boolean }>
+  ApiResponse<{ gear: Gear; success: boolean; error: ApiError }>
 > => {
   const response = await apiManager.post<{
     gear: Gear
     success: boolean
+    error: ApiError
   }>("/character/summon-gear")
   return response
 }
@@ -359,11 +365,13 @@ export const multiSummonGear = async (): Promise<
   ApiResponse<{
     summonResults: { gears: Gear[]; isNew: boolean }[]
     success: boolean
+    error: ApiError
   }>
 > => {
   const response = await apiManager.post<{
     summonResults: { gears: Gear[]; isNew: boolean }[]
     success: boolean
+    error: ApiError
   }>("/character/multi-summon-gear")
   return response
 }
