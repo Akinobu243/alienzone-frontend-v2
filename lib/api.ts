@@ -442,13 +442,19 @@ export const upgradeCharacter = async (
     serverSignature: string
     nonce: number
     character: Character
+    oldTokenId: number
+    oldTokenAmount: number
+    newTokenId: number
   }>
 > => {
-  const response = await apiManager.get<{
+  const response = await apiManager.post<{
     success: boolean
     serverSignature: string
     nonce: number
     character: Character
+    oldTokenId: number
+    oldTokenAmount: number
+    newTokenId: number
   }>("/character/upgrade-character", {
     characterId,
   })

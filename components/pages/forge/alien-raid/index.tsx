@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { useDailyRewards, useInventory } from "@/store/hooks"
-import { fetchUserProfile } from "@/store/slices/userProfileSlice"
-import { Character, InventoryItem } from "@/types"
-import { Check, Lock } from "lucide-react"
-import toast from "react-hot-toast"
+import { useInventory } from "@/store/hooks"
+import { InventoryItem } from "@/types"
 
 import { cn } from "@/lib/utils"
-
-import BrandButton from "../../../ui/brand-button"
-import { GradientBorder } from "../../../ui/gradient-border"
 
 const AlienRaid = ({
   onSelect,

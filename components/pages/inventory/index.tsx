@@ -5,7 +5,7 @@ import { useInventory } from "@/store/hooks"
 import { Character, InventoryItem } from "@/types"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { ethers } from "ethers"
-import { CloudLightning, X } from "lucide-react"
+import { CloudLightning, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { burnGear } from "@/lib/api"
@@ -111,14 +111,13 @@ const InventoryPage = () => {
 
       if (burnResponse && burnResponse.success && burnResponse.character) {
         // Show success message
-        toast.success("Gear burned successfully!")
+        // toast.success("Gear burned successfully!")
 
-        // Set the summoned character and open the summon modal
-        setSummonedCharacter(burnResponse.character)
-        setIsSummonModalOpen(true)
+        // // Set the summoned character and open the summon modal
+        // setSummonedCharacter(burnResponse.character)
 
-        // Reset selected item
-        setSelectedItem(null)
+        // // Reset selected item
+        // setSelectedItem(null)
 
         // Refresh inventory
         fetchInventory()
@@ -131,12 +130,14 @@ const InventoryPage = () => {
       } else {
         // @ts-expect-error 'burnResponse' is not typed
         toast.error(burnResponse?.error?.message || "Failed to burn gear")
+        setLoading(false)
       }
     } catch (error) {
       console.error("Error burning gear:", error)
       toast.error("An error occurred while burning gear")
-    } finally {
       setLoading(false)
+    } finally {
+      // setLoading(false)
     }
   }
 
@@ -197,10 +198,19 @@ const InventoryPage = () => {
       console.log("Tx ==> ", tx)
       console.log("Receipt ==> ", receipt)
 
-      toast.success("Minted successfully")
+      // Set the summoned character and open the summon modal
+      setSummonedCharacter(character)
+
+      // Reset selected item
+      setSelectedItem(null)
+
+      setIsSummonModalOpen(true)
+      toast.success("Gear burned successfully!")
     } catch (error) {
       console.error("Minting error:", error)
       toast.error("Failed to mint characters")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -328,8 +338,10 @@ const InventoryPage = () => {
                   blurColor="bg-[#96DFF4]"
                   className="w-full"
                   onClick={handleBurnGear}
+                  disabled={loading}
                 >
-                  Summon
+                  {loading ? "Summoning..." : "Summon"}
+                  {loading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
                 </BrandButton>
               </div>
             </div>
