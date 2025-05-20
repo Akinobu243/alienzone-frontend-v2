@@ -72,7 +72,7 @@ const SummonModal = ({
     const amounts = new Array(tokenIds.length).fill(1)
 
     const signature = await handleSignMessage(
-      charactersIds.join(","),
+      tokenIds.join(","),
       wallet,
       signMessage
     )
@@ -85,7 +85,7 @@ const SummonModal = ({
     try {
       setIsMinting(true)
       // Step 1: Get server signature and transaction ID
-      const response = await mintCharacters(charactersIds, signature)
+      const response = await mintCharacters(tokenIds, signature)
 
       console.log("Mint Response ==>", response)
       if (response.error || !response.data || !response.data.success) {
