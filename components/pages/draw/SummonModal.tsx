@@ -23,6 +23,8 @@ const SummonModal = ({
   title,
   showCloseButton = false,
   showMintButton = false,
+  isMinted,
+  setIsMinted,
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
@@ -33,6 +35,8 @@ const SummonModal = ({
   title?: string
   showCloseButton?: boolean
   showMintButton?: boolean
+  isMinted: boolean
+  setIsMinted: (isMinted: boolean) => void
 }) => {
   // Get the fetchCharacters function from the useCharacters hook
   const { fetchCharacters } = useCharacters()
@@ -40,7 +44,6 @@ const SummonModal = ({
   const { wallets } = useWallets()
   const { provider, signer } = useWallet()
   const [isMinting, setIsMinting] = useState(false)
-  const [isMinted, setIsMinted] = useState(false)
 
   // Handle modal close to refresh characters
   const handleOpenChange = (open: boolean) => {
@@ -70,6 +73,8 @@ const SummonModal = ({
       .map((item) => (item as Character).tokenId)
       .filter((id) => id !== undefined)
     const amounts = new Array(tokenIds.length).fill(1)
+
+    console.log("Wallet ===>", wallet)
 
     const signature = await handleSignMessage(
       tokenIds.join(","),

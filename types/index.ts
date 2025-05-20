@@ -284,6 +284,7 @@ export interface InventoryItem {
   isPortal2?: boolean
   image: string
   description: string
+  upgradesToId?: number
   type: "CHARACTER" | "ELEMENT" | "ALIEN_PART" | "GEAR"
 }
 
