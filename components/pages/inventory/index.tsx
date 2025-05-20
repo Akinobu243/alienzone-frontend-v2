@@ -57,6 +57,13 @@ const InventoryPage = () => {
   const { wallets } = useWallets()
   const { provider, signer } = useWallet()
   const { signMessage } = usePrivy()
+  const [isMinted, setIsMinted] = useState(false)
+
+  useEffect(() => {
+    if (isSummonModalOpen) {
+      setIsMinted(false)
+    }
+  }, [isSummonModalOpen])
 
   // Fetch inventory data when component mounts
   useEffect(() => {
@@ -359,6 +366,8 @@ const InventoryPage = () => {
           summonItems={[summonedCharacter]}
           loading={false}
           showCloseButton={true}
+          isMinted={isMinted}
+          setIsMinted={setIsMinted}
         />
       )}
     </div>

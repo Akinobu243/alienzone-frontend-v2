@@ -21,6 +21,8 @@ const AlienRaid = ({
     fetchInventory()
   }, [])
 
+  console.log("inventory ===>", inventory)
+
   useEffect(() => {
     if (!inventory) {
       setItems([])
@@ -29,7 +31,10 @@ const AlienRaid = ({
 
     setItems(
       inventory.filter(
-        (item) => item.type === "CHARACTER" && item.isPortal2 === isPortal2
+        (item) =>
+          item.type === "CHARACTER" &&
+          item.isPortal2 === isPortal2 &&
+          item.upgradesToId !== null
       )
     )
     setLoading(false)

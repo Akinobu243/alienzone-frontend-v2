@@ -33,6 +33,7 @@ const VideoPlayerModal = ({
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
   const { fetchCharacters } = useCharacters()
+
   useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
@@ -143,11 +144,18 @@ const DrawPage = ({ portal }: { portal: number }) => {
   const [singleSummonItem, setSingleSummonItem] = useState<
     Character | Gear | null
   >(null)
+  const [isMinted, setIsMinted] = useState(false)
   // const { fetchUserProfile } = useProfile()
   const dispatch = useDispatch<AppDispatch>()
 
   // Get the fetchCharacters function from the useCharacters hook
   const { fetchCharacters } = useCharacters()
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsMinted(false)
+    }
+  }, [isOpen])
 
   // Handle video end for single character summon
   const handleVideoEnded = () => {
@@ -393,6 +401,8 @@ const DrawPage = ({ portal }: { portal: number }) => {
         loading={loading}
         showCloseButton
         showMintButton={summonType === "character"}
+        isMinted={isMinted}
+        setIsMinted={setIsMinted}
       />
       <VideoPlayerModal
         isOpen={videoModalOpen}
