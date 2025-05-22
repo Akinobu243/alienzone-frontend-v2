@@ -6,6 +6,12 @@ import toast from "react-hot-toast"
 import { twMerge } from "tailwind-merge"
 import * as chains from "viem/chains"
 
+declare global {
+  interface Window {
+    __cacheBusterTimestamp?: number
+  }
+}
+
 export function getChain(chainId: number) {
   for (const chain of Object.values(chains)) {
     if ("id" in chain) {
@@ -328,3 +334,72 @@ export const getEthWallet = (wallets: ConnectedWallet[]) => {
 
 //   return false
 // }
+
+/**
+ * Adds a cache-busting query parameter to an image URL to prevent browser caching
+ * Uses a stable timestamp for the current page session to prevent flickering
+ * @param url The image URL to add the cache buster to
+ * @returns The URL with a cache busting parameter added
+ */
+export function addCacheBuster(url: string | undefined | null): string {
+  if (!url) return ""
+
+  // Use a window-level variable to store the session timestamp
+  // This ensures the timestamp stays consistent during the current page session
+  if (typeof window !== "undefined") {
+    if (!window.__cacheBusterTimestamp) {
+      window.__cacheBusterTimestamp = Date.now()
+    }
+
+    // If the URL already has a query parameter, append the cache buster with &
+    // Otherwise, add it with ?
+    const separator = url.includes("?") ? "&" : "?"
+    return `${url}${separator}v=${window.__cacheBusterTimestamp}`
+  }
+
+  // Fallback for server-side rendering
+  const separator = url.includes("?") ? "&" : "?"
+  return `${url}${separator}v=${Date.now()}`
+}
+
+// Cache for preloaded background images to prevent flickering
+const backgroundImageCache: Record<string, string> = {}
+
+/**
+ * Specialized version of addCacheBuster for background images that prevents flickering
+ * This function preloads the image and maintains a cache to ensure smooth background rendering
+ * @param url The background image URL
+ * @returns A cached URL with cache busting parameter
+ */
+export function getBackgroundImageUrl(url: string | undefined | null): string {
+  if (!url) return ""
+
+  // If we're on the server, just return a cache-busted URL
+  if (typeof window === "undefined") {
+    const separator = url.includes("?") ? "&" : "?"
+    return `${url}${separator}v=${Date.now()}`
+  }
+
+  // Use the original URL as the cache key
+  const cacheKey = url
+
+  // If we already have this URL in the cache, return the cached version
+  if (backgroundImageCache[cacheKey]) {
+    return backgroundImageCache[cacheKey]
+  }
+
+  // Add cache buster
+  const separator = url.includes("?") ? "&" : "?"
+  const cacheBustedUrl = `${url}${separator}v=${window.__cacheBusterTimestamp || Date.now()}`
+
+  // Store in cache
+  backgroundImageCache[cacheKey] = cacheBustedUrl
+
+  // Preload the image to prevent flickering
+  if (typeof Image !== "undefined") {
+    const img = new Image()
+    img.src = cacheBustedUrl
+  }
+
+  return cacheBustedUrl
+}

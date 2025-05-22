@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { useAliens, useProfile } from "@/store/hooks"
 
 import { getMessages, sendMessage } from "@/lib/api"
-import { cn } from "@/lib/utils"
+import { addCacheBuster, cn, getBackgroundImageUrl } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
 import { ChatIcon } from "@/components/icons"
 
@@ -17,7 +17,7 @@ function formatTimestamp(): string {
       minute: "numeric",
       hour12: true,
     })
-    .toLowerCase() // “2:39 pm”
+    .toLowerCase() // "2:39 pm"
 
   return `Today at ${timePart}`
 }
@@ -196,13 +196,13 @@ const Chat = ({
                       <div
                         className="size-14 rounded bg-white/10 shrink-0 mt-1"
                         style={{
-                          backgroundImage: `url(${message.elementImage.replace(".png", "-bg.png") || ""})`,
+                          backgroundImage: `url(${getBackgroundImageUrl(message.elementImage?.replace(".png", "-bg.png") || "")})`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
                       >
                         <img
-                          src={message.senderImage}
+                          src={addCacheBuster(message.senderImage)}
                           alt={message.senderName}
                           className="size-14 rounded"
                         />

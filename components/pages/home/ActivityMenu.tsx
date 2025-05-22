@@ -5,7 +5,12 @@ import { useProfile } from "@/store/hooks"
 import { Plus } from "lucide-react"
 
 import { levelRequirements } from "@/config/constants"
-import { cn, formatNumber } from "@/lib/utils"
+import {
+  addCacheBuster,
+  cn,
+  formatNumber,
+  getBackgroundImageUrl,
+} from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import {
   DojoIcon,
@@ -31,6 +36,7 @@ export const links = [
     title: "Dojo",
     href: "/dojo",
     icon: DojoIcon,
+    hardReload: true,
     image: "/images/pages/dojo.png",
   },
   {
@@ -99,28 +105,51 @@ const ActivityMenu = ({
 
           {/* Links */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {links.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-                className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
-              >
-                <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
-                  <Image
-                    src={link.image}
-                    alt={link.title}
-                    className="object-cover"
-                    fill
-                  />
-                </div>
-                <div className="flex items-end justify-between gap-2 mt-3">
-                  <h3 className="text-18 leading-none">{link.title}</h3>
-                  <div className="glass-effect size-6 rounded-sm flex items-center justify-center">
-                    <link.icon className="size-3" />
+            {links.map((link, index) =>
+              link.hardReload ? (
+                <a
+                  key={index}
+                  href={link.href}
+                  className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
+                >
+                  <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
+                    <Image
+                      src={link.image}
+                      alt={link.title}
+                      className="object-cover"
+                      fill
+                    />
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="flex items-end justify-between gap-2 mt-3">
+                    <h3 className="text-18 leading-none">{link.title}</h3>
+                    <div className="glass-effect size-6 rounded-sm flex items-center justify-center">
+                      <link.icon className="size-3" />
+                    </div>
+                  </div>
+                </a>
+              ) : (
+                <Link
+                  key={index}
+                  href={link.href}
+                  className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
+                >
+                  <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
+                    <Image
+                      src={link.image}
+                      alt={link.title}
+                      className="object-cover"
+                      fill
+                    />
+                  </div>
+                  <div className="flex items-end justify-between gap-2 mt-3">
+                    <h3 className="text-18 leading-none">{link.title}</h3>
+                    <div className="glass-effect size-6 rounded-sm flex items-center justify-center">
+                      <link.icon className="size-3" />
+                    </div>
+                  </div>
+                </Link>
+              )
+            )}
           </div>
         </div>
 
@@ -131,7 +160,7 @@ const ActivityMenu = ({
             <div
               className="relative flex items-center justify-center size-[100px] rounded-lg overflow-hidden"
               style={{
-                backgroundImage: `url(${alien?.element?.image.replace(".png", "-bg.png") || ""})`,
+                backgroundImage: `url(${getBackgroundImageUrl(alien?.element?.image?.replace(".png", "-bg.png") || "")})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
@@ -143,7 +172,7 @@ const ActivityMenu = ({
                 fill
               /> */}
               <img
-                src={alien?.image}
+                src={addCacheBuster(alien?.image)}
                 alt={alien?.name}
                 className="size-22 rounded"
               />

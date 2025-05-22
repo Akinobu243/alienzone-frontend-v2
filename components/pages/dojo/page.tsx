@@ -19,7 +19,6 @@ import {
   getOwnedAlienParts,
 } from "@/lib/api"
 import { cn, formatNumber, getEthWallet } from "@/lib/utils"
-import { GradientBorder } from "@/components/ui/gradient-border"
 import IconButton from "@/components/ui/icon-button"
 import {
   Popover,
@@ -29,6 +28,7 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 import { RenderAlien } from "./render-alien"
+import TraitPopover from "./trait-popover"
 
 const DOJO_ITEMS = [
   {
@@ -169,63 +169,6 @@ const DojoPage = () => {
     xpBoost: 0,
     raidTimeBoost: 0,
   })
-
-  // Update bonus details whenever selected traits change
-  // useEffect(() => {
-  //   // Only calculate bonuses for traits that differ from default
-  //   const newBonusDetails = {
-  //     starBoost: 0,
-  //     xpBoost: 0,
-  //     raidTimeBoost: 0,
-  //   }
-
-  //   // Check if traits have changed and add their bonuses
-  //   if (selectedTraits.hairId !== defaultTraits.hairId) {
-  //     const selectedHair = traits.HAIR.find(
-  //       (hair) => hair.id === selectedTraits.hairId
-  //     )
-  //     if (selectedHair) {
-  //       newBonusDetails.starBoost += selectedHair.starBoost || 0
-  //       newBonusDetails.xpBoost += selectedHair.xpBoost || 0
-  //       newBonusDetails.raidTimeBoost += selectedHair.raidTimeBoost || 0
-  //     }
-  //   }
-
-  //   if (selectedTraits.eyesId !== defaultTraits.eyesId) {
-  //     const selectedEyes = traits.EYES.find(
-  //       (eyes) => eyes.id === selectedTraits.eyesId
-  //     )
-  //     if (selectedEyes) {
-  //       newBonusDetails.starBoost += selectedEyes.starBoost || 0
-  //       newBonusDetails.xpBoost += selectedEyes.xpBoost || 0
-  //       newBonusDetails.raidTimeBoost += selectedEyes.raidTimeBoost || 0
-  //     }
-  //   }
-
-  //   if (selectedTraits.mouthId !== defaultTraits.mouthId) {
-  //     const selectedMouth = traits.MOUTH.find(
-  //       (mouth) => mouth.id === selectedTraits.mouthId
-  //     )
-  //     if (selectedMouth) {
-  //       newBonusDetails.starBoost += selectedMouth.starBoost || 0
-  //       newBonusDetails.xpBoost += selectedMouth.xpBoost || 0
-  //       newBonusDetails.raidTimeBoost += selectedMouth.raidTimeBoost || 0
-  //     }
-  //   }
-
-  //   if (selectedTraits.elementId !== defaultTraits.elementId) {
-  //     const selectedElement = traits.ELEMENT.find(
-  //       (element) => element.id === selectedTraits.elementId
-  //     )
-  //     if (selectedElement) {
-  //       newBonusDetails.starBoost += selectedElement.starBoost || 0
-  //       newBonusDetails.xpBoost += selectedElement.xpBoost || 0
-  //       newBonusDetails.raidTimeBoost += selectedElement.raidTimeBoost || 0
-  //     }
-  //   }
-
-  //   setBonusDetails(newBonusDetails)
-  // }, [selectedTraits, defaultTraits, traits])
 
   // Update bonus details whenever selected traits change
   useEffect(() => {
@@ -400,62 +343,6 @@ const DojoPage = () => {
     }
   }, [wallet])
 
-  // useEffect(() => {
-  //   if (wallets?.[0]?.address) {
-  //     getOwnedAlienParts(wallets?.[0]?.address).then((res) => {
-  //       if (res.data && Array.isArray(res.data?.userAlienParts)) {
-  //         // Initialize parts map
-  //         const partsMap: Record<string, any[]> = {
-  //           hair: [],
-  //           eyes: [],
-  //           mouth: [],
-  //           element: [],
-  //         }
-
-  //         // Track IDs to prevent duplicates
-  //         const seenIds: Record<string, Set<number>> = {
-  //           hair: new Set(),
-  //           eyes: new Set(),
-  //           mouth: new Set(),
-  //           element: new Set(),
-  //         }
-
-  //         // Process all objects in the array and collect their parts
-  //         res.data.userAlienParts.forEach((collection) => {
-  //           if (collection.parts && Array.isArray(collection.parts)) {
-  //             collection.parts.forEach((part: any) => {
-  //               const type = part.type.toLowerCase()
-  //               if (
-  //                 partsMap[type] !== undefined &&
-  //                 !seenIds[type].has(part.id)
-  //               ) {
-  //                 seenIds[type].add(part.id)
-  //                 partsMap[type].push(part)
-  //               }
-  //             })
-  //           }
-  //         })
-
-  //         // For elements, also check for duplicates
-  //         const uniqueElements = res.data?.elements
-  //           ? res.data.elements.filter(
-  //               (element: any, index: number, self: any[]) =>
-  //                 index === self.findIndex((e: any) => e.id === element.id)
-  //             )
-  //           : []
-
-  //         // Update traits with the grouped parts
-  //         setTraits({
-  //           HAIR: partsMap.hair || [],
-  //           EYES: partsMap.eyes || [],
-  //           MOUTH: partsMap.mouth || [],
-  //           ELEMENT: uniqueElements || [],
-  //         })
-  //       }
-  //     })
-  //   }
-  // }, [wallets])
-
   // Track loading state
 
   const handleEquipParts = async () => {
@@ -483,23 +370,6 @@ const DojoPage = () => {
       toast.error("No changes made")
       return
     }
-
-    // // Get the part IDs directly from the selectedTraits object
-    // let selectedPartIds = []
-
-    // // Add each selected trait ID if it exists
-    // if (selectedTraits.hairId) selectedPartIds.push(selectedTraits.hairId)
-    // if (selectedTraits.eyesId) selectedPartIds.push(selectedTraits.eyesId)
-    // if (selectedTraits.mouthId) selectedPartIds.push(selectedTraits.mouthId)
-    // if (selectedTraits.elementId) selectedPartIds.push(selectedTraits.elementId)
-
-    // // remove duplicates
-    // selectedPartIds = Array.from(new Set(selectedPartIds))
-
-    // if (selectedPartIds.length === 0) {
-    //   toast.error("Some traits are not selected")
-    //   return
-    // }
 
     // Create an array of objects with part type and ID
     const selectedParts = []
@@ -626,6 +496,7 @@ const DojoPage = () => {
   // console.log("Traits ===>", traits)
   console.log("selectedTraits ===>", selectedTraits)
   console.log("defaultTraits ===>", defaultTraits)
+  console.log("Traits ===>", traits)
 
   return (
     <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
@@ -642,224 +513,58 @@ const DojoPage = () => {
                 <ArrowLeft />
               </IconButton>
               <div className="flex flex-col gap-2">
-                {DOJO_ITEMS.slice(0, 4).map((item) => (
-                  <Popover key={item.id}>
-                    <PopoverTrigger asChild>
-                      <button
-                        className={cn(
-                          "flex items-center flex-col gap-2 bg-white/10 rounded-xl p-2 border border-white/10 aspect-square relative hover:bg-white/20 transition-all duration-300 shadow-lg",
-                          // Disable hover effect when no traits are available
-                          (item.value === "hairs" &&
-                            traits.HAIR.length === 0) ||
-                            (item.value === "eyes" &&
-                              traits.EYES.length === 0) ||
-                            (item.value === "mouth" &&
-                              traits.MOUTH.length === 0) ||
-                            (item.value === "background" &&
-                              traits.ELEMENT.length === 0)
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        )}
-                        onClick={() => {
-                          // Only set selected category if traits are available
-                          if (
-                            (item.value === "hairs" &&
-                              traits.HAIR.length > 0) ||
-                            (item.value === "eyes" && traits.EYES.length > 0) ||
-                            (item.value === "mouth" &&
-                              traits.MOUTH.length > 0) ||
-                            (item.value === "background" &&
-                              traits.ELEMENT.length > 0) ||
-                            !["hairs", "eyes", "mouth", "background"].includes(
-                              item.value
-                            )
-                          ) {
-                            setSelectedCategory(item.value)
-                          }
-                        }}
-                      >
-                        <Image
-                          src={item.image || "/placeholder.svg"}
-                          alt={item.label}
-                          className="w-24 h-24 opacity-30"
-                          width={100}
-                          height={100}
-                        />
-                        <span className="text-[8px] absolute bottom-3 left-1/2 -translate-x-1/2">
-                          {item.label}
-                        </span>
-                      </button>
-                    </PopoverTrigger>
-                    {((item.value === "hairs" && traits.HAIR.length > 0) ||
-                      (item.value === "eyes" && traits.EYES.length > 0) ||
-                      (item.value === "mouth" && traits.MOUTH.length > 0) ||
-                      (item.value === "background" &&
-                        traits.ELEMENT.length > 0) ||
-                      !["hairs", "eyes", "mouth", "background"].includes(
-                        item.value
-                      )) && (
-                      <PopoverContent
-                        className="w-64 p-3 rounded-xl border border-gray-light backdrop-blur-[40px] glass-effect"
-                        side="right"
-                        align="start"
-                      >
-                        <ScrollArea className="h-[150px]">
-                          <div className="grid grid-cols-3 gap-2">
-                            {item.value === "hairs" &&
-                              traits?.HAIR?.map((hair, index) => (
-                                <GradientBorder
-                                  key={index}
-                                  isSelected={selectedTraits.hairId === hair.id}
-                                  className=" transition-colors duration-300"
-                                >
-                                  <div
-                                    key={index}
-                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                    onClick={() =>
-                                      setSelectedTraits({
-                                        ...selectedTraits,
-                                        hair: hair.image,
-                                        hairId: hair.id,
-                                      })
-                                    }
-                                  >
-                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                      <Image
-                                        src={hair.image}
-                                        alt={hair.name}
-                                        width={50}
-                                        height={50}
-                                        className="object-cover"
-                                        crossOrigin="anonymous"
-                                      />
-                                    </div>
-                                  </div>
-                                </GradientBorder>
-                              ))}
-
-                            {item.value === "eyes" &&
-                              traits?.EYES?.map((eyes, index) => (
-                                <GradientBorder
-                                  key={index}
-                                  isSelected={selectedTraits.eyesId === eyes.id}
-                                  className=" transition-colors duration-300"
-                                >
-                                  <div
-                                    key={index}
-                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                    onClick={() =>
-                                      setSelectedTraits({
-                                        ...selectedTraits,
-                                        eyes: eyes.image,
-                                        eyesId: eyes.id,
-                                      })
-                                    }
-                                  >
-                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                      <Image
-                                        src={eyes.image}
-                                        alt={eyes.name}
-                                        width={50}
-                                        height={50}
-                                        className="object-cover"
-                                        crossOrigin="anonymous"
-                                      />
-                                    </div>
-                                  </div>
-                                </GradientBorder>
-                              ))}
-
-                            {item.value === "mouth" &&
-                              traits?.MOUTH?.map((mouth, index) => (
-                                <GradientBorder
-                                  key={index}
-                                  isSelected={
-                                    selectedTraits.mouthId === mouth.id
-                                  }
-                                  className=" transition-colors duration-300"
-                                >
-                                  <div
-                                    key={index}
-                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                    onClick={() =>
-                                      setSelectedTraits({
-                                        ...selectedTraits,
-                                        mouth: mouth.image,
-                                        mouthId: mouth.id,
-                                      })
-                                    }
-                                  >
-                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                      <Image
-                                        src={mouth.image}
-                                        alt={mouth.name}
-                                        width={50}
-                                        height={50}
-                                        className="object-cover"
-                                        crossOrigin="anonymous"
-                                      />
-                                    </div>
-                                  </div>
-                                </GradientBorder>
-                              ))}
-
-                            {item.value === "background" &&
-                              traits?.ELEMENT?.map((element, index) => (
-                                <GradientBorder
-                                  key={index}
-                                  isSelected={
-                                    selectedTraits.elementId === element.id
-                                  }
-                                  className=" transition-colors duration-300"
-                                >
-                                  <div
-                                    key={index}
-                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                    onClick={() =>
-                                      setSelectedTraits({
-                                        ...selectedTraits,
-                                        element: element.image,
-                                        elementId: element.id,
-                                      })
-                                    }
-                                  >
-                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                      <Image
-                                        src={element.image}
-                                        alt={element.name}
-                                        width={50}
-                                        height={50}
-                                        className="object-cover"
-                                        crossOrigin="anonymous"
-                                      />
-                                    </div>
-                                  </div>
-                                </GradientBorder>
-                              ))}
-
-                            {/* Example items - replace with actual data */}
-                            {!["hairs", "eyes", "mouth", "background"].includes(
-                              item.value
-                            ) &&
-                              [1, 2, 3, 4, 5, 6].map((i) => (
-                                <div
-                                  key={i}
-                                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                >
-                                  <div className="w-full h-full flex items-center justify-center">
-                                    <span className="text-xs">
-                                      {item.label} {i}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                          <ScrollBar orientation="vertical" />
-                        </ScrollArea>
-                      </PopoverContent>
-                    )}
-                  </Popover>
-                ))}
+                <TraitPopover
+                  item={DOJO_ITEMS[0]} // Hair
+                  traits={traits.HAIR}
+                  selectedId={selectedTraits.hairId}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      hair: trait.image,
+                      hairId: trait.id,
+                    })
+                  }
+                  disabled={traits.HAIR.length === 0}
+                />
+                <TraitPopover
+                  item={DOJO_ITEMS[1]} // Eyes
+                  traits={traits.EYES}
+                  selectedId={selectedTraits.eyesId}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      eyes: trait.image,
+                      eyesId: trait.id,
+                    })
+                  }
+                  disabled={traits.EYES.length === 0}
+                />
+                <TraitPopover
+                  item={DOJO_ITEMS[2]} // Mouth
+                  traits={traits.MOUTH}
+                  selectedId={selectedTraits.mouthId}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      mouth: trait.image,
+                      mouthId: trait.id,
+                    })
+                  }
+                  disabled={traits.MOUTH.length === 0}
+                />
+                <TraitPopover
+                  item={DOJO_ITEMS[3]} // Background/Element
+                  traits={traits.ELEMENT}
+                  selectedId={selectedTraits.elementId}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      element: trait.image,
+                      elementId: trait.id,
+                    })
+                  }
+                  disabled={traits.ELEMENT.length === 0}
+                />
               </div>
             </div>
             <div className="flex items-center gap-3 h-full">
@@ -884,7 +589,6 @@ const DojoPage = () => {
                       </button>
                     </PopoverTrigger>
                     <PopoverContent
-                      // className="w-64 bg-black/60 backdrop-blur-md border border-white/10 p-3 rounded-xl"
                       className="w-64 p-3 rounded-xl border border-gray-light backdrop-blur-[40px] glass-effect"
                       side="left"
                       align="start"
@@ -1119,7 +823,9 @@ const DojoPage = () => {
                             starsBoost
                           </span>
                           <span className="text-xs font-volkhov">
-                            {bonusDetails.starBoost}
+                            {bonusDetails.starBoost
+                              ? bonusDetails.starBoost.toFixed(5)
+                              : 0}
                           </span>
                         </div>
                         <div className="flex-1 flex justify-between items-center gap-2 bg-white/10 rounded px-2 py-1">
@@ -1127,7 +833,9 @@ const DojoPage = () => {
                             xpBoost
                           </span>
                           <span className="text-xs font-volkhov">
-                            {bonusDetails.xpBoost}
+                            {bonusDetails.xpBoost
+                              ? bonusDetails.xpBoost.toFixed(5)
+                              : 0}
                           </span>
                         </div>
                       </div>
@@ -1137,7 +845,9 @@ const DojoPage = () => {
                             raidTimeBoost
                           </span>
                           <span className="text-xs font-volkhov">
-                            {bonusDetails.raidTimeBoost}
+                            {bonusDetails.raidTimeBoost
+                              ? bonusDetails.raidTimeBoost.toFixed(5)
+                              : 0}
                           </span>
                         </div>
                       </div>

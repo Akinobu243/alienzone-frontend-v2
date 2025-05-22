@@ -9,9 +9,11 @@ import { Plus } from "lucide-react"
 
 import { levelRequirements } from "@/config/constants"
 import {
+  addCacheBuster,
   formateWalletAddress,
   formatNumber,
   formatRemainingTime,
+  getBackgroundImageUrl,
 } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import Chat from "@/components/common/Chat"
@@ -38,14 +40,14 @@ const Page = () => {
             <div
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
               style={{
-                backgroundImage: `url(${alien?.element?.image.replace(".png", "-bg.png") || ""})`,
+                backgroundImage: `url(${getBackgroundImageUrl(alien?.element?.image?.replace(".png", "-bg.png") || "")})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
             />
 
             <img
-              src={alien?.image || ""}
+              src={addCacheBuster(alien?.image || "")}
               alt={alien?.name || "Alien character"}
               className="absolute bg-cover bg-no-repeat"
               style={{

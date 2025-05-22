@@ -99,7 +99,14 @@ const InventoryPage = () => {
 
   // Handle burn gear functionality
   const handleBurnGear = async () => {
-    if (!selectedItem || selectedItem.type !== "GEAR") return
+    // if (!selectedItem || selectedItem.type !== "GEAR") return
+    if (!selectedItem) return
+    if (selectedItem.type !== "GEAR") {
+      toast.error("User does not have this gear")
+      return
+    }
+
+    console.log("selectedItem ==>", selectedItem)
 
     try {
       setLoading(true)
@@ -156,11 +163,13 @@ const InventoryPage = () => {
     const wallet = getEthWallet(wallets)
     if (!wallet) {
       toast.error("Please connect a wallet")
+      setLoading(false)
       return
     }
 
     if (!provider || !signer) {
       toast.error("Please connect a wallet")
+      setLoading(false)
       return
     }
 
@@ -168,22 +177,24 @@ const InventoryPage = () => {
     const tokenIds = [character.tokenId]
     const amounts = new Array(tokenIds.length).fill(1)
 
-    const signature = await handleSignMessage(
-      charactersIds.join(","),
-      wallet,
-      signMessage
-    )
-
-    if (!signature) {
-      toast.error("Please connect a wallet")
-      return
-    }
-
     try {
+      const signature = await handleSignMessage(
+        charactersIds.join(","),
+        wallet,
+        signMessage
+      )
+
+      if (!signature) {
+        toast.error("Signature failed or was cancelled")
+        setLoading(false)
+        return
+      }
+
       // Step 2: Perform the transaction using the server signature
       const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
       if (!contractAddress) {
         toast.error("Contract address not configured")
+        setLoading(false)
         return
       }
 
@@ -215,7 +226,16 @@ const InventoryPage = () => {
       toast.success("Gear burned successfully!")
     } catch (error) {
       console.error("Minting error:", error)
-      toast.error("Failed to mint characters")
+      if (error instanceof Error) {
+        // More descriptive error message based on the actual error
+        if (error.message.includes("user rejected")) {
+          toast.error("Transaction was cancelled by user")
+        } else {
+          toast.error(`Failed to mint: ${error.message}`)
+        }
+      } else {
+        toast.error("Failed to mint characters")
+      }
     } finally {
       setLoading(false)
     }

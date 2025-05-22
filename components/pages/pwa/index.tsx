@@ -10,6 +10,7 @@ import { Copy, CopyCheck, Loader2, LogOut } from "lucide-react"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
 import {
+  addCacheBuster,
   calculateJackpot,
   formateWalletAddress,
   getTokenPrice,
@@ -104,14 +105,14 @@ export default function Home() {
             <div className="w-1/2 hidden lg:block">
               <div className="w-full h-full  rounded-xl overflow-hidden bg-[#2C2D30]  relative z-10">
                 <Image
-                  src={alien?.image ?? ""}
+                  src={addCacheBuster(alien?.image ?? "")}
                   alt="User's alien"
                   className="w-full h-[calc(100%+130px)] object-contain z-10 relative"
                   width={100}
                   height={100}
                 />
                 <Image
-                  src={alien?.element?.background ?? ""}
+                  src={addCacheBuster(alien?.element?.background ?? "")}
                   alt="User's alien"
                   className="w-full h-full object-cover absolute top-0 left-0"
                   width={100}

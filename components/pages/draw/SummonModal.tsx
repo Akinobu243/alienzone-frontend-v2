@@ -72,23 +72,33 @@ const SummonModal = ({
     const tokenIds = summonItems
       .map((item) => (item as Character).tokenId)
       .filter((id) => id !== undefined)
-    const amounts = new Array(tokenIds.length).fill(1)
 
-    console.log("Wallet ===>", wallet)
-
-    const signature = await handleSignMessage(
-      tokenIds.join(","),
-      wallet,
-      signMessage
-    )
-
-    if (!signature) {
-      toast.error("Please connect a wallet")
+    // Validate tokenIds array
+    if (!tokenIds.length) {
+      toast.error("No valid token IDs found")
       return
     }
 
+    const amounts = new Array(tokenIds.length).fill(1)
+
+    console.log("Wallet ===>", wallet)
+    console.log("Token IDs to mint:", tokenIds)
+
     try {
+      // Sign the message for authentication
+      const signature = await handleSignMessage(
+        tokenIds.join(","),
+        wallet,
+        signMessage
+      )
+
+      if (!signature) {
+        toast.error("Failed to sign message")
+        return
+      }
+
       setIsMinting(true)
+
       // Step 1: Get server signature and transaction ID
       const response = await mintCharacters(tokenIds, signature)
 
@@ -100,6 +110,7 @@ const SummonModal = ({
             response.data?.error?.message ||
             "Failed to get mint data"
         )
+        setIsMinting(false)
         return
       }
 
@@ -110,6 +121,7 @@ const SummonModal = ({
         const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
         if (!contractAddress) {
           toast.error("Contract address not configured")
+          setIsMinting(false)
           return
         }
 
@@ -119,25 +131,67 @@ const SummonModal = ({
           signer
         )
 
-        // Perform the mint transaction
-        const tx = await contract.mintBatch(
-          tokenIds,
-          amounts,
-          Number(nonce),
-          serverSignature
-        )
-        const receipt = await tx.wait()
+        try {
+          // First try to estimate gas to catch potential errors before sending
+          const gasEstimate = await contract.mintBatch.estimateGas(
+            tokenIds,
+            amounts,
+            Number(nonce),
+            serverSignature
+          )
 
-        console.log("Tx ==> ", tx)
-        console.log("Receipt ==> ", receipt)
+          console.log("Gas estimate:", gasEstimate.toString())
 
-        toast.success("Minted successfully")
-        setIsMinted(true)
-        fetchCharacters() // Refresh the characters list
+          // Add 20% buffer to gas estimate
+          const gasLimit = Math.floor(Number(gasEstimate) * 1.2)
+
+          // Perform the mint transaction with explicit gas limit
+          const tx = await contract.mintBatch(
+            tokenIds,
+            amounts,
+            Number(nonce),
+            serverSignature,
+            {
+              gasLimit: gasLimit,
+            }
+          )
+
+          console.log("Transaction sent:", tx.hash)
+          toast.success("Transaction submitted, waiting for confirmation...")
+
+          const receipt = await tx.wait()
+          console.log("Transaction confirmed:", receipt)
+
+          toast.success("Minted successfully")
+          setIsMinted(true)
+          fetchCharacters() // Refresh the characters list
+        } catch (txError: any) {
+          console.error("Transaction error:", txError)
+
+          // Handle specific error cases
+          if (txError.code === "ACTION_REJECTED") {
+            toast.error("Transaction was rejected by user")
+          } else if (txError.reason) {
+            toast.error(`Transaction failed: ${txError.reason}`)
+          } else {
+            toast.error(
+              "Transaction failed. Please check your wallet and try again."
+            )
+          }
+
+          setIsMinting(false)
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Minting error:", error)
-      toast.error("Failed to mint characters")
+
+      // More specific error handling
+      if (error.code === 4001) {
+        toast.error("Transaction rejected by user")
+      } else {
+        toast.error(error.message || "Failed to mint characters")
+      }
+
       setIsMinting(false)
     } finally {
       setIsMinting(false)
