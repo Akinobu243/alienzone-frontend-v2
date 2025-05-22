@@ -1,5 +1,4 @@
 import React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useProfile, useTeam } from "@/store/hooks"
 import { Plus } from "lucide-react"
