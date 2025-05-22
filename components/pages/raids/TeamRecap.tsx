@@ -1,8 +1,9 @@
 import React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useProfile, useTeam } from "@/store/hooks"
 import { Plus } from "lucide-react"
+
+import { addCacheBuster, getBackgroundImageUrl } from "@/lib/utils"
 
 const TeamRecap = () => {
   const { data: profile } = useProfile()
@@ -59,17 +60,27 @@ const TeamRecap = () => {
               key={member.id}
               className="aspect-square relative rounded-xl overflow-hidden border-2 border-white/10 hover:z-10 transition-all duration-300 flex-1 max-w-[90px] lg:max-w-[165px]"
             >
-              <Image
+              {/* <Image
                 src={member.image || ""}
                 alt={member.name || ""}
                 fill
+                className="object-cover relative z-10"
+              /> */}
+              <img
+                src={addCacheBuster(member.image || "")}
+                alt={member.name || "Alien character"}
                 className="object-cover relative z-10"
               />
               {member.type === "alien" && (
                 <div
                   className="absolute inset-0 "
+                  // style={{
+                  //   backgroundImage: `url(${member.element.background})`,
+                  //   backgroundSize: "cover",
+                  //   backgroundPosition: "center",
+                  // }}
                   style={{
-                    backgroundImage: `url(${member.element.background})`,
+                    backgroundImage: `url(${getBackgroundImageUrl(member.element.background)})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}

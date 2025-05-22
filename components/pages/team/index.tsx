@@ -3,7 +3,7 @@ import { useAliens, useCharacters, useTeam } from "@/store/hooks"
 import { X } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { cn } from "@/lib/utils"
+import { addCacheBuster, cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 
 import AddCharacterModal from "./AddCharacterModal"
@@ -93,13 +93,13 @@ const TeamPage = () => {
         <div className="flex justify-center items-center col-span-3 max-lg:hidden">
           <div className="relative size-[405px] rounded-2xl overflow-hidden">
             <Image
-              src={alien?.image || ""}
+              src={addCacheBuster(alien?.image || "")}
               alt="Character"
               fill
               className="object-cover z-10"
             />
             <Image
-              src={alien?.element?.background || ""}
+              src={addCacheBuster(alien?.element?.background || "")}
               alt="User's alien"
               fill
             />

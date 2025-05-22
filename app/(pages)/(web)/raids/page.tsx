@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAliens } from "@/store/hooks"
 
-import { cn } from "@/lib/utils"
+import { addCacheBuster, cn, getBackgroundImageUrl } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import RaidsPage from "@/components/pages/raids"
 
@@ -45,14 +45,14 @@ const Page = () => {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(${alien?.element?.image.replace(".png", "-bg.png") || ""})`,
+            backgroundImage: `url(${getBackgroundImageUrl(alien?.element?.image?.replace(".png", "-bg.png") || "")})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
 
         <img
-          src={alien?.image || ""}
+          src={addCacheBuster(alien?.image || "")}
           alt={alien?.name || "Alien character"}
           className="absolute bg-cover bg-no-repeat"
           style={{

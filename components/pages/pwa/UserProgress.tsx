@@ -1,6 +1,8 @@
 import Image from "next/image"
 import { Alien, Profile } from "@/types"
 
+import { addCacheBuster } from "@/lib/utils"
+
 interface UserProgressProps {
   profile: Profile | null
   alien: Alien | null
@@ -19,13 +21,13 @@ export function UserProgress({
       {/* Alien Image */}
       <div className="w-full h-64  rounded-xl overflow-hidden bg-[#2C2D30]  relative lg:hidden">
         <img
-          src={alien?.image}
+          src={addCacheBuster(alien?.image)}
           alt="User's alien"
           className="w-full h-full object-contain z-10 relative"
         />
         {alien?.element && (
           <img
-            src={alien?.element?.background}
+            src={addCacheBuster(alien?.element?.background)}
             alt="User's alien"
             className="w-full h-full object-cover absolute top-0 left-0"
           />
