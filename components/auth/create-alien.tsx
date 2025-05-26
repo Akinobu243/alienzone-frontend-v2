@@ -136,7 +136,7 @@ const CreateAlien = ({
   return (
     <div className="w-full space-y-6 z-20 max-lg:py-4 max-lg:px-2">
       <div className="relative w-full flex items-center justify-between">
-        <BrandButton className="items-start cursor-auto max-lg:text-sm">
+        <BrandButton className="items-start cursor-auto max-lg:text-sm bg-gray-200/5">
           Create your Alien
         </BrandButton>
 
@@ -154,7 +154,7 @@ const CreateAlien = ({
       )}
 
       {traits && (
-        <div className="p-2 lg:p-6 rounded-normal border border-gray-light backdrop-blur-[40px] flex flex-col lg:flex-row gap-4 overflow-hidden">
+        <div className="p-2 lg:p-6 rounded-normal border border-gray-light backdrop-blur-[80px] flex flex-col lg:flex-row gap-4 overflow-hidden">
           <div className="w-full lg:w-[562px]">
             <AlienRenderer
               ref={canvasRef}

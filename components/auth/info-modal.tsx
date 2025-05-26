@@ -83,7 +83,7 @@ const InfoModal = ({
   return (
     <div className="w-full space-y-6 z-20 max-w-[562px]">
       <div className="relative w-full flex items-center justify-between">
-        <BrandButton className="items-start cursor-auto">
+        <BrandButton className="items-start cursor-auto bg-gray-200/5">
           Your Informations
         </BrandButton>
 
@@ -92,7 +92,7 @@ const InfoModal = ({
           moveToPreviousStep={moveToPreviousStep}
         />
       </div>
-      <div className="p-6 rounded-normal border border-gray-light backdrop-blur-[40px] flex flex-col lg:flex-row gap-4 overflow-hidden">
+      <div className="p-6 rounded-normal border border-gray-light backdrop-blur-[80px] flex flex-col lg:flex-row gap-4 overflow-hidden">
         {/* <Image
           src={character}
           alt="image"

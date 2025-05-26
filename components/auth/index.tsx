@@ -152,7 +152,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         <BackgroundCover url="/images/auth/mobile-bg.jpeg" />
       ) : (
         <video
-          src="/images/auth/desktop-bg.mov"
+          src="/images/auth/desktop-bg2.mp4"
           autoPlay
           muted
           loop
@@ -215,7 +215,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         <div className="relative w-full flex flex-col items-center justify-center">
           <BrandButton
             className="items-center hover:scale-105 duration-500 transition-transform active:scale-95 lg:fixed lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
-            blurColor="bg-[#9E96F4]"
+            blurColor="bg-black"
             onClick={handleButtonClick}
           >
             Tap here
