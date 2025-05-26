@@ -186,8 +186,8 @@ const ConnectModal = ({
           moveToPreviousStep={moveToPreviousStep}
         />
       </div>
-      <div className="p-6 backdrop-blur-[20px] rounded-normal border border-gray-light max-lg:bg-white/10 lg:backdrop-blur-[40px] font-inter space-y-8">
-        <div className="bg-glass p-4 rounded-lg text-off-white text-[12px]/[19px]">
+      <div className="p-6 backdrop-blur-[20px] rounded-normal border border-gray-light max-lg:bg-white/10 lg:backdrop-blur-[80px] font-inter space-y-8">
+        <div className="bg-glass p-4 rounded-lg text-off-white text-[12px]/[19px] glass-effect">
           By connecting a wallet, you agree to{" "}
           <span className="text-white">Terms of Service</span> and acknowledge
           that you have read and understand the{" "}
