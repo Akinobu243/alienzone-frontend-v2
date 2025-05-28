@@ -98,12 +98,12 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       selectedCharacter &&
       dataLoaded
     ) {
-      let portalTiers = characterTiers.portal2
-      if (activeTab === ForgeTabs.ENHANCEMENT) {
-        portalTiers = characterTiers.portal2
-      } else if (activeTab === ForgeTabs.PROMOTION) {
-        portalTiers = characterTiers.portal1
-      }
+      const portalTiers = [...characterTiers.portal2, ...characterTiers.portal1]
+      // if (activeTab === ForgeTabs.ENHANCEMENT) {
+      //   portalTiers = characterTiers.portal2
+      // } else if (activeTab === ForgeTabs.PROMOTION) {
+      //   portalTiers = characterTiers.portal1
+      // }
 
       const tierObj = portalTiers?.find((tierObj: any) => {
         const stageName = `stage${selectedCharacter.tier}`

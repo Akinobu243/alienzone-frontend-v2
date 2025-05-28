@@ -31,7 +31,7 @@ const AlienRaid = ({
       inventory.filter(
         (item) =>
           item.type === "CHARACTER" &&
-          item.isPortal2 === isPortal2 &&
+          // item.isPortal2 === isPortal2 &&
           item.upgradesToId !== null
       )
     )
@@ -45,7 +45,7 @@ const AlienRaid = ({
       {/* <h2 className="font-medium mb-5 bg-white/15 border border-white/10 w-max rounded-xl p-4">
         Alien Raid
       </h2> */}
-      <div className="w-full mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6">
+      <div className="w-full h-[calc(100vh-200px)] overflow-y-auto mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* <div className="flex-1">
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
@@ -116,7 +116,7 @@ const AlienRaid = ({
             </div>
           </div> */}
 
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-4 pb-20 h-full overflow-y-auto">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-4 h-full overflow-y-auto">
             {items.length > 0 ? (
               items.map((item, index) => (
                 <div
