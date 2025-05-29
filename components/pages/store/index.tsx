@@ -1,20 +1,13 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useWallet } from "@/context/wallet"
-import { useInventory, useProfile } from "@/store/hooks"
-import { Character, InventoryItem } from "@/types"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
-import { ethers, zeroPadValue } from "ethers"
+import { ethers } from "ethers"
 import { ArrowLeft, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
-import {
-  burnGear,
-  getStoreWearables,
-  getWearableObjectDetails,
-  updateGearBalance,
-} from "@/lib/api"
-import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
+import { getStoreWearables, getWearableObjectDetails } from "@/lib/api"
+import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import BrandButton from "@/components/ui/brand-button"
 import CONTRACT_ABI from "@/app/assets/wearablesContractAbi.json"
