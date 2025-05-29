@@ -106,7 +106,7 @@ const AddCharacterModal = () => {
           </span>
         </button>
       </DialogTrigger>
-      <DialogContent className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none p-0">
+      <DialogContent className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] rounded-none p-0">
         <div className="flex flex-col gap-4 z-10 relative justify-center items-center w-full h-full p-4 md:p-6 lg:p-8">
           {/* Header */}
           <div className="px-6 md:px-12 lg:px-20 py-3 md:py-4 lg:py-6 w-max bg-white/10 border-white/10 border rounded-xl relative overflow-hidden font-volkhov text-base md:text-lg lg:text-xl">
@@ -131,73 +131,78 @@ const AddCharacterModal = () => {
           )}
 
           {/* Character grid */}
-          <div className="flex flex-wrap justify-center w-full max-w-full md:max-w-4xl my-4 md:my-6 lg:my-10 gap-2 md:gap-0 overflow-y-auto max-h-[50vh] md:max-h-[60vh] p-2">
-            {characters?.filter((character) => !character.onTeam).length ===
-            0 ? (
-              <div className="text-center py-6 md:py-10">
-                <p className="text-lg md:text-xl">No characters available</p>
-                <p className="text-sm text-white/70 mt-2">
-                  Go to Draw page to summon characters
-                </p>
-              </div>
-            ) : (
-              characters
-                ?.filter((character) => !character.onTeam)
-                .map((character) => {
-                  const isSelected = isCharacterSelected(character)
+          <div className="w-full max-w-[95%] md:max-w-5xl px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 justify-items-center w-full gap-y-4 md:gap-y-6 lg:gap-y-10 gap-x-4 p-4 overflow-y-auto max-h-[50vh] md:max-h-[60vh]">
+              {characters?.filter((character) => !character.onTeam).length ===
+              0 ? (
+                <div className="text-center py-6 md:py-10 col-span-full">
+                  <p className="text-lg md:text-xl">No characters available</p>
+                  <p className="text-sm text-white/70 mt-2">
+                    Go to Draw page to summon characters
+                  </p>
+                </div>
+              ) : (
+                characters
+                  ?.filter((character) => !character.onTeam)
+                  .map((character) => {
+                    const isSelected = isCharacterSelected(character)
 
-                  return (
-                    <div
-                      key={character.id}
-                      className={cn(
-                        "relative cursor-pointer transition-all duration-300 transform hover:scale-105",
-                        isSelected && "scale-105",
-                        isMobile ? "w-[45%] md:w-auto" : "w-auto"
-                      )}
-                      onClick={() => toggleCharacterSelection(character)}
-                    >
-                      <div className="relative">
-                        <Image
-                          src={character.teamImage || ""}
-                          alt={character.name}
-                          width={500}
-                          height={500}
-                          className={cn(
-                            "object-contain",
-                            isMobile
-                              ? "w-full h-auto"
-                              : "size-40 md:size-44 lg:size-48 -mx-2 md:-mx-4 -my-1 md:-my-2.5"
-                          )}
-                        />
-                        {isSelected && (
-                          <div className="absolute top-2 right-2 bg-green-500 rounded-full size-5 md:size-6 flex items-center justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3 md:h-4 md:w-4 text-white"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
+                    return (
+                      <div
+                        key={character.id}
+                        className={cn(
+                          "relative cursor-pointer transition-all duration-300 transform hover:scale-105 bg-black/20 rounded-2xl overflow-hidden border border-white/10",
+                          "h-[280px] sm:h-[280px]",
+                          isSelected && "scale-100 border-white/30",
+                          isMobile ? "w-full max-w-[280px]" : "w-[180px]"
                         )}
-                        <div className="absolute bottom-0 left-0 right-0 text-center bg-black/50 py-1 mx-1 md:mx-4">
-                          <p className="text-xs md:text-sm truncate px-1">
-                            {character.name}
-                          </p>
-                          <p className="text-xs text-white/70">
-                            {character.rarity} • {character.power}
-                          </p>
+                        onClick={() => toggleCharacterSelection(character)}
+                      >
+                        <div className="relative flex flex-col items-center h-full">
+                          <div className="flex-1 w-full relative">
+                            <Image
+                              src={character.teamImage || ""}
+                              alt={character.name}
+                              width={500}
+                              height={500}
+                              className={cn(
+                                "object-contain",
+                                isMobile
+                                  ? "w-full h-auto"
+                                  : "w-full h-full object-cover"
+                              )}
+                            />
+                            {isSelected && (
+                              <div className="absolute top-2 right-2 bg-green-500 rounded-full size-5 md:size-6 flex items-center justify-center">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-3 w-3 md:h-4 md:w-4 text-white"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <div className="w-full text-center bg-black/50 py-2 px-2 max-md:absolute bottom-0 left-0 right-0">
+                            <p className="text-sm md:text-base font-medium truncate">
+                              {character.name}
+                            </p>
+                            <p className="text-xs text-white/70">
+                              {character.rarity} • {character.power}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )
-                })
-            )}
+                    )
+                  })
+              )}
+            </div>
           </div>
 
           {/* Action buttons */}

@@ -36,7 +36,12 @@ const RaidsList = ({
             />
           </div>
           <div className="relative  rounded overflow-hidden aspect-square w-14 shrink-0">
-            <Image src={raid.image} alt={raid.title} fill />
+            <Image
+              src={raid.image}
+              alt={raid.title}
+              fill
+              className="object-cover"
+            />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2 font-inter ">

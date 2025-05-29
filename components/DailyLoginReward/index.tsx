@@ -3,6 +3,7 @@ import Image from "next/image"
 import { useDailyRewards } from "@/store/hooks"
 import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { DailyReward } from "@/types"
+import { Cross1Icon } from "@radix-ui/react-icons"
 import { Check, Lock } from "lucide-react"
 import toast from "react-hot-toast"
 
@@ -11,7 +12,7 @@ import { cn } from "@/lib/utils"
 import BrandButton from "../ui/brand-button"
 import { GradientBorder } from "../ui/gradient-border"
 
-const DailyLoginReward = () => {
+const DailyLoginReward = ({ onClose }: { onClose: () => void }) => {
   const {
     data: rewards,
     loading,
@@ -224,9 +225,17 @@ const DailyLoginReward = () => {
 
   return (
     <div>
-      <h2 className="font-medium mb-5 bg-white/15 border border-white/10 w-max rounded-xl p-4">
-        Daily Login Bonus
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-medium mb-5 bg-white/15 border border-white/10 w-max rounded-xl p-4">
+          Daily Login Bonus
+        </h2>
+        <div
+          className="font-medium mb-5 bg-white/25 hover:bg-white/50 transition-all duration-300 border border-white/10 w-max rounded-xl p-4 cursor-pointer"
+          onClick={onClose}
+        >
+          <Cross1Icon className="size-4" />
+        </div>
+      </div>
       <div className="w-full mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Grid of rewards */}
