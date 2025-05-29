@@ -4,7 +4,7 @@ import { useWallet } from "@/context/wallet"
 import { useInventory, useProfile } from "@/store/hooks"
 import { Character, InventoryItem } from "@/types"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
-import { ethers } from "ethers"
+import { ethers, zeroPadValue } from "ethers"
 import { ArrowLeft, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
@@ -223,24 +223,30 @@ const StorePage = () => {
       return
     }
 
+    const contractAddress = process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS
+    if (!contractAddress || !ethers.isAddress(contractAddress)) {
+      toast.error("Invalid contract configuration")
+      return
+    }
+
     try {
       const contract = new ethers.Contract(
-        process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS || "",
+        contractAddress,
         CONTRACT_ABI,
         signer
       )
 
-      console.log("contract", contract)
-      console.log("signer", signer)
+      // Validate inputs before calling contract
+      console.log("Calling getBuyPriceAfterFee with:")
+      console.log("- subject:", subject)
+      console.log("- amount:", amount.toString())
 
-      console.log("subject", subject)
-      console.log("amount", amount)
+      const network = await signer.provider?.getNetwork()
+      console.log("Current network:", network?.chainId)
 
       const price = await contract.getBuyPriceAfterFee(subject, amount)
 
-      console.log(
-        `Subject: ${subject}\tAmount: ${amount.toString()}\tPrice: ${price.toString()}`
-      )
+      console.log(`Price returned: ${price.toString()}`)
 
       const tx = await contract.buyWearables(subject, amount, {
         value: price,
@@ -249,9 +255,18 @@ const StorePage = () => {
 
       toast.success("Wearables bought successfully!")
       console.log("Transaction hash:", tx.hash)
-    } catch (error) {
-      console.error("Buy failed:", error)
-      toast.error("Buy failed")
+    } catch (error: any) {
+      console.error("Full error object:", error)
+
+      if (error.code === "BAD_DATA") {
+        toast.error("Contract call failed - invalid data returned")
+      } else if (error.reason) {
+        toast.error(`Contract error: ${error.reason}`)
+      } else if (error.message) {
+        toast.error(`Error: ${error.message}`)
+      } else {
+        toast.error("Buy failed")
+      }
     } finally {
       setIsLoading({ ...isLoading, buy: false })
     }
@@ -270,9 +285,15 @@ const StorePage = () => {
       return
     }
 
+    const contractAddress = process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS
+    if (!contractAddress || !ethers.isAddress(contractAddress)) {
+      toast.error("Invalid contract configuration")
+      return
+    }
+
     try {
       const contract = new ethers.Contract(
-        process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS || "",
+        contractAddress,
         CONTRACT_ABI,
         signer
       )
@@ -552,10 +573,10 @@ const StorePage = () => {
                   <div
                     key={index}
                     className={cn(
-                      "w-full h-max backdrop-blur-lg rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/10 ",
+                      "w-full h-max backdrop-blur-lg rounded-lg cursor-pointer opacity-100 transition-all duration-200 hover:bg-white/10 relative",
                       selectedItem?.id === item.id &&
                         selectedItem?.type === item.type
-                        ? "bg-white/20"
+                        ? "bg-white/20 opacity-20"
                         : "bg-white/5"
                     )}
                     onClick={() =>
@@ -563,6 +584,11 @@ const StorePage = () => {
                     }
                   >
                     <div className="relative aspect-square bg-white/10 rounded-tl-lg rounded-tr-lg">
+                      {loadingItemId === item.id && (
+                        <div className="absolute inset-0 bg-black/10 flex items-center justify-center z-10 rounded-tl-lg rounded-tr-lg">
+                          <Loader2 className="w-8 h-8 animate-spin text-white" />
+                        </div>
+                      )}
                       <Image
                         src={item?.alienPart?.image || ""}
                         alt="item"
@@ -581,31 +607,35 @@ const StorePage = () => {
                       <div className="flex items-center justify-between text-xs">
                         <p className="truncate mr-2">Total supply</p>
                         <p className="text-2xs whitespace-nowrap">
-                          {/* {item?.totalSupply} */}
                           {formatTinyNumberJSX(item?.totalSupply)}
                         </p>
                       </div>
                       <div className="flex items-center justify-between text-xs">
                         <p className="truncate mr-2">Item price</p>
                         <p className=" text-2xs whitespace-nowrap">
-                          {/* {item?.buyPrice} */}
                           {formatTinyNumberJSX(item?.buyPrice)}
                         </p>
                       </div>
-                      <div className="flex items-center justify-center border border-white/10 rounded-lg p-2 mt-2 hover:bg-white/10 transition-all duration-200">
+                      {/* Commenting out buy button as requested */}
+                      {/* <div className="flex items-center justify-center border border-white/10 rounded-lg p-2 mt-2 hover:bg-white/10 transition-all duration-200">
                         {loadingItemId === item.id ? "Loading... " : "Buy"}
                         {loadingItemId === item.id && (
                           <Loader2 className="w-4 h-4 ml-2 animate-spin" />
                         )}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="col-span-full text-center py-10 text-white/60">
-                  {filteredItems.length === 0
-                    ? "No items found"
-                    : "Loading Wearables..."}
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                      <span className="text-sm"> Loading Wearables...</span>
+                    </div>
+                  ) : (
+                    "No items found"
+                  )}
                 </div>
               )}
             </div>
