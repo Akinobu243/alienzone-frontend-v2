@@ -72,6 +72,8 @@ const StorePage = () => {
     sell: false,
     transfer: false,
   })
+  const [showTransferInput, setShowTransferInput] = useState(false)
+  const [transferAddress, setTransferAddress] = useState("")
 
   // Fetch inventory data when component mounts
   useEffect(() => {
@@ -159,11 +161,19 @@ const StorePage = () => {
 
   // const handleTransfer = async (subject: string, amount: number) => {
   const handleTransfer = async (subject: string) => {
+    if (!transferAddress) {
+      toast.error("Please enter a wallet address")
+      return
+    }
+
+    if (!ethers.isAddress(transferAddress)) {
+      toast.error("Invalid wallet address")
+      return
+    }
+
     console.log("handleTransfer")
     setIsLoading({ ...isLoading, transfer: true })
 
-    // const subject =
-    //   "0xb7fbc0ed8d213b20fd87a6dc606ea6408011c15f43415245898593f5808fbdd6"
     const amount = ethers.parseEther("0.001")
 
     if (!signer) {
@@ -172,7 +182,7 @@ const StorePage = () => {
     }
 
     const from = await signer.getAddress()
-    const to = "0x6b7B85684092e7986a0C5471A97420227DcEE204"
+    const to = transferAddress
 
     console.log(
       `Subject: ${subject}\tAmount: ${amount.toString()}\tFrom: ${from}\tTo: ${to}`
@@ -190,6 +200,8 @@ const StorePage = () => {
 
       toast.success("Wearables transferred successfully!")
       console.log("Transaction hash:", tx.hash)
+      setShowTransferInput(false)
+      setTransferAddress("")
     } catch (error) {
       console.error("Transfer failed:", error)
       toast.error("Transfer failed")
@@ -439,39 +451,72 @@ const StorePage = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <BrandButton
-                  blurColor="bg-[#96DFF4]"
-                  className="w-full font-light"
-                  onClick={() => handleBuy(selectedItem?.subject)}
-                  disabled={isLoading.buy}
-                >
-                  {isLoading.buy ? "Buying... " : "Buy"}
-                  {isLoading.buy && (
-                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                  )}
-                </BrandButton>
-                <BrandButton
-                  blurColor="bg-[#F49696]"
-                  className="w-full font-light"
-                  onClick={() => handleSell(selectedItem?.subject)}
-                  disabled={isLoading.sell}
-                >
-                  {isLoading.sell ? "Selling... " : "Sell"}
-                  {isLoading.sell && (
-                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                  )}
-                </BrandButton>
-                <BrandButton
-                  blurColor="bg-[#EF98E6]"
-                  className="w-full font-light"
-                  onClick={() => handleTransfer(selectedItem?.subject)}
-                  disabled={isLoading.transfer}
-                >
-                  {isLoading.transfer ? "Transferring... " : "Transfer"}
-                  {isLoading.transfer && (
-                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                  )}
-                </BrandButton>
+                {!showTransferInput ? (
+                  <>
+                    <BrandButton
+                      blurColor="bg-[#96DFF4]"
+                      className="w-full font-light"
+                      onClick={() => handleBuy(selectedItem?.subject)}
+                      disabled={isLoading.buy}
+                    >
+                      {isLoading.buy ? "Buying... " : "Buy"}
+                      {isLoading.buy && (
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                      )}
+                    </BrandButton>
+                    <BrandButton
+                      blurColor="bg-[#F49696]"
+                      className="w-full font-light"
+                      onClick={() => handleSell(selectedItem?.subject)}
+                      disabled={isLoading.sell}
+                    >
+                      {isLoading.sell ? "Selling... " : "Sell"}
+                      {isLoading.sell && (
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                      )}
+                    </BrandButton>
+                    <BrandButton
+                      blurColor="bg-[#EF98E6]"
+                      className="w-full font-light"
+                      onClick={() => setShowTransferInput(true)}
+                      disabled={isLoading.transfer}
+                    >
+                      Transfer
+                    </BrandButton>
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-3 w-full">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Enter wallet address"
+                        value={transferAddress}
+                        onChange={(e) => setTransferAddress(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#EF98E6]/50"
+                      />
+                      <button
+                        onClick={() => {
+                          setShowTransferInput(false)
+                          setTransferAddress("")
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <BrandButton
+                      blurColor="bg-[#EF98E6]"
+                      className="w-full font-light"
+                      onClick={() => handleTransfer(selectedItem?.subject)}
+                      disabled={isLoading.transfer || !transferAddress}
+                    >
+                      {isLoading.transfer ? "Sending... " : "Send"}
+                      {isLoading.transfer && (
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                      )}
+                    </BrandButton>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -558,7 +603,7 @@ const StorePage = () => {
                 ))
               ) : (
                 <div className="col-span-full text-center py-10 text-white/60">
-                  {storeWearables.length === 0
+                  {filteredItems.length === 0
                     ? "No items found"
                     : "Loading Wearables..."}
                 </div>
