@@ -36,7 +36,7 @@ const DailyLoginModal = ({ isOpen, onClose }: DailyLoginModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-7xl transform overflow-hidden transition-all">
-                <DailyLoginReward />
+                <DailyLoginReward onClose={onClose} />
               </Dialog.Panel>
             </Transition.Child>
           </div>

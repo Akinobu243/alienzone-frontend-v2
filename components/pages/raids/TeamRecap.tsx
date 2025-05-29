@@ -67,7 +67,9 @@ const TeamRecap = () => {
                 className="object-cover relative z-10"
               /> */}
               <img
-                src={addCacheBuster(member.image || "")}
+                src={addCacheBuster(
+                  member.type === "alien" ? member.image : member.teamImage
+                )}
                 alt={member.name || "Alien character"}
                 className="object-cover relative z-10"
               />
