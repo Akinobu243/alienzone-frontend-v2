@@ -251,7 +251,10 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     try {
       setForgeListLoading(true)
       const res = await getForgeList()
-      setForgeList(res.data?.alienParts || [])
+      const sortedForgeList = res.data?.alienParts.sort(
+        (a: any, b: any) => a.id - b.id
+      )
+      setForgeList(sortedForgeList || [])
       setUserRuneAmounts(
         res.data?.userRuneAmounts || {
           COMMON: 0,
@@ -266,14 +269,14 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       const currentRealIndex = swiperRef.current?.realIndex || 0
 
       // Set active item based on the current slide after refetching
-      if (res.data?.alienParts && res.data.alienParts.length > 0) {
-        if (res.data.alienParts[currentRealIndex]) {
-          setActiveItem(res.data.alienParts[currentRealIndex])
-          setActiveItemId(res.data.alienParts[currentRealIndex].id)
+      if (sortedForgeList && sortedForgeList.length > 0) {
+        if (sortedForgeList[currentRealIndex]) {
+          setActiveItem(sortedForgeList[currentRealIndex])
+          setActiveItemId(sortedForgeList[currentRealIndex].id)
         } else {
           // Fallback to first item if current index is no longer valid
-          setActiveItem(res.data.alienParts[0])
-          setActiveItemId(res.data.alienParts[0].id)
+          setActiveItem(sortedForgeList[0])
+          setActiveItemId(sortedForgeList[0].id)
         }
       }
       setForgeListLoading(false)
