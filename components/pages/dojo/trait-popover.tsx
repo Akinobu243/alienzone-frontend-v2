@@ -94,6 +94,8 @@ const TraitPopover = ({
             className="w-24 h-24 opacity-30"
             width={100}
             height={100}
+            crossOrigin="anonymous"
+            unoptimized
           />
           <span className="text-[8px] absolute bottom-3 left-1/2 -translate-x-1/2">
             {item.label}
@@ -125,8 +127,8 @@ const TraitPopover = ({
                       </div>
                     ) : (
                       <Image
-                        loader={imageLoader}
-                        src={trait.image}
+                        // src={trait.image}
+                        src={`/api/image-proxy?url=${trait.image}`}
                         alt={trait.name || `Trait ${trait.id}`}
                         width={50}
                         height={50}
