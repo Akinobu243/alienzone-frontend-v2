@@ -188,6 +188,16 @@ export const createAlien = async (
   })
 }
 
+export const createAlienApi = async (
+  data: FormData
+): Promise<ApiResponse<{ success: boolean }>> => {
+  return apiManager.call<{ success: boolean }>({
+    url: "/profile/create-alien",
+    method: "POST",
+    data,
+  })
+}
+
 export const updateAlien = async (
   data: FormData
 ): Promise<ApiResponse<{ alien: Alien; success: boolean }>> => {

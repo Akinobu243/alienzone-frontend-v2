@@ -1,12 +1,13 @@
 "use client"
 
-import { Dispatch, SetStateAction, useRef } from "react"
+import { Dispatch, SetStateAction, useRef, useState } from "react"
 import Image from "next/image"
 import { useAliens } from "@/store/hooks"
 import { AuthUserData, CreateAlienData, Traits } from "@/types"
 import { Loader2 } from "lucide-react"
 import toast from "react-hot-toast"
 
+import { createAlienApi } from "@/lib/api"
 import { sanitizeInput } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -58,8 +59,15 @@ const CreateAlien = ({
 }: CreateAlienProps) => {
   const { createAlien, createStatus } = useAliens()
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [loading, setLoading] = useState(false)
+  const [isRenderComplete, setIsRenderComplete] = useState(false)
+  const [isImagesLoading, setIsImagesLoading] = useState(true)
 
   const handleCreateAlien = async () => {
+    setLoading(true)
+    // Reset render complete flag
+    setIsRenderComplete(false)
+
     // validation checks
     const validations = [
       {
@@ -88,10 +96,23 @@ const CreateAlien = ({
     const failedValidation = validations.find((v) => v.condition)
     if (failedValidation) {
       toast.error(failedValidation.message)
+      setLoading(false)
       return
     }
 
     try {
+      // Wait for render to complete
+      await new Promise<void>((resolve) => {
+        const checkRender = () => {
+          if (isRenderComplete) {
+            resolve()
+          } else {
+            setTimeout(checkRender, 100)
+          }
+        }
+        checkRender()
+      })
+
       // Get canvas content as PNG
       const canvas = canvasRef.current
       if (!canvas) {
@@ -117,10 +138,6 @@ const CreateAlien = ({
         { type: "image/png" }
       )
 
-      // convert file to base64 and open in new tab
-      // const base64 = URL.createObjectURL(file)
-      // window.open(base64, "_blank")
-
       // Create form data
       const formData = new FormData()
       formData.append("name", createAlienData.name)
@@ -131,14 +148,19 @@ const CreateAlien = ({
       formData.append("mouthId", selectedTraits.mouthId?.toString() || "")
       formData.append("strengthPoints", "100") // Default strength points
 
-      await createAlien(formData)
+      const response = await createAlienApi(formData)
+      console.log("response ====>", response)
 
-      if (!createStatus.error) {
+      if (response.data?.success) {
         moveToNextStep()
+      } else {
+        toast.error("Failed to create alien. Please try again.")
       }
     } catch (error) {
       console.error("Error creating alien:", error)
       toast.error("Failed to create alien. Please try again.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -183,6 +205,8 @@ const CreateAlien = ({
                   (element) => element.id === createAlienData.elementId
                 )?.image || ""
               }
+              onRenderComplete={() => setIsRenderComplete(true)}
+              onLoadingChange={setIsImagesLoading}
             />
           </div>
 
@@ -359,9 +383,13 @@ const CreateAlien = ({
               className="items-start hover:-translate-y-1 duration-500 transition-transform w-full max-lg:mt-4"
               blurColor="bg-[#96DFF4]"
               onClick={handleCreateAlien}
-              disabled={createStatus.loading}
+              disabled={createStatus.loading || loading || isImagesLoading}
             >
-              {createStatus.loading ? "Creating..." : "Continue"}
+              {createStatus.loading || loading
+                ? "Creating..."
+                : isImagesLoading
+                  ? "Loading traits..."
+                  : "Continue"}
             </BrandButton>
           </div>
         </div>
