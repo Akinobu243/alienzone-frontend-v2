@@ -2,12 +2,13 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useWallet } from "@/context/wallet"
 import { useLogout, usePrivy, useWallets } from "@privy-io/react-auth"
 import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
-import { getChain, getUserWallet, handleSignMessage } from "@/lib/utils"
+import { getChain, handleSignMessage } from "@/lib/utils"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
@@ -25,6 +26,7 @@ const ConnectModal = ({
     usePrivy()
   const { logout } = useLogout()
   const { wallets } = useWallets()
+  const { wallet } = useWallet()
   const router = useRouter()
   const options = [
     {
@@ -118,10 +120,11 @@ const ConnectModal = ({
   //   checkUser()
   // }, [authenticated, ready, wallets[0]])
 
-  const handleAuthenticate = async (walletAddress: string, email: string) => {
+  const handleAuthenticate = async (email: string) => {
     // const wallet = getEthWallet(wallets)
-    const wallet = getUserWallet(wallets, walletAddress)
+    // const wallet = getUserWallet(wallets, walletAddress)
     if (!wallet) {
+      // console.log("No wallet found ====>", walletAddress)
       toast.error("Please connect a wallet")
       return
     }
@@ -163,11 +166,17 @@ const ConnectModal = ({
 
   useEffect(() => {
     const checkUser = async () => {
-      if (authenticated && ready && user && user?.wallet) {
-        const res = await checkUserExist(user?.wallet?.address || "")
+      if (authenticated && ready && user && wallet) {
+        const res = await checkUserExist(wallet.address)
+
+        console.log("================================================")
+        console.log("User wallet res ====>", res)
+        console.log("User email ====>", user)
+        console.log("User wallet ====>", wallet)
+        console.log("================================================")
 
         if (res.data) {
-          handleAuthenticate(user?.wallet?.address, user?.email?.address || "")
+          handleAuthenticate(user?.email?.address || "")
         } else {
           moveToStep(2)
         }
@@ -195,7 +204,7 @@ const ConnectModal = ({
       // }
     }
     checkUser()
-  }, [authenticated, ready, wallets, user])
+  }, [authenticated, ready, wallet, user])
 
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">

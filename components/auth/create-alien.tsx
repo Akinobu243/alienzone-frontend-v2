@@ -142,6 +142,16 @@ const CreateAlien = ({
     }
   }
 
+  // Helper function to get proxied URL for trait images
+  const getProxiedUrl = (src: string): string => {
+    // Don't proxy local images (base images)
+    if (src.startsWith("/")) {
+      return src
+    }
+    // Use image proxy for external images (traits)
+    return `/api/image-proxy?url=${encodeURIComponent(src)}`
+  }
+
   return (
     <div className="w-full space-y-6 z-20 max-lg:py-4 max-lg:px-2">
       <div className="relative w-full flex items-center justify-between">
@@ -215,7 +225,7 @@ const CreateAlien = ({
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={element.image}
+                            src={getProxiedUrl(element.image)}
                             alt="element image"
                             width={200}
                             height={200}
@@ -253,7 +263,7 @@ const CreateAlien = ({
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={hair.image}
+                            src={getProxiedUrl(hair.image)}
                             alt="hair image"
                             width={200}
                             height={200}
@@ -291,7 +301,7 @@ const CreateAlien = ({
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={eyes.image}
+                            src={getProxiedUrl(eyes.image)}
                             alt="eyes image"
                             width={200}
                             height={200}
@@ -329,7 +339,7 @@ const CreateAlien = ({
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={mouth.image}
+                            src={getProxiedUrl(mouth.image)}
                             alt="mouth image"
                             width={200}
                             height={200}
