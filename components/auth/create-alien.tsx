@@ -7,7 +7,7 @@ import { AuthUserData, CreateAlienData, Traits } from "@/types"
 import { Loader2 } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { createAlien, createAlienApi } from "@/lib/api"
+import { createAlienApi } from "@/lib/api"
 import { sanitizeInput } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
