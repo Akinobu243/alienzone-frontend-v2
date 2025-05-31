@@ -9,6 +9,8 @@ interface AlienRendererProps {
     mouth: string
   }
   element: string
+  onRenderComplete?: () => void
+  onLoadingChange?: (isLoading: boolean) => void
 }
 
 // Cache for loaded images
@@ -36,7 +38,7 @@ const preloadImage = (src: string): Promise<HTMLImageElement> => {
 }
 
 export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
-  ({ selectedTraits, element }, ref) => {
+  ({ selectedTraits, element, onRenderComplete, onLoadingChange }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const localCanvasRef = useRef<HTMLCanvasElement>(null)
     const hiddenCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -116,6 +118,13 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       selectedTraits.mouth,
       element,
     ])
+
+    // Notify parent about loading state changes
+    useEffect(() => {
+      if (onLoadingChange) {
+        onLoadingChange(!isImagesLoaded)
+      }
+    }, [isImagesLoaded, onLoadingChange])
 
     useEffect(() => {
       if (!isImagesLoaded) return
@@ -207,6 +216,11 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
           if (imageCache[clothesPath]) {
             drawImage(imageCache[clothesPath])
           }
+
+          // Notify parent that rendering is complete
+          if (onRenderComplete) {
+            onRenderComplete()
+          }
         } catch (error) {
           console.error("Error drawing alien:", error)
         }
@@ -221,7 +235,7 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
 
       // Draw high-res output separately
       drawAlien(outputCtx, OUTPUT_SCALE, false)
-    }, [selectedTraits, element, isImagesLoaded])
+    }, [selectedTraits, element, isImagesLoaded, onRenderComplete])
 
     // Get dimensions for the container
     const { width: naturalWidth, height: naturalHeight } = getBaseDimensions()
