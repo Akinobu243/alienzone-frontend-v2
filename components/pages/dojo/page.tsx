@@ -18,7 +18,7 @@ import {
   getEquippedAlienParts,
   getOwnedAlienParts,
 } from "@/lib/api"
-import { cn, formatNumber, getEthWallet } from "@/lib/utils"
+import { cn, formatNumber } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
 import {
   Popover,
@@ -100,8 +100,9 @@ const DojoPage = () => {
   })
   const router = useRouter()
   const { wallets } = useWallets()
-  const { user } = useWallet()
-  const wallet = wallets[0] ? getEthWallet(wallets) : null
+  const { user, wallet } = useWallet()
+  // const wallet = wallets[0] ? getEthWallet(wallets) : null
+  console.log("wallet ====>", wallet)
 
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",

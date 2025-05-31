@@ -7,7 +7,7 @@ import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
-import { getChain, getEthWallet, handleSignMessage } from "@/lib/utils"
+import { getChain, getUserWallet, handleSignMessage } from "@/lib/utils"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
@@ -21,7 +21,8 @@ const ConnectModal = ({
   moveToPreviousStep: () => void
   moveToStep: (step: number) => void
 }) => {
-  const { login, ready, authenticated, signMessage, connectWallet } = usePrivy()
+  const { login, ready, authenticated, signMessage, connectWallet, user } =
+    usePrivy()
   const { logout } = useLogout()
   const { wallets } = useWallets()
   const router = useRouter()
@@ -54,6 +55,8 @@ const ConnectModal = ({
     //   ),
     // },
   ]
+
+  console.log("user ====>", user)
 
   const handleOptionClick = (option: (typeof options)[0]) => {
     if (ready && authenticated) {
@@ -115,8 +118,9 @@ const ConnectModal = ({
   //   checkUser()
   // }, [authenticated, ready, wallets[0]])
 
-  const handleAuthenticate = async () => {
-    const wallet = getEthWallet(wallets)
+  const handleAuthenticate = async (walletAddress: string, email: string) => {
+    // const wallet = getEthWallet(wallets)
+    const wallet = getUserWallet(wallets, walletAddress)
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
@@ -146,7 +150,12 @@ const ConnectModal = ({
     const res = await authenticate({
       signature: sign,
       signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+      register: {
+        email: email,
+      },
     })
+
+    console.log("res ====>", res)
     if (res.data) {
       router.push("/?showDailyReward=true")
     }
@@ -154,25 +163,39 @@ const ConnectModal = ({
 
   useEffect(() => {
     const checkUser = async () => {
-      if (authenticated && ready && wallets.length > 0) {
-        const ethWallet = getEthWallet(wallets)
-        if (ethWallet) {
-          const res = await checkUserExist(ethWallet.address)
+      if (authenticated && ready && user && user?.wallet) {
+        const res = await checkUserExist(user?.wallet?.address || "")
 
-          if (res.data) {
-            handleAuthenticate()
-          } else {
-            moveToStep(2)
-          }
+        if (res.data) {
+          handleAuthenticate(user?.wallet?.address, user?.email?.address || "")
         } else {
-          connectWallet({
-            walletList: ["metamask", "rainbow", "coinbase_wallet", "phantom"],
-          })
+          moveToStep(2)
         }
       }
+
+      // if (authenticated && ready && wallets.length > 0 && user) {
+      //   // ✅ Access email here
+      //   const email = user?.email?.address
+      //   console.log("User email:", email)
+
+      //   const ethWallet = getEthWallet(wallets)
+      //   if (ethWallet) {
+      //     const res = await checkUserExist(ethWallet.address)
+
+      //     if (res.data) {
+      //       handleAuthenticate(user?.email?.address || "")
+      //     } else {
+      //       moveToStep(2)
+      //     }
+      //   } else {
+      //     connectWallet({
+      //       walletList: ["metamask", "rainbow", "coinbase_wallet", "phantom"],
+      //     })
+      //   }
+      // }
     }
     checkUser()
-  }, [authenticated, ready, wallets])
+  }, [authenticated, ready, wallets, user])
 
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">
