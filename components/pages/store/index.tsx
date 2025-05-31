@@ -355,9 +355,7 @@ const StorePage = () => {
         {selectedItem && (
           <div
             className={cn(
-              "bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-3 overflow-y-auto transition-all duration-300",
-              "fixed inset-0 z-50 lg:static lg:z-auto lg:w-full lg:max-w-[400px] lg:inset-auto",
-              "lg:opacity-100 lg:translate-y-0"
+              "hidden lg:block bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-3 overflow-y-auto transition-all duration-300 inset-0 z-50 lg:z-auto lg:w-full lg:max-w-[400px] lg:inset-auto lg:opacity-100 lg:translate-y-0"
             )}
           >
             <div className="flex flex-col gap-4 h-full">
@@ -370,85 +368,6 @@ const StorePage = () => {
                   className="object-cover h-[350px] rounded"
                 />
               </div>
-
-              {/* <div className="flex flex-col gap-3 bg-white/10 rounded-lg p-3">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg">Your Cart</h2>
-                  <div className="flex items-center">2 items</div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between bg-white/10 rounded-lg p-2">
-                    <Image
-                      src={selectedItem.image || ""}
-                      alt="item"
-                      width={1000}
-                      height={1000}
-                      className="object-cover h-8 w-8 rounded"
-                    />
-                    <div className="flex items-center justify-between">
-                      <p className="truncate mr-2 text-sm">Item name</p>
-                      <Badge variant="epic">Epic</Badge>
-                    </div>
-                    <p className="truncate mr-2 text-sm">250</p>
-                    <button
-                      onClick={() => setSelectedItem(null)}
-                      className="top-3 right-3 bg-white/10 backdrop-blur-lg rounded size-5 flex items-center justify-center border border-white/10 hover:bg-white/20 transition-colors shadow-lg"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between bg-white/10 rounded-lg p-2">
-                    <Image
-                      src={selectedItem.image || ""}
-                      alt="item"
-                      width={1000}
-                      height={1000}
-                      className="object-cover h-8 w-8 rounded"
-                    />
-                    <div className="flex items-center justify-between">
-                      <p className="truncate mr-2 text-sm">Item name</p>
-                      <Badge variant="legendary">Legendary</Badge>
-                    </div>
-                    <p className="truncate mr-2 text-sm">250</p>
-                    <button
-                      onClick={() => setSelectedItem(null)}
-                      className="top-3 right-3 bg-white/10 backdrop-blur-lg rounded size-5 flex items-center justify-center border border-white/10 hover:bg-white/20 transition-colors shadow-lg"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between bg-white/10 rounded-lg p-2">
-                    <Image
-                      src={selectedItem.image || ""}
-                      alt="item"
-                      width={1000}
-                      height={1000}
-                      className="object-cover h-8 w-8 rounded"
-                    />
-                    <div className="flex items-center justify-between">
-                      <p className="truncate mr-2 text-sm">Item name</p>
-                      <Badge variant="legendary">Legendary</Badge>
-                    </div>
-                    <p className="truncate mr-2 text-sm">250</p>
-                    <button
-                      onClick={() => setSelectedItem(null)}
-                      className="top-3 right-3 bg-white/10 backdrop-blur-lg rounded size-5 flex items-center justify-center border border-white/10 hover:bg-white/20 transition-colors shadow-lg"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <BrandButton
-                  blurColor="bg-[#96DFF4]"
-                  className="w-full font-light"
-                  onClick={handleBurnGear}
-                  disabled={loading}
-                >
-                  {loading ? "Summoning..." : "Buy for 450"}
-                  {loading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
-                </BrandButton>
-              </div> */}
             </div>
           </div>
         )}
@@ -464,6 +383,18 @@ const StorePage = () => {
                 <ArrowLeft className="w-4 h-4" />
                 <span className="text-sm">Back to store</span>
               </BrandButton>
+
+              <div className="flex flex-col gap-4 h-full lg:hidden">
+                <div className="relative flex items-center justify-center bg-white/10 rounded-lg">
+                  <Image
+                    src={selectedItem?.alienPart?.image || ""}
+                    alt="item"
+                    width={400}
+                    height={400}
+                    className="object-cover h-[350px] rounded"
+                  />
+                </div>
+              </div>
 
               <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg font-bold">{selectedItem?.name}</h2>
