@@ -9,7 +9,6 @@ import toast from "react-hot-toast"
 import {
   getStoreWearables,
   getWearableObjectDetails,
-  handleBoughtQuest,
   processBoughtQuest,
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
