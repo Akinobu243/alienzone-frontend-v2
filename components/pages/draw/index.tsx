@@ -3,7 +3,7 @@ import Image from "next/image"
 import { AppDispatch } from "@/store"
 import { useCharacters } from "@/store/hooks"
 import { fetchUserProfile } from "@/store/slices/userProfileSlice"
-import { Character, Gear } from "@/types"
+import { Character, CharacterRarity, Gear } from "@/types"
 import { Loader2 } from "lucide-react"
 import { createPortal } from "react-dom"
 import toast from "react-hot-toast"
@@ -133,6 +133,25 @@ const VideoPlayerModal = ({
   )
 }
 
+type Rarity = "R" | "SR" | "SSR" | "UR"
+
+function getCharacterVideoURL(rarity: Rarity): string | null {
+  const baseURL =
+    "https://alienzone-v2.s3.us-west-1.amazonaws.com/characters-videos"
+
+  const videoMap: Record<Rarity, "Blue" | "Gold" | "Rainbow"> = {
+    R: "Blue",
+    SR: "Gold",
+    SSR: "Gold",
+    UR: "Rainbow",
+  }
+
+  const type = videoMap[rarity]
+  const randomIndex = Math.floor(Math.random() * 3) + 1 // Random number between 1 and 3
+
+  return `${baseURL}/${type}-${randomIndex}.MP4`
+}
+
 const DrawPage = ({ portal }: { portal: number }) => {
   const [loading, setLoading] = useState({ single: false, multi: false })
   const [isOpen, setIsOpen] = useState(false)
@@ -160,12 +179,9 @@ const DrawPage = ({ portal }: { portal: number }) => {
 
   // Handle video end for single character summon
   const handleVideoEnded = () => {
-    if (singleSummonItem) {
-      // Since we're only showing videos for characters, we know this is a Character type
-      setSummonItems([singleSummonItem as Character])
-      setIsOpen(true)
-    }
     setVideoModalOpen(false)
+    setCharacterVideoUrl("")
+    setIsOpen(true)
   }
 
   const handleSummonCharacter = async () => {
@@ -197,7 +213,16 @@ const DrawPage = ({ portal }: { portal: number }) => {
       } else if (response.data?.character) {
         // If no video, show the summon modal directly
         setSummonItems([response.data.character])
-        setIsOpen(true)
+
+        const vidoeUrl =
+          getCharacterVideoURL(response.data.character.rarity as Rarity) || ""
+        if (!vidoeUrl) {
+          setIsOpen(true)
+        } else {
+          setSingleSummonItem(response.data.character)
+          setCharacterVideoUrl(vidoeUrl)
+          setVideoModalOpen(true)
+        }
         toast.success("Character summoned successfully")
       }
     } catch (error) {
@@ -228,8 +253,31 @@ const DrawPage = ({ portal }: { portal: number }) => {
       const characters = response.data?.summonResults.map(
         (result) => result.character
       )
+
+      // Loop over characters to fetch rarity of all characters
+      const rarities = characters?.map((character) => character.rarity)
+      const hasUR = rarities?.includes("UR" as CharacterRarity)
+      const hasSSR =
+        rarities?.includes("SSR" as CharacterRarity) ||
+        rarities?.includes("SR" as CharacterRarity)
+      const hasR = rarities?.includes("R" as CharacterRarity)
+
+      const videoUrl = hasUR
+        ? getCharacterVideoURL("UR") || ""
+        : hasSSR
+          ? getCharacterVideoURL("SSR") || ""
+          : hasR
+            ? getCharacterVideoURL("R") || ""
+            : ""
+
       setSummonItems(characters || [])
-      setIsOpen(true)
+
+      if (videoUrl) {
+        setCharacterVideoUrl(videoUrl)
+        setVideoModalOpen(true)
+      } else {
+        setIsOpen(true)
+      }
       toast.success("Characters summoned successfully")
     } catch (error) {
       toast.error("Error summoning character")
@@ -415,12 +463,15 @@ const DrawPage = ({ portal }: { portal: number }) => {
         isMinted={isMinted}
         setIsMinted={setIsMinted}
       />
-      <VideoPlayerModal
-        isOpen={videoModalOpen}
-        setIsOpen={setVideoModalOpen}
-        videoUrl={characterVideoUrl}
-        onEnded={handleVideoEnded}
-      />
+
+      {characterVideoUrl && (
+        <VideoPlayerModal
+          isOpen={videoModalOpen}
+          setIsOpen={setVideoModalOpen}
+          videoUrl={characterVideoUrl}
+          onEnded={handleVideoEnded}
+        />
+      )}
     </>
   )
 }

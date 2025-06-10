@@ -302,11 +302,15 @@ export const updateTeam = async ({
 }
 
 export const getTeam = async (
-  walletAddress?: string
+  walletAddress?: string,
+  raidId?: number
 ): Promise<ApiResponse<TeamResponse>> => {
   const params: Record<string, string | number | boolean> = {}
   if (walletAddress) {
     params.walletAddress = walletAddress
+  }
+  if (raidId) {
+    params.raidId = raidId
   }
   const response = await apiManager.get<TeamResponse>(
     "/profile/get-team",

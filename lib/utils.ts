@@ -87,14 +87,25 @@ export const isRaidLaunched = (
   return history?.inProgress
 }
 
+// export const calculateLaunchedRaidRemainingTime = (
+//   history?: RaidHistoryResponse | null,
+//   raid?: Raid | null
+// ) => {
+//   if (!history || !raid || !history.inProgress) return null
+//   const createdAt = new Date(history.createdAt)
+//   const raidDuration = raid.duration
+//   const raidEndTime = new Date(createdAt.getTime() + raidDuration * 1000)
+//   const now = new Date()
+//   const remainingTime = raidEndTime.getTime() - now.getTime()
+//   return remainingTime
+// }
+
 export const calculateLaunchedRaidRemainingTime = (
   history?: RaidHistoryResponse | null,
   raid?: Raid | null
 ) => {
   if (!history || !raid || !history.inProgress) return null
-  const createdAt = new Date(history.createdAt)
-  const raidDuration = raid.duration
-  const raidEndTime = new Date(createdAt.getTime() + raidDuration * 1000)
+  const raidEndTime = new Date(history.raidFinishTime)
   const now = new Date()
   const remainingTime = raidEndTime.getTime() - now.getTime()
   return remainingTime

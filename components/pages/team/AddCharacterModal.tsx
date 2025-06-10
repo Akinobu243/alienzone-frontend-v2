@@ -54,12 +54,12 @@ const AddCharacterModal = () => {
 
       const currentCharacterIds =
         team?.team
-          .filter((member) => member.type === "character")
+          ?.filter((member) => member.type === "character")
           .map((member) => member.id) || []
 
       const currentAlienIds =
         team?.team
-          .filter((member) => member.type === "alien")
+          ?.filter((member) => member.type === "alien")
           .map((member) => member.id) || []
 
       // Add selected character IDs to current character IDs

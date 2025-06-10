@@ -92,6 +92,7 @@ export interface RaidHistory {
   inProgress: boolean
   createdAt: string
   updatedAt: string
+  raidFinishTime: string
 }
 
 export interface RaidHistoryResponse extends RaidHistory {

@@ -5,11 +5,13 @@ import { Plus } from "lucide-react"
 
 import { addCacheBuster, getBackgroundImageUrl } from "@/lib/utils"
 
-const TeamRecap = () => {
+const TeamRecap = ({
+  buffs,
+}: {
+  buffs?: { xpBoost?: number; starsBoost?: number; raidTimeBoost?: number }
+}) => {
   const { data: profile } = useProfile()
   const { data: team } = useTeam()
-
-  console.log("team ====>", team)
 
   return (
     <div className="glass-effect p-2 lg:p-4 lg:mt-3 rounded-2xl">
@@ -28,20 +30,37 @@ const TeamRecap = () => {
               <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1 flex-1">
                 <span className="text-xs  font-inter uppercase">XP</span>
                 <span className="font-volkhov text-2xs ">
-                  +{team?.buffs?.xpBoost}%
+                  {(buffs?.xpBoost || 0) > 0 || (team?.buffs?.xpBoost || 0) > 0
+                    ? "+"
+                    : ""}
+                  {buffs?.xpBoost ? buffs?.xpBoost : team?.buffs?.xpBoost}%
                 </span>
               </div>
               <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1 flex-1">
                 <span className="text-xs  font-inter uppercase">Star</span>
                 <span className="font-volkhov text-2xs">
-                  +{team?.buffs?.starsBoost}%
+                  {(buffs?.starsBoost || 0) > 0 ||
+                  (team?.buffs?.starsBoost || 0) > 0
+                    ? "+"
+                    : ""}
+                  {buffs?.starsBoost
+                    ? buffs?.starsBoost
+                    : team?.buffs?.starsBoost}
+                  %
                 </span>
               </div>
             </div>
             <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1">
               <span className="text-xs  font-inter">Raid time</span>
               <span className="font-volkhov text-2xs">
-                +{team?.buffs?.raidTimeBoost}%
+                {(buffs?.raidTimeBoost || 0) > 0 ||
+                (team?.buffs?.raidTimeBoost || 0) > 0
+                  ? "+"
+                  : ""}
+                {buffs?.raidTimeBoost
+                  ? buffs?.raidTimeBoost
+                  : team?.buffs?.raidTimeBoost}
+                %
               </span>
             </div>
           </div>

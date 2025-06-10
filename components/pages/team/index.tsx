@@ -22,12 +22,12 @@ const TeamPage = () => {
       // Get current team members
       const currentCharacterIds =
         team?.team
-          .filter((member) => member.type === "character")
+          ?.filter((member) => member.type === "character")
           .map((member) => member.id) || []
 
       const currentAlienIds =
         team?.team
-          .filter((member) => member.type === "alien")
+          ?.filter((member) => member.type === "alien")
           .map((member) => member.id) || []
 
       // Filter out the member to remove

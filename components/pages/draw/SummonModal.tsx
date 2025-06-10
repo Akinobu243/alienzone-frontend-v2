@@ -461,33 +461,35 @@ const SummonModal = ({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog
-        open={showConfirmDialog}
-        onOpenChange={handleConfirmDialogChange}
-      >
-        <AlertDialogContent className="border border-white/10">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-volkhov text-lg text-center">
-              Confirmation
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-center text-white/80">
-              Leaving without minting will result in loss of stars. Are you sure
-              you want to continue?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel className="px-6 !h-12 bg-white/10 border-white/10 border rounded-xl py-3 relative overflow-hidden font-volkhov text-base group">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmClose}
-              className="px-6 !h-12 !bg-white/10 border-white/10 border rounded-xl py-3 relative overflow-hidden font-volkhov text-base group ![background-image:none]"
-            >
-              Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {showConfirmDialog && (
+        <AlertDialog
+          open={showConfirmDialog}
+          onOpenChange={handleConfirmDialogChange}
+        >
+          <AlertDialogContent className="border border-white/10">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-volkhov text-lg text-center">
+                Confirmation
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-center text-white/80">
+                Leaving without minting will result in loss of stars. Are you
+                sure you want to continue?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+              <AlertDialogCancel className="px-6 !h-12 bg-white/10 border-white/10 border rounded-xl py-3 relative overflow-hidden font-volkhov text-base group">
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmClose}
+                className="px-6 !h-12 !bg-white/10 border-white/10 border rounded-xl py-3 relative overflow-hidden font-volkhov text-base group ![background-image:none]"
+              >
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </>
   )
 }

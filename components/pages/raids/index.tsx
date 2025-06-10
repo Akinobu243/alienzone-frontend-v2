@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRaidHistory, useRaids } from "@/store/hooks"
 import { Raid } from "@/types"
 import { Plus } from "lucide-react"
 
+import { getTeam } from "@/lib/api"
 import { isRaidLaunched } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ArrowBack } from "@/components/icons"
@@ -18,8 +19,30 @@ const RaidsPage = ({ isHunt = false }: { isHunt?: boolean }) => {
   const { data: raids } = useRaids()
   const [selectedRaid, setSelectedRaid] = useState<Raid | null>(null)
   const { data: histories } = useRaidHistory()
+  const [buffs, setBuffs] = useState<{
+    xpBoost: number
+    starsBoost: number
+    raidTimeBoost: number
+  }>({
+    xpBoost: 0,
+    starsBoost: 0,
+    raidTimeBoost: 0,
+  })
 
-  console.log("raids  =====>", raids)
+  useEffect(() => {
+    if (selectedRaid) {
+      handleGetTeam()
+    }
+  }, [selectedRaid])
+
+  const handleGetTeam = async () => {
+    const response = await getTeam(undefined, selectedRaid?.id)
+    console.log("response buffs", response)
+
+    if (response.data) {
+      setBuffs(response.data.buffs)
+    }
+  }
 
   return (
     <>
@@ -31,7 +54,7 @@ const RaidsPage = ({ isHunt = false }: { isHunt?: boolean }) => {
         />
         <div className="flex-1 h-full flex flex-col overflow-y-auto">
           <SingleRaid raid={selectedRaid || undefined} />
-          <TeamRecap />
+          <TeamRecap buffs={buffs} />
           {/* End of team recap section */}
         </div>
       </div>
@@ -81,7 +104,7 @@ const RaidsPage = ({ isHunt = false }: { isHunt?: boolean }) => {
 
         {!selectedRaid && !isRaidsListOpen ? <NoRaid /> : ""}
 
-        <TeamRecap />
+        <TeamRecap buffs={buffs} />
       </div>
     </>
   )
