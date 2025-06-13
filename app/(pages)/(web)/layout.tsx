@@ -16,7 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
   const pathname = usePathname()
 
-  const isHomePage = pathname === "/home"
+  const isHomePage = pathname === "/"
 
   return (
     <Suspense

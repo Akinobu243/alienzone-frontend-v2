@@ -1,14 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Trophy } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/useIsMobile"
 
-import DailyLoginModal from "../DailyLoginReward/Modal"
 import {
   DoubleArrowIcon,
   FlagIcon,
@@ -22,7 +19,7 @@ import IconButton from "../ui/icon-button"
 import Chat from "./Chat"
 
 // const sidebarItems = [
-//   { label: "Home", href: "/home", icon: HomeIcon },
+//   { label: "Home", href: "/", icon: HomeIcon },
 //   { label: "Raids", href: "/raids", icon: DoubleArrowIcon },
 //   { label: "Team", href: "/team", icon: PeopleIcon },
 //   { label: "Inventory", href: "/inventory", icon: FlagIcon },
@@ -31,7 +28,7 @@ import Chat from "./Chat"
 // ]
 
 const sidebarItems = [
-  { label: "Home", href: "/home", icon: HomeIcon },
+  { label: "Home", href: "/", icon: HomeIcon },
   { label: "Leaderboard", href: "/leaderboard", icon: DoubleArrowIcon },
   { label: "Friends", href: "/friends", icon: PeopleIcon },
   { label: "Quests", href: "/quests", icon: FlagIcon },
@@ -44,24 +41,9 @@ const sidebarItems = [
   },
 ]
 
-const RightSidebar = ({
-  className,
-  queryIsRewardModalOpen,
-}: {
-  className?: string
-  queryIsRewardModalOpen?: boolean
-}) => {
-  const [isRewardModalOpen, setIsRewardModalOpen] = useState(
-    queryIsRewardModalOpen || false
-  )
+const RightSidebar = ({ className }: { className?: string }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
-
-  useEffect(() => {
-    if (queryIsRewardModalOpen) {
-      setIsRewardModalOpen(true)
-    }
-  }, [queryIsRewardModalOpen])
 
   return (
     <div
@@ -80,7 +62,7 @@ const RightSidebar = ({
         <AlienzoneIcon className="size-6" />
       </Link>
 
-      {pathname === "/home" && isMobile && (
+      {pathname === "/" && isMobile && (
         <Chat className="lg:hidden absolute left-8 bottom-10" btnClassName="" />
       )}
 
@@ -107,13 +89,6 @@ const RightSidebar = ({
           )
         })}
       </div>
-      <button onClick={() => setIsRewardModalOpen(true)}>
-        <Trophy className="size-5" />
-      </button>
-      <DailyLoginModal
-        isOpen={isRewardModalOpen}
-        onClose={() => setIsRewardModalOpen(false)}
-      />
     </div>
   )
 }

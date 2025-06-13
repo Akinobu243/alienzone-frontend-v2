@@ -76,6 +76,7 @@ const DailyLoginReward = ({ onClose }: { onClose: () => void }) => {
         toast.success("Daily rewards claimed successfully!")
         fetchDailyRewards()
         fetchUserProfile()
+        onClose()
       } else {
         toast.error(
           res?.error?.message || res?.error || "Failed to claim rewards"

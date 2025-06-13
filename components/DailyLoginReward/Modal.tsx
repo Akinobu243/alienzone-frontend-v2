@@ -1,17 +1,15 @@
 import { Fragment } from "react"
+import { useDailyLoginReward } from "@/contexts/DailyLoginRewardContext"
 import { Dialog, Transition } from "@headlessui/react"
 
 import DailyLoginReward from "."
 
-interface DailyLoginModalProps {
-  isOpen: boolean
-  onClose: () => void
-}
+const DailyLoginModal = () => {
+  const { isRewardModalOpen, closeRewardModal } = useDailyLoginReward()
 
-const DailyLoginModal = ({ isOpen, onClose }: DailyLoginModalProps) => {
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+    <Transition appear show={isRewardModalOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={closeRewardModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -36,7 +34,7 @@ const DailyLoginModal = ({ isOpen, onClose }: DailyLoginModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-7xl transform overflow-hidden transition-all">
-                <DailyLoginReward onClose={onClose} />
+                <DailyLoginReward onClose={closeRewardModal} />
               </Dialog.Panel>
             </Transition.Child>
           </div>

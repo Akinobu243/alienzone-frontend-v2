@@ -5,6 +5,7 @@ import "./styles/globals.css"
 import { RaidTimerProvider } from "@/context/raidTimer"
 import { ThemeProvider } from "@/context/ThemeProvider"
 import { WalletProvider } from "@/context/wallet"
+import { DailyLoginRewardProvider } from "@/contexts/DailyLoginRewardContext"
 import { ReduxProvider } from "@/store/provider"
 import { Toaster } from "react-hot-toast"
 
@@ -47,9 +48,11 @@ export default function RootLayout({
             <ReduxProvider>
               <WalletProvider>
                 <RaidTimerProvider>
-                  {children}
-                  <Toaster />
-                  <InstallPWAPrompt />
+                  <DailyLoginRewardProvider>
+                    {children}
+                    <Toaster />
+                    <InstallPWAPrompt />
+                  </DailyLoginRewardProvider>
                 </RaidTimerProvider>
               </WalletProvider>
             </ReduxProvider>

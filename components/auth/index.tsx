@@ -163,12 +163,11 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
           src="/images/auth/desktop-bg2.mp4"
           autoPlay
           muted
-          loop
           className="w-full h-full object-cover fixed top-0 left-0"
         />
       )}
       {currentStep > 0 ? (
-        <div className="fixed w-[100vw] h-[100vh] backdrop-blur-[10px] z-10 max-lg:bg-black/50"></div>
+        <div className="fixed w-[100vw] h-[100vh] backdrop-blur-[10px] z-10 bg-black/30"></div>
       ) : null}
 
       <Suspense fallback={null}>
@@ -185,7 +184,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="z-50 w-full flex flex-col items-center justify-center"
+              className="z-50 w-full flex flex-col items-center justify-center "
             >
               {currentStep === 1 ? (
                 <ConnectModal

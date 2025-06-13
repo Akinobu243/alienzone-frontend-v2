@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { useDailyLoginReward } from "@/contexts/DailyLoginRewardContext"
 import { useProfile } from "@/store/hooks"
 
 import { cn } from "@/lib/utils"
@@ -14,16 +15,17 @@ import {
 } from "../icons"
 import IconButton from "../ui/icon-button"
 
-const topbarItems = [
-  { label: "", href: "", icon: MailIcon },
-  { label: "", href: "", icon: ShopIcon },
-  { label: "", href: "", icon: Shop2Icon },
-  { label: "", href: "", icon: VolumeIcon },
-  { label: "", href: "", icon: SettingsIcon },
-]
-
 const TopBar = ({ className }: { className?: string }) => {
   const { data: profile } = useProfile()
+  const { openRewardModal } = useDailyLoginReward()
+
+  const topbarItems = [
+    { label: "", href: "", icon: MailIcon },
+    { label: "", href: "", icon: ShopIcon, onClick: () => openRewardModal() },
+    { label: "", href: "", icon: Shop2Icon },
+    { label: "", href: "", icon: VolumeIcon },
+    { label: "", href: "", icon: SettingsIcon },
+  ]
 
   return (
     <div
@@ -40,7 +42,11 @@ const TopBar = ({ className }: { className?: string }) => {
         {topbarItems.map((item, index) => (
           <IconButton
             key={index}
-            className="size-10 lg:size-11 rounded-lg opacity-50 pointer-events-none p-1"
+            className={cn(
+              "size-10 lg:size-11 rounded-lg p-1",
+              item.onClick ? "cursor-pointer" : "opacity-50 pointer-events-none"
+            )}
+            onClick={item.onClick}
           >
             <item.icon className="size-4 lg:size-5" />
           </IconButton>

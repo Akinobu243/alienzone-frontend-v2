@@ -156,7 +156,7 @@ const ActivityMenu = ({
         {/* Footer */}
         <div className="gap-4 mt-10 w-full justify-end hidden lg:flex">
           {/* Profile Image */}
-          <div className="glass-effect p-2 rounded-xl ">
+          <Link href="/pwa" className="glass-effect p-2 rounded-xl ">
             <div
               className="relative flex items-center justify-center size-[100px] rounded-lg overflow-hidden"
               style={{
@@ -177,7 +177,7 @@ const ActivityMenu = ({
                 className="size-22 rounded"
               />
             </div>
-          </div>
+          </Link>
 
           {/* Stats */}
           <div className="flex-1 glass-effect rounded-xl max-w-[390px] w-full">
