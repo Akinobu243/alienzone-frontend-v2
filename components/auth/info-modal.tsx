@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import PreviousStepButton from "@/components/auth/previous-step-button"
-// import countries from /assets/counties.json
 import countries from "@/app/assets/countries.json"
 
 interface InfoModalProps {

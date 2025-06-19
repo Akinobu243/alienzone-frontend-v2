@@ -507,11 +507,13 @@ export const getLeaderboard = async ({
   limit,
   filter,
   search,
+  date,
 }: {
   offset?: number
   limit?: number
   filter?: "enterprises" | "likes"
   search?: string
+  date?: string | null
 }): Promise<ApiResponse<{ users: Leaderboard[]; thisUser?: Leaderboard }>> => {
   const params: Record<string, string | number | boolean> = {}
   if (offset) {
@@ -525,6 +527,9 @@ export const getLeaderboard = async ({
   }
   if (search) {
     params.search = search
+  }
+  if (date) {
+    params.date = date
   }
 
   const response = await apiManager.get<{

@@ -27,6 +27,9 @@ import {
   UserRound,
   XLogo,
 } from "@/components/icons"
+import countries from "@/app/assets/countries.json"
+
+import { DateFilter } from "./date-filter"
 
 enum LeaderboardTabs {
   PLAYERS = "players",
@@ -96,6 +99,14 @@ const LEADERBOARD_COLUMNS = [
     width: 1,
     align: "right",
   },
+  {
+    id: "",
+    label: "",
+    labelSmall: "",
+    showOnSmall: true,
+    width: 1,
+    align: "right",
+  },
 ]
 
 const LeaderboardPage = () => {
@@ -109,6 +120,7 @@ const LeaderboardPage = () => {
   const [leaderboardData, setLeaderboardData] = useState<Leaderboard[]>([])
   const [thisUser, setThisUser] = useState<Leaderboard | null>(null)
   const [search, setSearch] = useState<string>("")
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const debouncedSearch = useDebounce(search, 300)
   const [friends, setFriends] = useState<any[]>([])
   const { data: profile } = useProfile()
@@ -123,13 +135,14 @@ const LeaderboardPage = () => {
     getLeaderboard({
       filter: activeTab === LeaderboardTabs.PLAYERS ? undefined : activeTab,
       search: debouncedSearch,
+      date: selectedDate,
     }).then((res) => {
       if (res.data) {
         setLeaderboardData(res.data.users)
         setThisUser(res.data.thisUser || null)
       }
     })
-  }, [activeTab, debouncedSearch])
+  }, [activeTab, debouncedSearch, selectedDate])
 
   useEffect(() => {
     if (selectedUser) {
@@ -195,6 +208,11 @@ const LeaderboardPage = () => {
     }
   }
 
+  const handleDateChange = (date: string | null) => {
+    setSelectedDate(date)
+    setSelectedUser(null)
+  }
+
   console.log("leaderboardData ===>", leaderboardData)
   console.log("Profile ===>", profile)
   console.log("friends ===>", friends)
@@ -204,6 +222,9 @@ const LeaderboardPage = () => {
 
   return (
     <div className="relative w-full h-full">
+      <div className="absolute -top-[4.1rem] left-2">
+        <DateFilter onDateChange={handleDateChange} />
+      </div>
       <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl  flex flex-col lg:flex-row gap-3 overflow-hidden backdrop-blur-md">
         <div
           className={cn(
@@ -292,15 +313,35 @@ const LeaderboardPage = () => {
 
                     {/* Name Column */}
                     <div className="flex items-center gap-2 col-span-2 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
-                        <img
-                          src="/images/user.png"
-                          alt="User"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                      {thisUser?.aliens.length > 0 &&
+                      thisUser?.elements.length > 0 ? (
+                        <div className="flex gap-2 w-8 h-8">
+                          <div className="flex-1 aspect-square rounded overflow-hidden relative">
+                            <Image
+                              src={thisUser?.aliens[0]?.image || ""}
+                              alt="Character"
+                              fill
+                              className="object-cover z-10"
+                            />
+                            <Image
+                              src={thisUser?.elements[0].background || ""}
+                              alt="User's alien"
+                              fill
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
+                          <img
+                            src={thisUser.image}
+                            alt={thisUser.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+
                       <span className="font-medium truncate">
-                        {thisUser?.name}
+                        {thisUser.name}
                       </span>
                     </div>
 
@@ -331,6 +372,19 @@ const LeaderboardPage = () => {
                     <div className="flex items-center justify-between">
                       <span>{thisUser?.reputation}</span>
                     </div>
+
+                    <div className="flex items-center justify-center">
+                      {
+                        countries.find(
+                          (country) =>
+                            country.name.toLowerCase().split(",")[0].trim() ===
+                            thisUser?.country
+                              ?.toLowerCase()
+                              ?.split(",")[0]
+                              .trim()
+                        )?.flag
+                      }
+                    </div>
                   </div>
                   <span
                     className={cn(
@@ -347,104 +401,122 @@ const LeaderboardPage = () => {
 
             {/* Table Body */}
 
-            {leaderboardData.map((item, index) => (
-              <div
-                key={index}
-                className={cn(
-                  `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center relative overflow-hidden`,
-                  index % 2 === 0 ? "bg-white/5" : "bg-white/[0.02]",
-                  selectedUser?.id === item.id && "bg-white/30"
-                )}
-                style={{
-                  gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
-                }}
-                onClick={() => setSelectedUser(item)}
-              >
-                {/* Rank Column */}
-                <div className="flex items-center">
-                  {index + 1 <= 3 ? (
-                    <Image
-                      src={`/images/rank-${index + 1}.png`}
-                      alt="Rank"
-                      width={28}
-                      height={28}
-                    />
-                  ) : (
-                    <span className=" size-8 bg-white/10 rounded-full text-xs flex items-center justify-center font-inter">
-                      {index + 1}
-                    </span>
+            {leaderboardData.length > 0 ? (
+              leaderboardData.map((item, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center relative overflow-hidden`,
+                    index % 2 === 0 ? "bg-white/5" : "bg-white/[0.02]",
+                    selectedUser?.id === item.id && "bg-white/30"
                   )}
-                </div>
+                  style={{
+                    gridTemplateColumns: `repeat(${totalColSpan}, minmax(0, 1fr))`,
+                  }}
+                  onClick={() => setSelectedUser(item)}
+                >
+                  {/* Rank Column */}
+                  <div className="flex items-center">
+                    {index + 1 <= 3 ? (
+                      <Image
+                        src={`/images/rank-${index + 1}.png`}
+                        alt="Rank"
+                        width={28}
+                        height={28}
+                      />
+                    ) : (
+                      <span className=" size-8 bg-white/10 rounded-full text-xs flex items-center justify-center font-inter">
+                        {index + 1}
+                      </span>
+                    )}
+                  </div>
 
-                {/* Name Column */}
-                <div className="flex items-center gap-2 col-span-2 min-w-0">
-                  {item?.aliens.length > 0 && item?.elements.length > 0 ? (
-                    <div className="flex gap-2 w-8 h-8">
-                      <div className="flex-1 aspect-square rounded overflow-hidden relative">
-                        <Image
-                          src={item?.aliens[0]?.image || ""}
-                          alt="Character"
-                          fill
-                          className="object-cover z-10"
-                        />
-                        <Image
-                          src={item?.elements[0].background || ""}
-                          alt="User's alien"
-                          fill
+                  {/* Name Column */}
+                  <div className="flex items-center gap-2 col-span-2 min-w-0">
+                    {item?.aliens.length > 0 && item?.elements.length > 0 ? (
+                      <div className="flex gap-2 w-8 h-8">
+                        <div className="flex-1 aspect-square rounded overflow-hidden relative">
+                          <Image
+                            src={item?.aliens[0]?.image || ""}
+                            alt="Character"
+                            fill
+                            className="object-cover z-10"
+                          />
+                          <Image
+                            src={item?.elements[0].background || ""}
+                            alt="User's alien"
+                            fill
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
                         />
                       </div>
-                    </div>
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-
-                  <span className="font-medium truncate">{item.name}</span>
-                </div>
-
-                {/* Enterprise Column */}
-                <div
-                  className={cn(
-                    "truncate",
-                    !LEADERBOARD_COLUMNS.find((col) => col.id === "entreprise")
-                      ?.showOnSmall && "hidden md:block"
-                  )}
-                >
-                  {item.enterprise.length > 0 ? item.enterprise : "-"}
-                </div>
-
-                {/* Level Column */}
-                <div
-                  className={cn(
-                    "truncate",
-                    !LEADERBOARD_COLUMNS.find((col) => col.id === "level")
-                      ?.showOnSmall && "hidden md:block"
-                  )}
-                >
-                  {item.level}
-                </div>
-
-                {/* Points Column */}
-                <div className="flex items-center justify-between">
-                  <span>{item.reputation}</span>
-                </div>
-                {alien && alien?.userId === item.id && (
-                  <span
-                    className={cn(
-                      "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] duration-500 transition-all",
-                      "bg-[#cf74bd]"
                     )}
-                  />
-                )}
+
+                    <span className="font-medium truncate">{item.name}</span>
+                  </div>
+
+                  {/* Enterprise Column */}
+                  <div
+                    className={cn(
+                      "truncate",
+                      !LEADERBOARD_COLUMNS.find(
+                        (col) => col.id === "entreprise"
+                      )?.showOnSmall && "hidden md:block"
+                    )}
+                  >
+                    {item.enterprise.length > 0 ? item.enterprise : "-"}
+                  </div>
+
+                  {/* Level Column */}
+                  <div
+                    className={cn(
+                      "truncate",
+                      !LEADERBOARD_COLUMNS.find((col) => col.id === "level")
+                        ?.showOnSmall && "hidden md:block"
+                    )}
+                  >
+                    {item.level}
+                  </div>
+
+                  {/* Points Column */}
+                  <div className="flex items-center justify-between">
+                    <span>{item.reputation}</span>
+                  </div>
+                  {alien && alien?.userId === item.id && (
+                    <span
+                      className={cn(
+                        "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] duration-500 transition-all",
+                        "bg-[#cf74bd]"
+                      )}
+                    />
+                  )}
+
+                  <div className="flex items-center justify-center">
+                    {
+                      countries.find(
+                        (country) =>
+                          country.name.toLowerCase().split(",")[0].trim() ===
+                          item?.country?.toLowerCase()?.split(",")[0].trim()
+                      )?.flag
+                    }
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <span className="text-white/50">No data</span>
               </div>
-            ))}
+            )}
           </div>
         </div>
+
         {selectedUser && (
           <div
             className={cn(
