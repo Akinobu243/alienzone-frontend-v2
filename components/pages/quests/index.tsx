@@ -266,7 +266,7 @@ const formatWeeklyTime = (timestamp: string | number): string => {
 }
 
 const QuestsPage = () => {
-  const [activeTab, setActiveTab] = useState<"daily" | "weekly">("weekly")
+  const [activeTab, setActiveTab] = useState<"daily" | "weekly">("daily")
   const [timer, setTimer] = useState("")
   const [quests, setQuests] = useState<Quest[]>([])
   const [dailyResetTime, setDailyResetTime] = useState<number>(0)
@@ -428,9 +428,9 @@ const QuestsPage = () => {
       </div>
 
       {/* Points Section */}
-      <div className="bg-white/5 rounded-lg p-3 flex gap-4 flex-col lg:flex-row">
+      <div className="bg-white/5 rounded-lg p-3 flex gap-4 flex-col lg:flex-row min-w-0">
         {/* Left side - Title and Timer */}
-        <div className="flex flex-col gap-1 bg-white/5 rounded-lg p-3  items-center justify-center text-center h-full px-32">
+        <div className="flex flex-col gap-1 bg-white/5 rounded-lg p-3 items-center justify-center text-center lg:whitespace-nowrap lg:w-[400px] flex-shrink-0">
           <h2 className="text-2xl font-semibold text-white">
             {activeTab === "daily" ? "Daily Points" : "Weekly Points"}
           </h2>
@@ -443,14 +443,17 @@ const QuestsPage = () => {
         </div>
 
         {/* Right side - Progress Bar and Rewards */}
-        <div className="flex-1 bg-white/5 rounded-lg p-3">
+        <div className="flex-1 bg-white/5 rounded-lg p-3 min-w-0">
           {/* Reward Points */}
-          <div className="flex justify-between mt-4">
+          <div className="flex gap-6 mt-4 overflow-x-auto pb-2 no-scrollbar">
             {rewards?.dailyRewards &&
               rewards?.dailyRewards.map((reward, index) => (
-                <div key={index} className="flex flex-col  gap-2">
+                <div
+                  key={index}
+                  className="flex flex-col gap-2 flex-shrink-0 min-w-[120px]"
+                >
                   {/* Reward Box */}
-                  <div className="relative flex items-center gap-3 rounded-xl lg:min-w-[120px]">
+                  <div className="relative flex items-center gap-3 rounded-xl">
                     {/* Icon Container */}
                     <div className="relative max-lg:hidden">
                       <div className="w-10 h-10 rounded bg-white/5 border border-white/10 flex items-center justify-center p-1.5">
@@ -467,7 +470,7 @@ const QuestsPage = () => {
                     {/* Amount */}
                     <div className="flex flex-col">
                       <span className="text-[11px] text-white">
-                        Day {reward.id}
+                        Day {index + 1}
                       </span>
                       <span className="text-sm text-white font-medium">
                         {reward.amount}
