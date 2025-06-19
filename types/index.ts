@@ -178,6 +178,7 @@ export interface Pack {
   updatedAt: string
   rewards: PackReward[]
   isPurchased: boolean
+  type: "STARS" | "SPECIAL"
 }
 
 // enum PackRewardType {

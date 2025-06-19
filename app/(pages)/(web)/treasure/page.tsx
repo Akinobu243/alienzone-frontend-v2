@@ -26,6 +26,11 @@ import ItemCard from "@/components/pages/treasure/ItemCard"
 
 const tabs = [
   {
+    id: "stars",
+    label: "STARS",
+    active: true,
+  },
+  {
     id: "special",
     label: "Special",
     active: true,
@@ -93,7 +98,7 @@ const PackDetailsModal = ({ pack, isOpen, onClose }: PackDetailsModalProps) => {
 }
 
 const Page = () => {
-  const [activeTab, setActiveTab] = useState("star")
+  const [activeTab, setActiveTab] = useState("stars")
   const [packs, setPacks] = useState<Pack[]>([])
   const { data: profile } = useProfile()
   const { user } = useWallet()
@@ -167,14 +172,20 @@ const Page = () => {
                 }}
               >
                 <CarouselContent className="h-full">
-                  {packs.map((pack, index) => (
-                    <CarouselItem
-                      key={index}
-                      className="lg:basis-1/2 xl:basis-1/3 "
-                    >
-                      <ItemCard pack={pack} setSelectedPack={setSelectedPack} />
-                    </CarouselItem>
-                  ))}
+                  {packs
+                    .filter((pack) => pack.type.toLowerCase() === activeTab)
+                    .map((pack, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="lg:basis-1/2 xl:basis-1/3 "
+                      >
+                        <ItemCard
+                          pack={pack}
+                          setSelectedPack={setSelectedPack}
+                          isSpecial={activeTab === "special"}
+                        />
+                      </CarouselItem>
+                    ))}
                 </CarouselContent>
               </Carousel>
 
@@ -258,14 +269,16 @@ const Page = () => {
             }}
           >
             <CarouselContent className="h-full">
-              {packs.map((pack, index) => (
-                <CarouselItem
-                  key={index}
-                  className=" lg:basis-1/2 xl:basis-1/3 "
-                >
-                  <ItemCard pack={pack} setSelectedPack={setSelectedPack} />
-                </CarouselItem>
-              ))}
+              {packs
+                .filter((pack) => pack.type.toLowerCase() === activeTab)
+                .map((pack, index) => (
+                  <CarouselItem
+                    key={index}
+                    className=" lg:basis-1/2 xl:basis-1/3 "
+                  >
+                    <ItemCard pack={pack} setSelectedPack={setSelectedPack} />
+                  </CarouselItem>
+                ))}
             </CarouselContent>
           </Carousel>
 
@@ -282,6 +295,7 @@ const Page = () => {
             ))}
           </div>
         </div>
+
         <div className="flex items-center gap-4 border border-white/10 rounded-xl px-4  bg-white/10 justify-center">
           <div className="flex h-14 items-center gap-2">
             <Image

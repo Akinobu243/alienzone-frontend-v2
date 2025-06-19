@@ -9,9 +9,10 @@ import { isPwa } from "@/hooks/isPwa"
 interface ItemCardProps {
   pack: Pack
   setSelectedPack: (pack: Pack) => void
+  isSpecial?: boolean
 }
 
-const ItemCard = ({ pack, setSelectedPack }: ItemCardProps) => {
+const ItemCard = ({ pack, setSelectedPack, isSpecial }: ItemCardProps) => {
   const [isBuying, setIsBuying] = useState(false)
   const isPwaMode = isPwa()
 
@@ -75,8 +76,32 @@ const ItemCard = ({ pack, setSelectedPack }: ItemCardProps) => {
             </div>
           ) : (
             <>
-              <p className="">Buy for</p>
-              <p className="text-[#5FD7FF]">{pack.price}$</p>
+              {isSpecial ? (
+                <>
+                  <p className="">Buy for</p>
+                  <p className="text-[#5FD7FF]">{pack.price}$</p>
+                </>
+              ) : (
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/images/stars.png"
+                      alt="STAR"
+                      width={24}
+                      height={24}
+                    />
+                    {pack.rewards[0].type === "STARS" && (
+                      <div className="">
+                        <p>{pack.rewards[0].amount}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="">Buy for</p>
+                    <p className="text-[#5FD7FF]">{pack.price}$</p>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </button>
