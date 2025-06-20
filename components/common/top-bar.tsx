@@ -1,8 +1,10 @@
 "use client"
 
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useDailyLoginReward } from "@/contexts/DailyLoginRewardContext"
 import { useProfile } from "@/store/hooks"
+import { UserIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -18,6 +20,7 @@ import IconButton from "../ui/icon-button"
 const TopBar = ({ className }: { className?: string }) => {
   const { data: profile } = useProfile()
   const { openRewardModal } = useDailyLoginReward()
+  const router = useRouter()
 
   const topbarItems = [
     { label: "", href: "", icon: MailIcon },
@@ -25,6 +28,12 @@ const TopBar = ({ className }: { className?: string }) => {
     { label: "", href: "", icon: Shop2Icon },
     { label: "", href: "", icon: VolumeIcon },
     { label: "", href: "", icon: SettingsIcon },
+    {
+      label: "",
+      href: "/profile",
+      icon: UserIcon,
+      onClick: () => router.push("/profile"),
+    },
   ]
 
   return (

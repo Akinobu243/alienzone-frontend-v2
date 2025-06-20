@@ -173,8 +173,15 @@ export const checkUserExist = async (
   return response
 }
 
-export const getProfile = async (): Promise<ApiResponse<Profile | null>> => {
-  const response = await apiManager.get<Profile | null>("/profile/get-profile")
+export const getProfile = async (
+  walletAddress?: string
+): Promise<ApiResponse<Profile | null>> => {
+  const response = await apiManager.get<Profile | null>(
+    "/profile/get-profile",
+    {
+      walletAddress: walletAddress || "",
+    }
+  )
   return response
 }
 
@@ -396,6 +403,15 @@ export const getUserInventory = async (): Promise<
 > => {
   const response = await apiManager.get<InventoryItem[]>(
     "/inventory/get-user-inventory"
+  )
+  return response
+}
+
+export const getStoreInventory = async (): Promise<
+  ApiResponse<InventoryItem[]>
+> => {
+  const response = await apiManager.get<InventoryItem[]>(
+    "/inventory/get-store-inventory"
   )
   return response
 }
@@ -727,8 +743,14 @@ export const equipAlienPart = async ({
   return response
 }
 
-export const getFriendsList = async (): Promise<ApiResponse<any>> => {
-  const response = await apiManager.get<any>("/friends/list")
+export const getFriendsList = async (
+  walletAddress?: string
+): Promise<ApiResponse<any>> => {
+  const params: Record<string, string | number | boolean> = {}
+  if (walletAddress) {
+    params.walletAddress = walletAddress
+  }
+  const response = await apiManager.get<any>("/friends/list", params)
   return response
 }
 
@@ -833,4 +855,8 @@ export const processBoughtQuest = async (
     subject,
   })
   return response
+}
+
+export const getUser = async (userId: string) => {
+  return await apiManager.get(`/users/${userId}`)
 }

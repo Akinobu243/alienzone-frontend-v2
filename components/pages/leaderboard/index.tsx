@@ -218,6 +218,8 @@ const LeaderboardPage = () => {
   console.log("friends ===>", friends)
   console.log("thisUser ===>", alien)
 
+  console.log("selectedUser ===>", selectedUser)
+
   console.log("selectedUserTeam ===>", selectedUserTeam?.team)
 
   return (
@@ -400,7 +402,6 @@ const LeaderboardPage = () => {
             )}
 
             {/* Table Body */}
-
             {leaderboardData.length > 0 ? (
               leaderboardData.map((item, index) => (
                 <div

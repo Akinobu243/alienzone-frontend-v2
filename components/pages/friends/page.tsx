@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import Link from "next/link"
 import { useAliens, useProfile } from "@/store/hooks"
 import { Loader2, Pin, Search } from "lucide-react"
 import { toast } from "react-hot-toast"
@@ -44,6 +45,7 @@ type Friend = {
     timestamp: string
   }
   isPinned?: boolean
+  walletAddress: string
 }
 
 // Utility functions for date formatting
@@ -749,7 +751,7 @@ const FriendsPage = () => {
                     <div className="absolute top-1/2 -translate-y-1/2 -right-[4px] size-2 rounded-full bg-green-400 border-4 border-[#5FFF954A]" />
                   )}
                 </div>
-                <div className="flex-1 bg-white/5 rounded p-2 h-16 flex flex-col justify-between">
+                <div className="flex-1 bg-white/5 rounded p-2 h-16 flex flex-col justify-between group">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-white text-sm font-medium">
@@ -761,8 +763,8 @@ const FriendsPage = () => {
                       <button
                         onClick={(e) => handlePinChat(e, friend.id)}
                         className={cn(
-                          "p-1 rounded hover:bg-white/10 group transition-all duration-300",
-                          friend.isPinned && "text-[#5FFF95] bg-white/10"
+                          "p-1 rounded hover:bg-white/10 group transition-all duration-300 hidden group-hover:block",
+                          friend.isPinned && "text-[#5FFF95] bg-white/10 block"
                         )}
                       >
                         <Pin
@@ -829,9 +831,12 @@ const FriendsPage = () => {
                       </div> */}
                     </div>
                   </div>
-                  <button className="text-xs font-inter border border-white/10 px-3 py-1 rounded bg-white/5">
+                  <Link
+                    href={`/profile?walletAddress=${selectedFriend.walletAddress}`}
+                    className="text-xs font-inter border border-white/10 px-3 py-1 rounded bg-white/5"
+                  >
                     View profile
-                  </button>
+                  </Link>
                 </div>
 
                 {/* Chat Messages */}
@@ -991,9 +996,12 @@ const FriendsPage = () => {
                     </div> */}
                   </div>
                 </div>
-                <button className="text-xs font-inter border border-white/10 px-3 py-1 rounded bg-white/5">
+                <Link
+                  href={`/profile?walletAddress=${selectedFriend.walletAddress}`}
+                  className="text-xs font-inter border border-white/10 px-3 py-1 rounded bg-white/5"
+                >
                   View profile
-                </button>
+                </Link>
               </div>
             </div>
 

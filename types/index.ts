@@ -39,6 +39,7 @@ export interface Profile {
   xpBoost: number
   raidTimeBoost: number
   email: string
+  likedUserIds: number[]
 }
 
 export interface RaidReward {

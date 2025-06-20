@@ -60,7 +60,7 @@ const Page = () => {
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
               <TopBar className="absolute right-8 top-10 max-lg:hidden " />
               <div className="absolute top-10 left-24  gap-3 z-20 hidden lg:flex h-14 items-center">
-                <h1 className="text-white text-3xl ">Friends</h1>
+                <h1 className="text-white text-3xl ">Profile</h1>
               </div>
               <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl lg:min-h-[calc(100vh-140px)] max-lg:hidden">
                 <div className="absolute inset-0 bg-cover bg-bottom bg-no-repeat bg-[url('/images/wheel/wheel-bg.png')]">
