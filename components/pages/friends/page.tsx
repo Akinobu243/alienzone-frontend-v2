@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useAliens, useProfile } from "@/store/hooks"
-import { Loader2, Search } from "lucide-react"
+import { Loader2, Pin, Search } from "lucide-react"
 import { toast } from "react-hot-toast"
 
 import {
@@ -9,6 +9,7 @@ import {
   getMessages,
   searchFriend,
   sendMessage,
+  togglePinFriend,
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { ArrowBack } from "@/components/icons"
@@ -42,6 +43,7 @@ type Friend = {
     content: string
     timestamp: string
   }
+  isPinned?: boolean
 }
 
 // Utility functions for date formatting
@@ -320,7 +322,14 @@ const FriendsPage = () => {
       const res = await getFriendsList()
       console.log("getFriendsList response ===>", res)
       if (res.data) {
-        setFriends(res.data)
+        // Sort friends list to show pinned chats on top
+        setFriends(
+          res.data.sort((a: Friend, b: Friend) => {
+            if (a.isPinned && !b.isPinned) return -1
+            if (!a.isPinned && b.isPinned) return 1
+            return 0
+          })
+        )
       }
     } catch (error) {
       console.error("Error fetching friends list:", error)
@@ -559,6 +568,29 @@ const FriendsPage = () => {
     }
   }
 
+  // Add handlePinChat function
+  const handlePinChat = async (e: React.MouseEvent, friendId: number) => {
+    e.stopPropagation() // Prevent chat opening when clicking pin
+
+    try {
+      const res = await togglePinFriend(friendId)
+      if (res.data) {
+        // Sort friends list to show pinned chats on top
+        setFriends(
+          res.data.sort((a: Friend, b: Friend) => {
+            if (a.isPinned && !b.isPinned) return -1
+            if (!a.isPinned && b.isPinned) return 1
+            return 0
+          })
+        )
+        toast.success("Chat pin status updated")
+      }
+    } catch (error) {
+      console.error("Error updating pin status:", error)
+      toast.error("Failed to update pin status")
+    }
+  }
+
   console.log("alien =====>", alien)
   console.log("profile =====>", profile)
 
@@ -719,30 +751,36 @@ const FriendsPage = () => {
                 </div>
                 <div className="flex-1 bg-white/5 rounded p-2 h-16 flex flex-col justify-between">
                   <div className="flex items-center justify-between">
-                    <span className="text-white text-sm font-medium">
-                      {friend.name}{" "}
-                      <span className="bg-white/5 border border-white/10 text-2xs py-0.5 rounded px-1.5 font-inter">
-                        Lvl. {friend.level}
+                    <div className="flex items-center gap-2">
+                      <span className="text-white text-sm font-medium">
+                        {friend.name}{" "}
+                        <span className="bg-white/5 border border-white/10 text-2xs py-0.5 rounded px-1.5 font-inter">
+                          Lvl. {friend.level}
+                        </span>
                       </span>
-                    </span>
+                      <button
+                        onClick={(e) => handlePinChat(e, friend.id)}
+                        className={cn(
+                          "p-1 rounded hover:bg-white/10 group transition-all duration-300",
+                          friend.isPinned && "text-[#5FFF95] bg-white/10"
+                        )}
+                      >
+                        <Pin
+                          className={cn(
+                            "w-3 h-3 transition-transform",
+                            friend.isPinned && "rotate-45"
+                          )}
+                        />
+                      </button>
+                    </div>
                     <span className="text-white/50 text-xs">
                       {friend?.message?.timestamp}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <p
-                      className={cn(
-                        "text-xs truncate max-w-[200px] font-inter"
-                        // friend?.message?.content && "text-[#5FFF95]"
-                      )}
-                    >
+                    <p className="text-xs truncate max-w-[200px] font-inter">
                       {friend?.message?.content}
                     </p>
-                    {/* {friend.newMessageCount > 0 && (
-                      <span className="text-2xs font-inter bg-[#5FFF95] text-black size-4 rounded-full flex items-center justify-center">
-                        {friend.newMessageCount}
-                      </span>
-                    )} */}
                   </div>
                 </div>
               </div>
@@ -891,9 +929,6 @@ const FriendsPage = () => {
                       className="flex-1 bg-white/5 rounded-xl px-4 py-3 text-white placeholder:text-white/50 outline-none border border-white/10 focus:border-white/20 font-inter"
                       onKeyPress={handleKeyPress}
                     />
-                    <button className="px-4 rounded-xl bg-brand text-white font-medium bg-white/5 border border-white/10 font-inter">
-                      👀
-                    </button>
                     <button
                       className="px-4 rounded-xl bg-brand text-white font-medium bg-white/5 border border-white/10 font-inter"
                       onClick={handleSendMessage}

@@ -732,6 +732,13 @@ export const getFriendsList = async (): Promise<ApiResponse<any>> => {
   return response
 }
 
+export const togglePinFriend = async (
+  friendId: number
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.post<any>(`/friends/toggle-pin/${friendId}`)
+  return response
+}
+
 export const addFriend = async (
   userIds: number[]
 ): Promise<ApiResponse<{ success: boolean }>> => {
