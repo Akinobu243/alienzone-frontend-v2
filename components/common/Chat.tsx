@@ -36,7 +36,7 @@ const Chat = ({
   className?: string
   btnClassName?: string
 }) => {
-  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(true)
   const [messages, setMessages] = useState<any[]>([])
   const [messageInput, setMessageInput] = useState("")
   const { alien } = useAliens()
@@ -45,6 +45,11 @@ const Chat = ({
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const [messagePollingInterval, setMessagePollingInterval] =
     useState<NodeJS.Timeout | null>(null)
+
+  // Fetch messages on component mount
+  useEffect(() => {
+    fetchMessages()
+  }, [])
 
   // Update polling when chat open/close state changes
   useEffect(() => {

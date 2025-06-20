@@ -26,7 +26,7 @@ const colors = [
   "#7FFF00", // Common Rune
   "#00BFFF", // Rare Rune
   "#4169E1", // Epic Rune
-  "#FF0000", // Legendary Rune
+  // "#FF0000", // Legendary Rune
   // Additional colors if needed
   // "#9400D3",
   // "#00FF7F",
@@ -275,13 +275,21 @@ const Page = () => {
                       "absolute inset-0 bg-cover bg-bottom bg-no-repeat",
                       {
                         "bg-[url('/images/wheel/4.svg')]":
+                          !userCanSpin &&
+                          !isSpinning &&
                           spinHistory.filter(
                             (spin) =>
                               new Date(spin).toDateString() ===
                               new Date().toDateString()
                           ).length >= 3, // Daily limit reached (3 spins)
                         "bg-[url('/images/wheel/3.svg')]":
-                          !userCanSpin && !isSpinning, // Timer cooldown after spin
+                          !userCanSpin &&
+                          !isSpinning &&
+                          spinHistory.filter(
+                            (spin) =>
+                              new Date(spin).toDateString() ===
+                              new Date().toDateString()
+                          ).length < 3, // Timer cooldown after spin
                         "bg-[url('/images/wheel/2.svg')]": isSpinning, // Spinning state
                         "bg-[url('/images/wheel/1.svg')]":
                           userCanSpin && !isSpinning, // Ready to spin

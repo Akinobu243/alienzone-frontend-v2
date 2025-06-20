@@ -20,7 +20,7 @@ const itemColorMap = {
   COMMON: "#7FFF00",
   RARE: "#00BFFF",
   EPIC: "#4169E1",
-  LEGENDARY: "#FF0000",
+  // LEGENDARY: "#FF0000",
 }
 
 // First, let's define interfaces for the API response types

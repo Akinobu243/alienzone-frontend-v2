@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Image from "next/image"
 import { Calendar, Check, Grid2X2, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -18,6 +19,21 @@ import {
 } from "@/components/ui/tooltip"
 
 import Wheel from "./Wheel"
+
+export const wheelItemImages = {
+  stars: "/images/stars.png",
+  bronze_cut:
+    "https://alienzone-v2.s3.amazonaws.com/buff-items/Bronze%20Cut.png",
+  silver_knife:
+    "https://alienzone-v2.s3.amazonaws.com/buff-items/Silver%20Knife.png",
+  golden_shears:
+    "https://alienzone-v2.s3.amazonaws.com/buff-items/Golden%20Shears.png",
+  uncommon_rune: "",
+  common_rune: "",
+  rare_rune: "",
+  epic_rune: "",
+  legendary_rune: "",
+}
 
 interface WheelPageProps {
   isSpinning?: boolean
@@ -205,8 +221,6 @@ const WheelPage = ({
     return ""
   }
 
-  console.log("spinStatus", spinStatus)
-
   return (
     <div className="w-full h-full flex flex-col">
       {/* Desktop Version */}
@@ -259,18 +273,42 @@ const WheelPage = ({
                 {wheelItems?.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                    className="flex items-center gap-3 p-3 rounded-xl justify-between bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
                   >
-                    <div
-                      className="w-8 h-8 rounded-lg"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="text-white flex-1">{item.name}</span>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-8 h-8 rounded-lg"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-white flex-1">{item.name}</span>
+                    </div>
                     {/* {item.isNew && (
-                      <span className="text-2xs font-inter bg-white/10 px-2 py-0.5 rounded-lg">
-                        New
-                      </span>
-                    )} */}
+                          <span className="text-2xs font-inter bg-white/10 px-2 py-0.5 rounded-lg">
+                            New
+                          </span>
+                        )} */}
+                    {wheelItemImages[
+                      item.name
+                        .toLocaleLowerCase()
+                        .split(" ")
+                        .join("_") as keyof typeof wheelItemImages
+                    ] && (
+                      <div className="relative h-6 w-6">
+                        <Image
+                          src={
+                            wheelItemImages[
+                              item.name
+                                .toLocaleLowerCase()
+                                .split(" ")
+                                .join("_") as keyof typeof wheelItemImages
+                            ]
+                          }
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -284,11 +322,19 @@ const WheelPage = ({
         <div
           className={cn("absolute inset-0 bg-cover bg-bottom bg-no-repeat", {
             "bg-[url('/images/wheel/4.svg')]":
+              !userCanSpin &&
+              !isSpinning &&
               spinHistory.filter(
                 (spin) =>
                   new Date(spin).toDateString() === new Date().toDateString()
               ).length >= 3, // Daily limit reached (3 spins)
-            "bg-[url('/images/wheel/3.svg')]": !userCanSpin && !isSpinning, // Timer cooldown after spin
+            "bg-[url('/images/wheel/3.svg')]":
+              !userCanSpin &&
+              !isSpinning &&
+              spinHistory.filter(
+                (spin) =>
+                  new Date(spin).toDateString() === new Date().toDateString()
+              ).length < 3, // Timer cooldown after spin
             "bg-[url('/images/wheel/2.svg')]": isSpinning, // Spinning state
             "bg-[url('/images/wheel/1.svg')]": userCanSpin && !isSpinning, // Ready to spin
           })}
@@ -382,18 +428,42 @@ const WheelPage = ({
                     {wheelItems?.map((item, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                        className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
                       >
-                        <div
-                          className="w-8 h-8 rounded-lg"
-                          style={{ backgroundColor: item.color }}
-                        />
-                        <span className="text-white flex-1">{item.name}</span>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-8 h-8 rounded-lg"
+                            style={{ backgroundColor: item.color }}
+                          />
+                          <span className="text-white flex-1">{item.name}</span>
+                        </div>
                         {/* {item.isNew && (
                           <span className="text-2xs font-inter bg-white/10 px-2 py-0.5 rounded-lg">
                             New
                           </span>
                         )} */}
+                        {wheelItemImages[
+                          item.name
+                            .toLocaleLowerCase()
+                            .split(" ")
+                            .join("_") as keyof typeof wheelItemImages
+                        ] && (
+                          <div className="relative h-6 w-6">
+                            <Image
+                              src={
+                                wheelItemImages[
+                                  item.name
+                                    .toLocaleLowerCase()
+                                    .split(" ")
+                                    .join("_") as keyof typeof wheelItemImages
+                                ]
+                              }
+                              alt={item.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
