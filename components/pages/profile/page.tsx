@@ -13,7 +13,6 @@ import {
   getProfile,
   getStoreInventory,
   getTeam,
-  getUser,
   likeUser,
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
