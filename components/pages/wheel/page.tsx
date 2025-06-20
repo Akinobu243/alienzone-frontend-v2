@@ -28,6 +28,10 @@ interface WheelPageProps {
   setIsError: (isError: boolean) => void
   timeRemaining: string
   hasWonReward: boolean
+  wheelSpinStatus?: {
+    canSpin: boolean
+    secondsUntilNextSpin: number
+  } | null
 }
 
 const WheelPage = ({
@@ -39,6 +43,7 @@ const WheelPage = ({
   setIsError,
   timeRemaining,
   hasWonReward,
+  wheelSpinStatus,
 }: WheelPageProps) => {
   const [openPopover, setOpenPopover] = useState<"calendar" | "items" | null>(
     null
@@ -279,12 +284,13 @@ const WheelPage = ({
         <div
           className={cn("absolute inset-0 bg-cover bg-bottom bg-no-repeat", {
             "bg-[url('/images/wheel/4.svg')]":
-              Boolean(timeRemaining) && !hasWonReward, // Timer cooldown
-            "bg-[url('/images/wheel/3.svg')]": hasWonReward, // Won reward state
-            "bg-[url('/images/wheel/2.svg')]":
-              !timeRemaining && isSpinning && !hasWonReward, // Spinning state
-            "bg-[url('/images/wheel/1.svg')]":
-              !timeRemaining && !isSpinning && !hasWonReward, // Ready to spin
+              spinHistory.filter(
+                (spin) =>
+                  new Date(spin).toDateString() === new Date().toDateString()
+              ).length >= 3, // Daily limit reached (3 spins)
+            "bg-[url('/images/wheel/3.svg')]": !userCanSpin && !isSpinning, // Timer cooldown after spin
+            "bg-[url('/images/wheel/2.svg')]": isSpinning, // Spinning state
+            "bg-[url('/images/wheel/1.svg')]": userCanSpin && !isSpinning, // Ready to spin
           })}
         />
 

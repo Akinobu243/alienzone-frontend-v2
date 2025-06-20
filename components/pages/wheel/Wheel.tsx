@@ -432,18 +432,15 @@ const Wheel = ({
     } catch (error) {
       console.error("Error getting winning item:", error)
       toast.error("An error occurred while retrieving your prize")
+      setIsError(true)
     } finally {
       setIsAnimating(false)
       setFinished(true)
-
-      // Reset spin request flag
       spinRequestedRef.current = false
 
-      // Get winning item
+      // Get winning item and notify parent immediately
       const winningItem = segmentsRef.current[winningSegmentIndexRef.current]
-
       setCurrentItem(winningItem)
-
       if (onSpinComplete) {
         onSpinComplete(winningItem)
       }

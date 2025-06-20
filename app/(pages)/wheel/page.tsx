@@ -212,14 +212,9 @@ const Page = () => {
     }
     setWinningItem(item)
     setIsSpinning(false)
-    setHasWonReward(true)
-
-    // Add delay before showing timer
-    setTimeout(() => {
-      setHasWonReward(false) // Reset hasWonReward after delay
-      fetchCanSpin()
-      fetchWheelItems()
-    }, 3000) // 3 seconds delay
+    // Immediately update the state and fetch new data
+    fetchCanSpin()
+    fetchWheelItems()
   }
 
   const handleSpin = async () => {
@@ -265,7 +260,7 @@ const Page = () => {
               <TopBar className="relative  top-auto right-auto lg:hidden items-center" />
             )}
           </div>
-          <div className="relative flex-1  w-full   overflow-hidden flex flex-col ">
+          <div className="relative flex-1 w-full overflow-hidden flex flex-col">
             <div className="relative z-10 h-full flex-1   flex flex-col overflow-auto">
               <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
@@ -280,12 +275,16 @@ const Page = () => {
                       "absolute inset-0 bg-cover bg-bottom bg-no-repeat",
                       {
                         "bg-[url('/images/wheel/4.svg')]":
-                          Boolean(timeRemaining) && !hasWonReward, // Only show timer image if hasWonReward is false
-                        "bg-[url('/images/wheel/3.svg')]": hasWonReward, // Show won image regardless of timer when hasWonReward is true
-                        "bg-[url('/images/wheel/2.svg')]":
-                          !timeRemaining && isSpinning && !hasWonReward,
+                          spinHistory.filter(
+                            (spin) =>
+                              new Date(spin).toDateString() ===
+                              new Date().toDateString()
+                          ).length >= 3, // Daily limit reached (3 spins)
+                        "bg-[url('/images/wheel/3.svg')]":
+                          !userCanSpin && !isSpinning, // Timer cooldown after spin
+                        "bg-[url('/images/wheel/2.svg')]": isSpinning, // Spinning state
                         "bg-[url('/images/wheel/1.svg')]":
-                          !timeRemaining && !isSpinning && !hasWonReward,
+                          userCanSpin && !isSpinning, // Ready to spin
                       }
                     )}
                   />
@@ -314,6 +313,7 @@ const Page = () => {
                     setIsError={setIsError}
                     timeRemaining={timeRemaining}
                     hasWonReward={hasWonReward}
+                    wheelSpinStatus={spinStatus}
                   />
                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 max-lg:hidden">
                     <BrandButton
@@ -341,6 +341,7 @@ const Page = () => {
                   setIsError={setIsError}
                   timeRemaining={timeRemaining}
                   hasWonReward={hasWonReward}
+                  wheelSpinStatus={spinStatus}
                 />
               </div>
 

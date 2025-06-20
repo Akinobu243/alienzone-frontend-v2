@@ -24,12 +24,12 @@ const InventoryTabs = [
     icon: CloudLightning,
   },
   {
-    label: "Alien Gear",
+    label: "Gear",
     value: "gear",
     icon: CloudLightning,
   },
   {
-    label: "Alien Raid",
+    label: "Characters",
     value: "raids",
     icon: CloudLightning,
   },
