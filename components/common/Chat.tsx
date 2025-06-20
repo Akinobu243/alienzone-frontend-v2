@@ -45,10 +45,13 @@ const Chat = ({
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const [messagePollingInterval, setMessagePollingInterval] =
     useState<NodeJS.Timeout | null>(null)
+  const [isInitialMount, setIsInitialMount] = useState(true)
 
   // Fetch messages on component mount
   useEffect(() => {
     fetchMessages()
+    // Set initial mount to false after first render
+    setIsInitialMount(false)
   }, [])
 
   // Update polling when chat open/close state changes
@@ -77,7 +80,7 @@ const Chat = ({
         clearInterval(messagePollingInterval)
       }
     }
-  }, [isChatOpen]) // Dependency on isChatOpen
+  }, [isChatOpen])
 
   // Helper function to fetch messages
   const fetchMessages = async () => {
@@ -130,30 +133,38 @@ const Chat = ({
   }
 
   const scrollToBottom = (behavior: ScrollBehavior = "auto") => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior })
+    if (!isInitialMount && chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior,
+      })
     }
   }
 
-  // Scroll to bottom when messages change or when a friend is selected
+  // Scroll to bottom when messages change
   useEffect(() => {
-    // Small delay to ensure DOM is updated
-    const timeoutId = setTimeout(() => {
-      scrollToBottom()
-    }, 100)
+    if (!isInitialMount) {
+      // Only scroll if it's not the initial mount
+      const timeoutId = setTimeout(() => {
+        scrollToBottom()
+      }, 100)
 
-    return () => clearTimeout(timeoutId)
-  }, [messages])
+      return () => clearTimeout(timeoutId)
+    }
+  }, [messages, isInitialMount])
 
   const handleChatOpen = () => {
     setIsChatOpen(true)
     fetchMessages()
-    // Force scroll after a delay
-    const chatContainer = document.getElementById("chat-container")
-
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight
-    }
+    // Only scroll after user interaction
+    setTimeout(() => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTo({
+          top: chatContainerRef.current.scrollHeight,
+          behavior: "smooth",
+        })
+      }
+    }, 100)
   }
 
   return (
