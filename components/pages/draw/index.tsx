@@ -196,6 +196,8 @@ const DrawPage = ({ portal }: { portal: number }) => {
         return
       }
 
+      console.log("Draw character ===>", response.data.character)
+
       // Refresh characters list after successful summon
       fetchCharacters()
       // fetchUserProfile()
@@ -252,6 +254,11 @@ const DrawPage = ({ portal }: { portal: number }) => {
 
       const characters = response.data?.summonResults.map(
         (result) => result.character
+      )
+
+      console.log(
+        "draw character ties ===>",
+        characters.map((character) => character.tier)
       )
 
       // Loop over characters to fetch rarity of all characters
