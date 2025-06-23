@@ -705,6 +705,44 @@ export const getOwnedAlienParts = async (
   }
 }
 
+export const getDojoOwnedAlienParts = async (
+  walletAddress?: string
+): Promise<
+  ApiResponse<{
+    userAlienParts: AlienPartsGroup[]
+    elements: Element[]
+    alienPartsList: AlienPart[]
+  }>
+> => {
+  const params: Record<string, string | number | boolean> = {}
+  if (walletAddress) {
+    params.walletAddress = walletAddress
+  }
+  const response = await apiManager.get<{
+    userAlienParts: AlienPartsGroup[]
+    elements: Element[]
+    alienPartsList: AlienPart[]
+  }>("/profile/get-dojo-owned-alien-parts", params)
+
+  console.log("getDojoOwnedAlienParts response ===>", response)
+
+  if (response.data) {
+    return {
+      data: {
+        userAlienParts: response.data.userAlienParts,
+        elements: response.data.elements,
+        alienPartsList: response.data.alienPartsList,
+      },
+      error: null,
+    }
+  }
+
+  return {
+    data: null,
+    error: response.error,
+  }
+}
+
 export const getEquippedAlienParts = async (
   alienId?: number
 ): Promise<ApiResponse<EquippedAlienParts>> => {
@@ -856,7 +894,7 @@ export const getWearableObjectDetails = async (
 export const processBoughtQuest = async (
   subject: string
 ): Promise<ApiResponse<any>> => {
-  const response = await apiManager.get<any>("/store/wearables/bought-quest", {
+  const response = await apiManager.post<any>("/store/wearables/bought-quest", {
     subject,
   })
   return response

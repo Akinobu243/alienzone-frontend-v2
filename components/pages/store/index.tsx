@@ -71,6 +71,7 @@ const StorePage = () => {
   })
   const [showTransferInput, setShowTransferInput] = useState(false)
   const [transferAddress, setTransferAddress] = useState("")
+  const [quantity, setQuantity] = useState("")
 
   // Fetch inventory data when component mounts
   useEffect(() => {
@@ -132,8 +133,8 @@ const StorePage = () => {
     }
   }
 
-  function formatTinyNumberJSX(value: number) {
-    if (value === 0) return <span>$0</span>
+  function formatTinyNumberJSX(value: number, showDollarSign = true) {
+    if (value === 0) return <span>{showDollarSign ? "$0" : "0"}</span>
 
     const parts = value.toExponential().split("e-")
 
@@ -144,14 +145,20 @@ const StorePage = () => {
 
       return (
         <span>
-          $0.{decimalPart}
+          {showDollarSign ? "$0." : "0."}
+          {decimalPart}
           <sub>{zeros}</sub>
         </span>
       )
     }
 
     // For regular numbers
-    return <span>${value}</span>
+    return (
+      <span>
+        {showDollarSign ? "$" : ""}
+        {value}
+      </span>
+    )
   }
 
   const handleBoughtQuest = async (subject: string) => {
@@ -163,6 +170,7 @@ const StorePage = () => {
     try {
       setLoading(true)
       await processBoughtQuest(subject)
+      // fetchStoreWearables()
     } catch (error) {
       console.error("Error processing bought quest:", error)
       toast.error("An error occurred while processing bought quest")
@@ -242,22 +250,35 @@ const StorePage = () => {
     console.log("handleTransfer")
 
     setIsLoading({ ...isLoading, buy: true })
-    // const subject =
-    //   "0xb7fbc0ed8d213b20fd87a6dc606ea6408011c15f43415245898593f5808fbdd6"
-    const amount = ethers.parseEther("0.001")
-
-    if (!signer) {
-      toast.error("Wallet not connected")
-      return
-    }
-
-    const contractAddress = process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS
-    if (!contractAddress || !ethers.isAddress(contractAddress)) {
-      toast.error("Invalid contract configuration")
-      return
-    }
 
     try {
+      if (!quantity || parseFloat(quantity) <= 0) {
+        toast.error("Please enter a valid quantity")
+        return
+      }
+
+      const parsedQuantity = parseFloat(quantity)
+      if (
+        selectedItem?.availability &&
+        parsedQuantity > selectedItem.availability
+      ) {
+        toast.error("Quantity exceeds available supply")
+        return
+      }
+
+      const amount = ethers.parseEther(quantity)
+
+      if (!signer) {
+        toast.error("Wallet not connected")
+        return
+      }
+
+      const contractAddress = process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS
+      if (!contractAddress || !ethers.isAddress(contractAddress)) {
+        toast.error("Invalid contract configuration")
+        return
+      }
+
       const contract = new ethers.Contract(
         contractAddress,
         CONTRACT_ABI,
@@ -283,6 +304,7 @@ const StorePage = () => {
 
       toast.success("Wearables bought successfully!")
       handleBoughtQuest(subject)
+      setQuantity("")
       console.log("Transaction hash:", tx.hash)
     } catch (error: any) {
       console.error("Full error object:", error)
@@ -405,6 +427,7 @@ const StorePage = () => {
                   setSelectedItem(null)
                   setShowTransferInput(false)
                   setTransferAddress("")
+                  setQuantity("")
                 }}
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -447,7 +470,7 @@ const StorePage = () => {
                     <p className="text-2xs whitespace-nowrap">
                       {/* {selectedItem?.totalSupply} */}
                       {selectedItem?.totalSupply
-                        ? formatTinyNumberJSX(selectedItem?.totalSupply)
+                        ? formatTinyNumberJSX(selectedItem?.totalSupply, false)
                         : 0}
                     </p>
                   </div>
@@ -473,36 +496,53 @@ const StorePage = () => {
               <div className="flex items-center gap-3">
                 {!showTransferInput ? (
                   <>
-                    <BrandButton
-                      blurColor="bg-[#96DFF4]"
-                      className="w-full font-light"
-                      onClick={() => handleBuy(selectedItem?.subject)}
-                      disabled={isLoading.buy}
-                    >
-                      {isLoading.buy ? "Buying... " : "Buy"}
-                      {isLoading.buy && (
-                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                      )}
-                    </BrandButton>
-                    <BrandButton
-                      blurColor="bg-[#F49696]"
-                      className="w-full font-light"
-                      onClick={() => handleSell(selectedItem?.subject)}
-                      disabled={isLoading.sell || !selectedItem?.heldAmount}
-                    >
-                      {isLoading.sell ? "Selling... " : "Sell"}
-                      {isLoading.sell && (
-                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                      )}
-                    </BrandButton>
-                    <BrandButton
-                      blurColor="bg-[#EF98E6]"
-                      className="w-full font-light"
-                      onClick={() => setShowTransferInput(true)}
-                      disabled={isLoading.transfer || !selectedItem?.heldAmount}
-                    >
-                      Transfer
-                    </BrandButton>
+                    <div className="flex flex-col gap-3 w-full">
+                      <div className="relative">
+                        <input
+                          type="number"
+                          step="0.001"
+                          min="0.001"
+                          placeholder="0.001"
+                          value={quantity}
+                          onChange={(e) => setQuantity(e.target.value)}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#96DFF4]/50"
+                        />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <BrandButton
+                          blurColor="bg-[#96DFF4]"
+                          className="w-full font-light"
+                          onClick={() => handleBuy(selectedItem?.subject)}
+                          disabled={isLoading.buy || !quantity}
+                        >
+                          {isLoading.buy ? "Buying... " : "Buy"}
+                          {isLoading.buy && (
+                            <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                          )}
+                        </BrandButton>
+                        <BrandButton
+                          blurColor="bg-[#F49696]"
+                          className="w-full font-light"
+                          onClick={() => handleSell(selectedItem?.subject)}
+                          disabled={isLoading.sell || !selectedItem?.heldAmount}
+                        >
+                          {isLoading.sell ? "Selling... " : "Sell"}
+                          {isLoading.sell && (
+                            <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                          )}
+                        </BrandButton>
+                        <BrandButton
+                          blurColor="bg-[#EF98E6]"
+                          className="w-full font-light"
+                          onClick={() => setShowTransferInput(true)}
+                          disabled={
+                            isLoading.transfer || !selectedItem?.heldAmount
+                          }
+                        >
+                          Transfer
+                        </BrandButton>
+                      </div>
+                    </div>
                   </>
                 ) : (
                   <div className="flex flex-col gap-3 w-full">
@@ -606,7 +646,7 @@ const StorePage = () => {
                       <div className="flex items-center justify-between text-xs">
                         <p className="truncate mr-2">Total supply</p>
                         <p className="text-2xs whitespace-nowrap">
-                          {formatTinyNumberJSX(item?.totalSupply)}
+                          {formatTinyNumberJSX(item?.totalSupply, false)}
                         </p>
                       </div>
                       <div className="flex items-center justify-between text-xs">

@@ -15,8 +15,8 @@ import { useDispatch } from "react-redux"
 
 import {
   equipAlienPart,
+  getDojoOwnedAlienParts,
   getEquippedAlienParts,
-  getOwnedAlienParts,
 } from "@/lib/api"
 import { cn, formatNumber } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
@@ -399,7 +399,7 @@ const DojoPage = () => {
 
   useEffect(() => {
     if (wallet?.address) {
-      getOwnedAlienParts(wallet?.address).then((res) => {
+      getDojoOwnedAlienParts(wallet?.address).then((res) => {
         if (res.data && Array.isArray(res.data?.userAlienParts)) {
           // Initialize parts map with default body already included
           const partsMap: Record<string, any[]> = {
