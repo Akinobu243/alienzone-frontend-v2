@@ -36,7 +36,13 @@ function SearchParamsHandler() {
   return null
 }
 
-export function Loader({ children }: { children: React.ReactNode }) {
+export function Loader({
+  children,
+  isDojoPage,
+}: {
+  children: React.ReactNode
+  isDojoPage?: boolean
+}) {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const { ready, authenticated, user } = usePrivy()
@@ -86,7 +92,7 @@ export function Loader({ children }: { children: React.ReactNode }) {
     handleWalletState()
   }, [user?.wallet?.address, dispatch, ready, authenticated, router])
 
-  if (isLoading) {
+  if (isLoading && isDojoPage) {
     return (
       <div className="flex justify-center items-center h-screen bg-black">
         <Loader2 className="size-6 animate-spin" />
@@ -99,7 +105,14 @@ export function Loader({ children }: { children: React.ReactNode }) {
       <Suspense fallback={null}>
         <SearchParamsHandler />
       </Suspense>
-      {children}
+      <div className="relative">
+        {children}
+        {isLoading && !isDojoPage && (
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[100]">
+            <Loader2 className="size-10 animate-spin text-white" />
+          </div>
+        )}
+      </div>
     </>
   )
 }

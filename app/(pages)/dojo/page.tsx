@@ -17,7 +17,7 @@ const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
 
   return (
-    <Loader>
+    <Loader isDojoPage>
       <Suspense
         fallback={
           <div className="flex justify-center items-center h-screen">
