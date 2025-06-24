@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ForgeTabs } from "@/types"
 
 import { cn } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 import { Button } from "@/components/ui/button"
 import IconButton from "@/components/ui/icon-button"
 import ChatBox from "@/components/common/chat-box"
@@ -33,6 +34,8 @@ const TABS = [
 const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
   const [activeTab, setActiveTab] = useState<ForgeTabs>(ForgeTabs.FORGE)
+  const playClickSound = useClickSound("/sounds/click.mp3")
+
   return (
     <Loader>
       <Suspense
@@ -46,7 +49,10 @@ const Page = () => {
           {TABS.map((tab) => (
             <Button
               key={tab.value}
-              onClick={() => setActiveTab(tab.value)}
+              onClick={() => {
+                playClickSound()
+                setActiveTab(tab.value)
+              }}
               className={cn(
                 " px-5 !h-14 rounded-xl",
                 activeTab === tab.value ? "glass-effect" : "opacity-70"

@@ -3,6 +3,7 @@ import Image from "next/image"
 import { CloudLightning } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 
 import { journalData } from "./data"
 
@@ -32,6 +33,7 @@ const JournalTabs = [
 const JournalPage = () => {
   const [activeTab, setActiveTab] = useState<string>("all")
   const [filteredItems, setFilteredItems] = useState<any[]>(journalData)
+  const playClickSound = useClickSound("/sounds/click.mp3")
 
   // Handle tab change
   const handleTabChange = (tabValue: string) => {
@@ -64,7 +66,10 @@ const JournalPage = () => {
             {JournalTabs.map((tab) => (
               <button
                 key={tab.value}
-                onClick={() => handleTabChange(tab.value)}
+                onClick={() => {
+                  playClickSound()
+                  handleTabChange(tab.value)
+                }}
                 className={cn(
                   "px-3 sm:px-4 h-10 lg:w-full rounded-lg border border-white/10 whitespace-nowrap flex items-center gap-2 justify-between text-xs sm:text-sm transition-all duration-300",
                   activeTab === tab.value ? "bg-white/20" : "bg-white/5"

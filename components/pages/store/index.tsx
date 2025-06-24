@@ -12,6 +12,7 @@ import {
   processBoughtQuest,
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 import { Badge } from "@/components/ui/badge"
 import BrandButton from "@/components/ui/brand-button"
 import CONTRACT_ABI from "@/app/assets/wearablesContractAbi.json"
@@ -72,6 +73,7 @@ const StorePage = () => {
   const [showTransferInput, setShowTransferInput] = useState(false)
   const [transferAddress, setTransferAddress] = useState("")
   const [quantity, setQuantity] = useState("")
+  const playClickSound = useClickSound("/sounds/click.mp3")
 
   // Fetch inventory data when component mounts
   useEffect(() => {
@@ -600,7 +602,10 @@ const StorePage = () => {
               {storeTabs.map((tab) => (
                 <button
                   key={tab.value}
-                  onClick={() => handleTabChange(tab.value)}
+                  onClick={() => {
+                    playClickSound()
+                    handleTabChange(tab.value)
+                  }}
                   className={cn(
                     "px-3 sm:px-4 h-10 lg:w-full rounded-lg border border-white/10 whitespace-nowrap flex items-center gap-2 justify-between text-xs sm:text-sm transition-all duration-300",
                     activeTab === tab.value ? "bg-white/20" : "bg-white/5"

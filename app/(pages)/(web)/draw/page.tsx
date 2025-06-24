@@ -4,12 +4,14 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 import { Button } from "@/components/ui/button"
 import DrawPage from "@/components/pages/draw"
 
 const Page = () => {
   const pathname = usePathname()
   const [portal, setPortal] = useState<number>(1)
+  const playClickSound = useClickSound("/sounds/click.mp3")
 
   return (
     <>
@@ -19,7 +21,10 @@ const Page = () => {
             " px-5 !h-14 rounded-xl text-lg",
             portal === 1 ? "bg-white/10 backdrop-blur-lg" : "opacity-70"
           )}
-          onClick={() => setPortal(1)}
+          onClick={() => {
+            playClickSound()
+            setPortal(1)
+          }}
         >
           <span className="hidden lg:block">Portal</span> 01
         </Button>
@@ -29,7 +34,10 @@ const Page = () => {
             " px-5 !h-14 rounded-xl text-lg",
             portal === 2 ? "bg-white/10 backdrop-blur-lg" : "opacity-70"
           )}
-          onClick={() => setPortal(2)}
+          onClick={() => {
+            playClickSound()
+            setPortal(2)
+          }}
         >
           <span className="hidden lg:block">Portal</span> 02
         </Button>

@@ -11,6 +11,7 @@ import {
   formatNumber,
   getBackgroundImageUrl,
 } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 import useHoverSound from "@/hooks/use-hover-sound"
 import { Progress } from "@/components/ui/progress"
 import {
@@ -91,8 +92,9 @@ const ActivityMenu = ({
   const { data: profile } = useProfile()
   const { handleMouseEnter, handleMouseLeave } = useHoverSound(
     "/sounds/pop.mp3",
-    0.4
+    0.1
   )
+  const playClickSound = useClickSound("/sounds/click.mp3")
 
   return (
     <div
@@ -118,6 +120,7 @@ const ActivityMenu = ({
                   className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
+                  onClick={() => playClickSound()}
                 >
                   <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
                     <Image

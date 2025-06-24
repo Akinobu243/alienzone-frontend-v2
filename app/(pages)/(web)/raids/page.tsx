@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation"
 import { useAliens } from "@/store/hooks"
 
 import { addCacheBuster, cn, getBackgroundImageUrl } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 import { Button } from "@/components/ui/button"
 import RaidsPage from "@/components/pages/raids"
 
 const Page = () => {
   const pathname = usePathname()
   const { alien } = useAliens()
+  const playClickSound = useClickSound("/sounds/click.mp3")
 
   return (
     <>
@@ -23,6 +25,9 @@ const Page = () => {
               "px-5 !h-14 rounded-xl glass-effect",
               pathname === "/raids" ? "!bg-white/20" : ""
             )}
+            onClick={() => {
+              playClickSound()
+            }}
           >
             Raids
           </Button>
@@ -33,6 +38,9 @@ const Page = () => {
               "px-5 !h-14 rounded-xl glass-effect",
               pathname === "/hunt" ? "!bg-white/20" : ""
             )}
+            onClick={() => {
+              playClickSound()
+            }}
           >
             Hunt
           </Button>
