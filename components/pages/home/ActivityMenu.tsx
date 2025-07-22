@@ -264,7 +264,10 @@ const ActivityMenu = ({
                     height={50}
                   />
                 </div>
-                <p className="text-xs font-volkhov">{zoneBalance} ZONE</p>
+                <p className="text-xs font-volkhov">
+                  {Number(zoneBalance) > 0 ? Number(zoneBalance).toFixed(6) : 0}{" "}
+                  ZONE
+                </p>
                 <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                   <Plus className="size-3" />
                 </button>
