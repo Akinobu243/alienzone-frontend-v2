@@ -251,6 +251,7 @@ const StorePage = () => {
 
   const handleBuy = async (subject: string) => {
     console.log("handleBuy")
+    console.log("handleBuy")
 
     setIsLoading({ ...isLoading, buy: true })
 
@@ -310,9 +311,7 @@ const StorePage = () => {
 
       const signerAddress = await signer.getAddress()
       const zoneTokenBalance = await zoneTokenContract.balanceOf(signerAddress)
-
-      console.log("zoneTokenBalance", zoneTokenBalance, signerAddress)
-      // console.log("zoneTokenBalance", zoneTokenBalance, signerAddress)
+      console.log("zoneTokenBalance ===>", zoneTokenBalance, signerAddress)
       if (zoneTokenBalance < amount) {
         toast.error("Insufficient zone token balance")
         return
@@ -333,7 +332,12 @@ const StorePage = () => {
       // console.log("Calling getBuyPriceAfterFee with:")
       // console.log("- subject:", subject)
       // console.log("- amount:", amount.toString())
+      // console.log("Calling getBuyPriceAfterFee with:")
+      // console.log("- subject:", subject)
+      // console.log("- amount:", amount.toString())
 
+      // const network = await signer.provider?.getNetwork()
+      // console.log("Current network:", network?.chainId)
       // const network = await signer.provider?.getNetwork()
       // console.log("Current network:", network?.chainId)
 
