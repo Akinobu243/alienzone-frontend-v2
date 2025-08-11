@@ -1,51 +1,24 @@
 "use client"
 
-import { useEffect, useState } from "react"
-
 import { useIsMobile } from "@/hooks/useIsMobile"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogOverlay,
-  DialogTitle,
-} from "@/components/ui/dialog"
 
 export default function MobileDesktopNotice() {
   const isMobile = useIsMobile()
-  const [isOpen, setIsOpen] = useState(false)
-
-  useEffect(() => {
-    if (isMobile) {
-      setIsOpen(true)
-    } else {
-      setIsOpen(false)
-    }
-  }, [isMobile])
 
   if (!isMobile) return null
+  //   if (!canInstallPWA && !isIOS) return null
 
   return (
-    <Dialog open={isOpen}>
-      <DialogOverlay className="bg-black/60" />
-
-      <DialogContent
-        hideClose
-        onEscapeKeyDown={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        className="bg-white/10 backdrop-blur-lg border border-white/10 rounded-md"
-      >
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold mb-2">
-            Use on Desktop
-          </DialogTitle>
-          <DialogDescription>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div className="bg-gray-dark rounded-xl p-6 w-full max-w-sm space-y-6">
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold text-center">Use on Desktop</h3>
+          <p className="text-sm text-gray-300 mt-2 text-center">
             For the best experience, please use this application on a desktop
-            device.
-          </DialogDescription>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
+            device
+          </p>
+        </div>
+      </div>
+    </div>
   )
 }
