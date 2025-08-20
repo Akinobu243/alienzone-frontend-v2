@@ -12,20 +12,22 @@ import {
 
 const slides = [
   {
-    title: "Lorem Ipsum dolor",
+    title: "Earn every friday",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit, dolor eu condimentum fringilla, est arcu aliquet urna, non egestas elit tellus a urna. ",
-    image: "/images/carousel/slide-1.jpg",
+      "Players receive $ZONE based on their position in the leaderboard!",
+    image: "/images/carousel/01.jpeg",
   },
   {
-    title: "Second Slide",
-    description: "Another beautiful description goes here.",
-    image: "/images/carousel/slide-1.jpg",
+    title: "Become stronger",
+    description:
+      "With the Dojo items, your Alien grows in power and collects more rewards in raids.",
+    image: "/images/carousel/02.jpeg",
   },
   {
-    title: "Third Slide",
-    description: "Third slide with engaging content.",
-    image: "/images/carousel/slide-1.jpg",
+    title: "Unleash your team",
+    description:
+      "It takes 9 copies of a Raider to reach Tier 3 and unlock its full power.",
+    image: "/images/carousel/03.PNG",
   },
 ]
 
@@ -70,7 +72,7 @@ const HomeCarousel = () => {
                         "linear-gradient(266.01deg, rgba(0, 0, 0, 0) -31.57%, rgba(0, 0, 0, 0.8) 100.11%)",
                     }}
                   />
-                  <div className="absolute top-8 lg:top-12 left-5 lg:left-10 space-y-2 w-[90%] lg:w-[80%]">
+                  <div className="absolute top-8 lg:top-20 left-5 lg:left-10 space-y-2 w-[90%] lg:w-[80%]">
                     <h2 className="text-18 lg:text-3xl font-bold text-white">
                       {slide.title}
                     </h2>
