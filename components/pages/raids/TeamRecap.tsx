@@ -13,6 +13,8 @@ const TeamRecap = ({
   const { data: profile } = useProfile()
   const { data: team } = useTeam()
 
+  console.log("Team ===>", team)
+
   return (
     <div className="glass-effect p-2 lg:p-4 lg:mt-3 rounded-2xl">
       <div className="flex items-center gap-3 max-lg:flex-col w-full relative">

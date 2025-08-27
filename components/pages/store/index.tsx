@@ -489,12 +489,14 @@ const StorePage = () => {
               </div>
 
               <div className="flex flex-col gap-2 w-full">
-                <h2 className="text-lg font-bold">{selectedItem?.name}</h2>
-                <p className="text-sm">{selectedItem?.description}</p>
+                <h2 className="text-xl font-bold">{selectedItem?.name}</h2>
+                <p className="text-lg font-volkhov">
+                  {selectedItem?.description}
+                </p>
 
-                <div className="flex flex-col mt-3 gap-1 py-3">
+                <div className="flex flex-col mt-3 gap-3 py-3">
                   <div className="flex items-center justify-between">
-                    <p className="truncate mr-2 text-sm">Type</p>
+                    <p className="truncate mr-2 text-lg font-bold">Type</p>
                     <Badge
                       variant={selectedItem?.alienPart?.type?.toLowerCase()}
                     >
@@ -502,14 +504,18 @@ const StorePage = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2">Availability</p>
-                    <p className=" text-2xs whitespace-nowrap">
+                    <p className="truncate mr-2 text-lg font-bold">
+                      Availability
+                    </p>
+                    <p className="text-[16px] whitespace-nowrap">
                       {selectedItem?.availability}/{selectedItem?.totalSupply}
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2">Total supply</p>
-                    <p className="text-2xs whitespace-nowrap">
+                    <p className="truncate mr-2 text-lg font-bold">
+                      Total supply
+                    </p>
+                    <p className="text-[16px] whitespace-nowrap">
                       {/* {selectedItem?.totalSupply} */}
                       {selectedItem?.totalSupply
                         ? formatTinyNumberJSX(selectedItem?.totalSupply, false)
@@ -517,7 +523,9 @@ const StorePage = () => {
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2">Item price</p>
+                    <p className="truncate mr-2 text-lg font-bold">
+                      Item price
+                    </p>
                     <div className="flex items-center gap-1">
                       <div className="size-3 flex items-center justify-center">
                         <Image
@@ -527,7 +535,7 @@ const StorePage = () => {
                           height={50}
                         />
                       </div>
-                      <p className=" text-2xs whitespace-nowrap">
+                      <p className=" text-[16px] whitespace-nowrap">
                         {/* {selectedItem?.buyPrice} */}
                         {selectedItem?.buyPrice
                           ? formatTinyNumberJSX(selectedItem?.buyPrice, false)
@@ -536,8 +544,10 @@ const StorePage = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2">Held Amount</p>
-                    <p className=" text-2xs whitespace-nowrap">
+                    <p className="truncate mr-2 text-lg font-bold">
+                      Held Amount
+                    </p>
+                    <p className=" text-[16px] whitespace-nowrap">
                       {selectedItem?.heldAmount
                         ? formatTinyNumberJSX(selectedItem?.heldAmount)
                         : 0}
