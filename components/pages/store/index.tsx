@@ -496,7 +496,7 @@ const StorePage = () => {
 
                 <div className="flex flex-col mt-3 gap-[0.35rem] py-3">
                   <div className="flex items-center justify-between">
-                    <p className="truncate mr-2 text-[18px] font-bold">Type</p>
+                    <p className="truncate mr-2 text-[16px] font-bold">Type</p>
                     <Badge
                       variant={selectedItem?.alienPart?.type?.toLowerCase()}
                     >
@@ -504,7 +504,7 @@ const StorePage = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-bold">
                       Availability
                     </p>
                     <p className="text-[16px] whitespace-nowrap">
@@ -512,7 +512,7 @@ const StorePage = () => {
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-bold">
                       Total supply
                     </p>
                     <p className="text-[16px] whitespace-nowrap">
@@ -523,7 +523,7 @@ const StorePage = () => {
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-bold">
                       Item price
                     </p>
                     <div className="flex items-center gap-1">
@@ -544,7 +544,7 @@ const StorePage = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-bold">
                       Held Amount
                     </p>
                     <p className=" text-[16px] whitespace-nowrap">
