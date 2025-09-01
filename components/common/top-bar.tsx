@@ -8,6 +8,8 @@ import { UserIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import useClickSound from "@/hooks/use-click-sound"
+import { useZoneBalance } from "@/hooks/use-zone-balance"
+import { useWallet } from "@/context/wallet"
 
 import {
   MailIcon,
@@ -22,8 +24,9 @@ const TopBar = ({ className }: { className?: string }) => {
   const { data: profile } = useProfile()
   const { openRewardModal } = useDailyLoginReward()
   const router = useRouter()
-
-  const topbarItems = [
+  const { signer } = useWallet()
+  const zoneBalance = useZoneBalance(signer)
+  const topbarItems = [ 
     { label: "", href: "", icon: MailIcon },
     {
       label: "",
@@ -42,7 +45,7 @@ const TopBar = ({ className }: { className?: string }) => {
     },
   ]
   const playClickSound = useClickSound("/sounds/click.mp3")
-
+  console.log("zoneBalance ===>", zoneBalance, signer)
   return (
     <div
       className={cn(
@@ -51,6 +54,15 @@ const TopBar = ({ className }: { className?: string }) => {
       )}
     >
       <div className="lg:bg-white/10 w-max rounded-normal items-center gap-2.5 p-2 max-lg:backdrop-blur-0 max-lg:border-none flex glass-effect">
+        <div className="flex items-center gap-3 px-4">
+          <span className="text-white/50 text-sm">
+            {Number(zoneBalance || 0) > 0
+              ? (Math.floor(Number(zoneBalance) * 1e6) / 1e6).toFixed(6)
+              : "0.0"}{" "}
+            ZONE
+          </span>
+          <Image src="/images/coin-zone.png" alt="coinzone" width={16} height={16} />
+        </div>
         <div className="flex items-center gap-3 px-4">
           <span className="text-white/50 text-sm">{profile?.stars}</span>
           <Image src="/images/stars.png" alt="star" width={16} height={16} />
