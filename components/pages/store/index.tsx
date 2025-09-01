@@ -313,11 +313,14 @@ const StorePage = () => {
         signer
       )
 
+      const response = await getWearableObjectDetails(subject)
+      const price = response.data.buyPrice.toString();
+
       const signerAddress = await signer.getAddress()
       const zoneTokenBalance = await zoneTokenContract.balanceOf(signerAddress)
-      console.log("zoneTokenBalance ===>", zoneTokenBalance, signerAddress)
+      console.log("zoneTokenBalance ===>", zoneTokenBalance, signerAddress, amount, price)
 
-      if (zoneTokenBalance < amount) {
+      if (zoneTokenBalance < BigInt(quantity) * ethers.parseEther(price)) {
         toast.error("Insufficient zone token balance")
         return
       }
@@ -327,8 +330,8 @@ const StorePage = () => {
         contractAddress
       )
       // console.log("zoneTokenAllowance", zoneTokenAllowance)
-      if (zoneTokenAllowance < amount) {
-        await zoneTokenContract.approve(contractAddress, amount * BigInt(2))
+      if (zoneTokenAllowance < BigInt(quantity) * ethers.parseEther(price)) {
+        await zoneTokenContract.approve(contractAddress, BigInt(quantity) * ethers.parseEther(price) * BigInt(2))
       }
       // const newZoneTokenAllowance = await zoneTokenContract.allowance(await signer.getAddress(), contractAddress)
       // console.log("New zoneTokenAllowance", newZoneTokenAllowance)
