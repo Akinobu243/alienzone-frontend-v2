@@ -79,6 +79,12 @@ const DOJO_ITEMS = [
     label: "Accessories",
     image: "/images/pages/dojo/accessories.png",
   },
+  {
+    id: 9,
+    value: "backgroundImage",
+    label: "Background Image",
+    image: "/images/pages/dojo/backgroundImage.png",
+  },
 ]
 
 const EQUIP_COST = 150
@@ -96,6 +102,7 @@ const DojoPage = () => {
     MARKS: any[]
     POWERS: any[]
     ACCESSORIES: any[]
+    BACKGROUND: any[]
   }>({
     HAIR: [],
     EYES: [],
@@ -114,6 +121,7 @@ const DojoPage = () => {
     MARKS: [],
     POWERS: [],
     ACCESSORIES: [],
+    BACKGROUND: [],
   })
   const router = useRouter()
   const { wallets } = useWallets()
@@ -154,6 +162,8 @@ const DojoPage = () => {
     powersId: number
     accessories: string
     accessoriesId: number
+    background: string
+    backgroundId: number
   }>({
     hair: "",
     eyes: "",
@@ -171,6 +181,8 @@ const DojoPage = () => {
     powersId: 0,
     accessories: "",
     accessoriesId: 0,
+    background: "",
+    backgroundId: 0,
   })
 
   const [defaultTraits, setDefaultTraits] = useState<{
@@ -190,6 +202,8 @@ const DojoPage = () => {
     powersId: number
     accessories: string
     accessoriesId: number
+    background: string
+    backgroundId: number
   }>({
     hair: "",
     eyes: "",
@@ -207,6 +221,8 @@ const DojoPage = () => {
     powersId: 0,
     accessories: "",
     accessoriesId: 0,
+    background: "",
+    backgroundId: 0,
   })
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -365,6 +381,11 @@ const DojoPage = () => {
             updatedTraits.elementId = alien.element.id
           }
 
+          if (res.data?.background) {
+            updatedTraits.background = res.data.background.image
+            updatedTraits.backgroundId = res.data.background.id
+          }
+
           // Set body if available
           if (res.data?.body) {
             updatedTraits.body = res.data.body.image
@@ -420,6 +441,7 @@ const DojoPage = () => {
             marks: [],
             powers: [],
             accessories: [],
+            background: [],
           }
 
           // Track IDs to prevent duplicates
@@ -432,6 +454,7 @@ const DojoPage = () => {
             marks: new Set(),
             powers: new Set(),
             accessories: new Set(),
+            background: new Set(),
           }
 
           // Calculate total power from all parts
@@ -502,6 +525,7 @@ const DojoPage = () => {
             MARKS: partsMap.marks || [],
             POWERS: partsMap.powers || [],
             ACCESSORIES: partsMap.accessories || [],
+            BACKGROUND: partsMap.background || [],
           })
         }
       })
@@ -564,6 +588,12 @@ const DojoPage = () => {
       selectedParts.push({
         type: "accessories",
         id: selectedTraits.accessoriesId,
+      })
+
+    if (selectedTraits.backgroundId)
+      selectedParts.push({
+        type: "background",
+        id: selectedTraits.backgroundId,
       })
 
     if (selectedParts.length === 0) {
@@ -734,16 +764,16 @@ const DojoPage = () => {
                 />
                 <TraitPopover
                   item={DOJO_ITEMS[3]} // Background/Element
-                  traits={traits.ELEMENT}
-                  selectedId={selectedTraits.elementId}
+                  traits={traits.BACKGROUND}
+                  selectedId={selectedTraits.backgroundId}
                   onSelect={(trait) =>
                     setSelectedTraits({
                       ...selectedTraits,
-                      element: trait.image,
-                      elementId: trait.id,
+                      background: trait.image,
+                      backgroundId: trait.id,
                     })
                   }
-                  disabled={traits.ELEMENT.length === 0}
+                  disabled={traits.BACKGROUND.length === 0}
                 />
               </div>
             </div>
