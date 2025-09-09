@@ -68,6 +68,14 @@ const LEADERBOARD_COLUMNS = [
     align: "left",
   },
   {
+    id: "id",
+    label: "ID",
+    labelSmall: "ID",
+    showOnSmall: true,
+    width: 1,
+    align: "left",
+  },
+  {
     id: "name",
     label: "Name",
     labelSmall: "Name",
@@ -430,6 +438,17 @@ const LeaderboardPage = () => {
                         {index + 1}
                       </span>
                     )}
+                  </div>
+
+                  {/* ID Column */}
+                  <div
+                    className={cn(
+                      "truncate",
+                      !LEADERBOARD_COLUMNS.find((col) => col.id === "id")
+                        ?.showOnSmall && "hidden md:block"
+                    )}
+                  >
+                    {item.id}
                   </div>
 
                   {/* Name Column */}
