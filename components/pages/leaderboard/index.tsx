@@ -223,7 +223,7 @@ const LeaderboardPage = () => {
     if (!id) return
     navigator.clipboard.writeText(id.toString())
     setCopiedId(id.toString())
-    setTimeout(() => setCopiedId(null), 1000) // show check for 2s
+    setTimeout(() => setCopiedId(""), 1000) // show check for 2s
   }
 
   const handleDateChange = (date: string | null) => {
