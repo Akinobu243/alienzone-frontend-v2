@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import { useAliens, useAppDispatch, useRaidHistory } from "@/store/hooks"
 import { addRaidHistory } from "@/store/slices/raidsSlice"
@@ -23,11 +24,13 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
   const dispatch = useAppDispatch()
   const { data: aliens } = useAliens()
   const { data: raidHistory } = useRaidHistory()
+  const [disabled, setDisabled] = useState(false)
 
   const handleLaunchRaid = async () => {
     if (!raid?.id) return
 
     try {
+      setDisabled(true)
       const response = await launchRaid({
         raidId: raid?.id,
         alienIds: aliens?.map((alien) => alien.id) || [],
@@ -44,6 +47,8 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
       }
     } catch (error) {
       console.log("error", error)
+    } finally {
+      setDisabled(false)
     }
   }
 
@@ -145,7 +150,7 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
         className="w-full"
         blurColor="bg-[#EF98E6]"
         onClick={handleLaunchRaid}
-        disabled={isRaidLaunched(raid, raidHistory)}
+        disabled={isRaidLaunched(raid, raidHistory) || disabled}
       >
         Launch Raid
       </BrandButton>
