@@ -96,10 +96,18 @@ const config: Config = {
             height: "0",
           },
         },
+        dotLoop: {
+          "0%": { content: '"."' },
+          "25%": { content: '".."' },
+          "50%": { content: '"..."' },
+          "75%": { content: '""' },
+          "100%": { content: '"."' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        dotLoop: "dotLoop 1.5s steps(1,end) infinite",
       },
     },
   },
