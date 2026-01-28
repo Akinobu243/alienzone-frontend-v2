@@ -2,11 +2,11 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { useProfile } from "@/store/hooks"
-import { Loader2 } from "lucide-react"
 
 import { getStoreInventory } from "@/lib/api"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Loader } from "@/components/pages/profile/components"
 
 export const InventoryContent = () => {
   const searchParams = useSearchParams()
@@ -81,14 +81,7 @@ export const InventoryContent = () => {
           ))
         ) : (
           <div className="col-span-full text-center py-10 text-white/60">
-            {itemsLoading ? (
-              <div className="flex items-center justify-center">
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                <span className="text-sm">Loading Items...</span>
-              </div>
-            ) : (
-              "No items found"
-            )}
+            {itemsLoading ? <Loader text="Loading items" /> : "No items found"}
           </div>
         )}
       </div>
