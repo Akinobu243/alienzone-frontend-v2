@@ -9,8 +9,8 @@ export interface TabProps {
 
 export const Tab = ({ title, after, onClick, isActive }: TabProps) => {
   const buttonClassnames = isActive
-    ? "flex-1 bg-white/10 rounded-10 p-3 flex items-center justify-between"
-    : "flex-1 bg-white/5 hover:bg-white/10 rounded-10 p-3 flex items-center justify-between"
+    ? "flex-1 glass-effect-filled rounded-10 p-3 flex items-center justify-between"
+    : "flex-1 glass-effect duration-300 hover:bg-white/10 rounded-10 p-3 flex items-center justify-between"
 
   return (
     <button className={buttonClassnames} onClick={onClick}>
