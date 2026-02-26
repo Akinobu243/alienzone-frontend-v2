@@ -21,9 +21,9 @@ export const PortfolioItem = ({
     <Box flex align="center" gap={1}>
       <Avatar url={imageUrl} altText={name} size={32} />
       <Box flex direction="column" gap={1}>
-        <Typography.Text font="inter">{name}</Typography.Text>
+        <Typography.Text font="secondary">{name}</Typography.Text>
         {count && (
-          <Typography.Text font="inter" color="caption" size="2xs">
+          <Typography.Text font="secondary" color="caption" size="2xs">
             {count}
           </Typography.Text>
         )}
