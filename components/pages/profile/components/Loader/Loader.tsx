@@ -9,7 +9,7 @@ export const Loader = ({ text }: LoaderProps) => {
       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
       <span className="text-sm">
         {text}
-        <span class="after:animate-dotLoop" />
+        <span className="after:animate-dotLoop" />
       </span>
     </div>
   )
