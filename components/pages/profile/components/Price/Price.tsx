@@ -20,7 +20,7 @@ export const Price = ({
 }: PriceProps) => {
   return (
     <Box flex direction="column" align="end" gap={1}>
-      <Typography.Text font="inter">
+      <Typography.Text font="secondary">
         {price} {tokenName}
       </Typography.Text>
       {isPositive && percentageDiff && (
