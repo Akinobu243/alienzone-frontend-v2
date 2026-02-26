@@ -1,6 +1,8 @@
 import { useEffect } from "react"
 import { usePortfolio } from "@/store/hooks"
 
+import { ALIENZONE_TOKEN_ICON_URL } from "@/lib/constants"
+
 import {
   Box,
   Card,
@@ -29,29 +31,39 @@ export const PortfolioContent = () => {
     return "Portfolio data is not found"
   }
 
+  const shouldShowPortfolioPriceChange = Boolean(
+    data.usd_balance_diff &&
+      data.usd_balance_diff_positive &&
+      data.usd_diff_percentage
+  )
+
   return (
     <Box gap={4} direction="column">
       <Box flex gap={1} direction="column">
         <Typography.Caption>Portfolio</Typography.Caption>
 
         <Typography.Text size="3xl">
-          ${data.zone_balance_usd} ({data.zone_balance} {TOKEN_NAME})
+          ${data.balance_usd} ({data.balance_summary} {TOKEN_NAME})
         </Typography.Text>
 
-        <PriceChange
-          countUsd={data.zone_balance_usd}
-          isPositive={data.balance_diff_positive}
-          percentageDiff={data.zone_balance_diff_percentage}
-        />
+        {shouldShowPortfolioPriceChange && (
+          <PriceChange
+            countUsd={data.usd_balance_diff}
+            isPositive={data.usd_balance_diff_positive}
+            percentageDiff={data.usd_diff_percentage}
+          />
+        )}
       </Box>
 
       <Card>
         <Box flex direction="column" gap={3}>
           <Typography.Text size="lg">Wallet</Typography.Text>
           <PortfolioItem
-            imageUrl={data.items[0].imageUrl}
+            imageUrl={ALIENZONE_TOKEN_ICON_URL}
             name="Alienzone"
-            after={<Price price={data.zone_balance} tokenName={TOKEN_NAME} />}
+            after={
+              <Price price={data.wallet_zone_balance} tokenName={TOKEN_NAME} />
+            }
           ></PortfolioItem>
         </Box>
       </Card>
@@ -71,7 +83,7 @@ export const PortfolioContent = () => {
                     price={item.price}
                     tokenName={TOKEN_NAME}
                     isPositive={item.price_diff_positive}
-                    percentageDiff={item.price_diff_24h}
+                    percentageDiff={item.price_diff_percentage}
                   />
                 }
               />
