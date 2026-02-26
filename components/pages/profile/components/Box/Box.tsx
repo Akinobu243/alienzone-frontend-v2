@@ -10,6 +10,7 @@ interface BoxProps {
   justify?: "center" | "between" | "stretch" | "end"
   align?: "center" | "stretch" | "end"
   children?: ReactNode
+  gap?: number
 }
 
 export const Box = ({
