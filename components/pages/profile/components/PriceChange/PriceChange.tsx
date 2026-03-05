@@ -51,7 +51,7 @@ export const PriceChangeSmall = ({
       size="2xs"
     >
       {changeSymbol}
-      {percentageDiff}
+      {percentageDiff}%
     </Typography.Text>
   )
 }
