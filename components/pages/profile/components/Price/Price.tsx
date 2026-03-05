@@ -23,7 +23,7 @@ export const Price = ({
       <Typography.Text font="secondary">
         {price} {tokenName}
       </Typography.Text>
-      {isPositive && percentageDiff && (
+      {isPositive !== undefined && percentageDiff && (
         <PriceChangeSmall
           isPositive={isPositive}
           percentageDiff={percentageDiff}

@@ -37,7 +37,7 @@ export const PortfolioContent = () => {
 
   const shouldShowPortfolioPriceChange = Boolean(
     data.usd_balance_diff &&
-      data.usd_balance_diff_positive &&
+      data.usd_balance_diff_positive !== undefined &&
       data.usd_diff_percentage
   )
 
@@ -76,7 +76,7 @@ export const PortfolioContent = () => {
         <Box flex direction="column" gap={3}>
           <Typography.Text size="lg">Dojo Items</Typography.Text>
           <Box flex direction="column" gap={2}>
-            {data.items.map((item) => (
+            {data.items?.map((item) => (
               <PortfolioItem
                 key={item.name}
                 imageUrl={item.picture_url}
@@ -100,7 +100,7 @@ export const PortfolioContent = () => {
         <Box flex direction="column" gap={3}>
           <Typography.Text size="lg">Characters</Typography.Text>
           <Box flex direction="column" gap={2}>
-            {data.characters.map((item) => (
+            {data.characters?.map((item) => (
               <PortfolioItem
                 key={item.name}
                 imageUrl={item.picture_url}
