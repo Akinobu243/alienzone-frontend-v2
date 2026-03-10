@@ -13,7 +13,11 @@ export const Avatar = ({ url, altText, size }: AvatarProps) => {
       alt={altText}
       width={size}
       height={size}
-      className="h-full"
+      className="object-fill"
+      style={{
+        height: `${size}px`,
+        width: `${size}px`,
+      }}
     />
   )
 }

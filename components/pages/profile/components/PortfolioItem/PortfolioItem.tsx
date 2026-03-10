@@ -19,7 +19,7 @@ export const PortfolioItem = ({
 }: PortfolioItemProps) => (
   <Box flex align="center" justify="between">
     <Box flex align="center" gap={1}>
-      <Avatar url={imageUrl} altText={name} size={32} />
+      <Avatar url={imageUrl} altText={name} size={42} />
       <Box flex direction="column" gap={1}>
         <Typography.Text font="secondary">{name}</Typography.Text>
         {count && (
