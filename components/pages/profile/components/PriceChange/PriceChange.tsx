@@ -2,29 +2,33 @@ import { ChartCaretIcon } from "@/components/icons"
 import { Typography } from "@/components/pages/profile/components"
 
 import { Box } from "../Box"
+import { textColorsByChangeSymbol } from "./constants"
+import { getChangeSymbol } from "./utils"
 
 interface PriceChangeProps {
-  isPositive: boolean
-  countUsd: string
-  percentageDiff: string
+  isPositive?: boolean
+  countUsd?: string
+  percentageDiff?: string
 }
 
 export const PriceChange = ({
   isPositive,
-  countUsd,
-  percentageDiff,
+  countUsd = "0",
+  percentageDiff = "0",
 }: PriceChangeProps) => {
-  const changeSymbol = isPositive ? "+" : "-"
+  const changeSymbol = getChangeSymbol(isPositive, percentageDiff)
   const pricesString = `${changeSymbol}$${countUsd} ${changeSymbol}${percentageDiff}%`
 
   return (
     <Box flex gap={1} align="center">
-      <ChartCaretIcon
-        rotate={isPositive ? 0 : 180}
-        fill={isPositive ? "#5FFF95" : "#FF3F3F"}
-      />
+      {changeSymbol && (
+        <ChartCaretIcon
+          rotate={isPositive ? 0 : 180}
+          fill={isPositive ? "#5FFF95" : "#FF3F3F"}
+        />
+      )}
       <Typography.Text
-        color={isPositive ? "positive" : "negative"}
+        color={textColorsByChangeSymbol[changeSymbol]}
         font="secondary"
       >
         {pricesString}
@@ -40,13 +44,13 @@ type PriceChangeSmallProps = Pick<
 
 export const PriceChangeSmall = ({
   isPositive,
-  percentageDiff,
+  percentageDiff = "0",
 }: PriceChangeSmallProps) => {
-  const changeSymbol = isPositive ? "+" : "-"
+  const changeSymbol = getChangeSymbol(isPositive, percentageDiff)
 
   return (
     <Typography.Text
-      color={isPositive ? "positive" : "negative"}
+      color={textColorsByChangeSymbol[changeSymbol]}
       font="secondary"
       size="2xs"
     >
