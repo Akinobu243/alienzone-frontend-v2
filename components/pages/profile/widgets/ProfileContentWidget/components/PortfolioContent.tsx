@@ -35,12 +35,6 @@ export const PortfolioContent = () => {
     return
   }
 
-  const shouldShowPortfolioPriceChange = Boolean(
-    data.usd_balance_diff &&
-      data.usd_balance_diff_positive !== undefined &&
-      data.usd_diff_percentage
-  )
-
   return (
     <Box gap={4} direction="column">
       <Box flex gap={1} direction="column">
@@ -50,13 +44,11 @@ export const PortfolioContent = () => {
           ${data.balance_usd} ({data.balance_summary} {TOKEN_NAME})
         </Typography.Text>
 
-        {shouldShowPortfolioPriceChange && (
-          <PriceChange
-            countUsd={data.usd_balance_diff as string}
-            isPositive={data.usd_balance_diff_positive as boolean}
-            percentageDiff={data.usd_diff_percentage as string}
-          />
-        )}
+        <PriceChange
+          countUsd={data.usd_balance_diff}
+          isPositive={data.usd_balance_diff_positive}
+          percentageDiff={data.usd_diff_percentage}
+        />
       </Box>
 
       <Card>
@@ -66,7 +58,11 @@ export const PortfolioContent = () => {
             imageUrl={ALIENZONE_TOKEN_ICON_URL}
             name="Alienzone"
             after={
-              <Price price={data.wallet_zone_balance} tokenName={TOKEN_NAME} />
+              <Price
+                price={data.wallet_zone_balance}
+                tokenName={TOKEN_NAME}
+                withoutChange
+              />
             }
           ></PortfolioItem>
         </Box>
@@ -98,14 +94,20 @@ export const PortfolioContent = () => {
 
       <Card>
         <Box flex direction="column" gap={3}>
-          <Typography.Text size="lg">Characters</Typography.Text>
+          <Typography.Text size="lg">Aliens</Typography.Text>
           <Box flex direction="column" gap={2}>
             {data.characters?.map((item) => (
               <PortfolioItem
                 key={item.name}
                 imageUrl={item.picture_url}
                 name={item.name}
-                after={<Price price={item.price} tokenName={TOKEN_NAME} />}
+                after={
+                  <Price
+                    price={item.price}
+                    tokenName={TOKEN_NAME}
+                    withoutChange
+                  />
+                }
               />
             ))}
           </Box>

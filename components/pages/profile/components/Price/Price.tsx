@@ -10,6 +10,7 @@ interface PriceProps {
   tokenName: string
   isPositive?: boolean
   percentageDiff?: string
+  withoutChange?: boolean
 }
 
 export const Price = ({
@@ -17,13 +18,14 @@ export const Price = ({
   tokenName,
   isPositive,
   percentageDiff,
+  withoutChange,
 }: PriceProps) => {
   return (
     <Box flex direction="column" align="end" gap={1}>
       <Typography.Text font="secondary">
         {price} {tokenName}
       </Typography.Text>
-      {isPositive !== undefined && percentageDiff && (
+      {!withoutChange && (
         <PriceChangeSmall
           isPositive={isPositive}
           percentageDiff={percentageDiff}
